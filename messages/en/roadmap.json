@@ -1,0 +1,226 @@
+{
+  "statusPlanned": "To be done",
+  "statusLive": "Live",
+  "aboutTitle": "What this module will do",
+  "capabilitiesTitle": "Planned capabilities",
+  "dependenciesTitle": "Depends on",
+  "noDependencies": "No dependencies. This module can be built at any time.",
+  "plannedModuleLink": "Planned module",
+  "external": {
+    "websiteCatalogApi": "Website catalog API",
+    "opportunityLineItems": "Opportunity line items",
+    "erpIntegration": "ERP integration",
+    "campaignIdColumns": "Campaign link on leads and opportunities",
+    "fxRates": "Exchange rates"
+  },
+  "modules": {
+    "products": {
+      "title": "Products & Price Books",
+      "summary": "One product catalog shared with the website shop, priced per country and currency.",
+      "description": "Products are synced from the website marketplace catalog, so a product keeps the same SKU in the shop, in quotes and in the CRM. Price books hold the list price of each product per country and currency (BRL, USD, EUR, CNY). Reps add products from the right price book to an opportunity as line items, and the opportunity amount is then calculated from those lines instead of typed by hand.",
+      "capabilities": {
+        "catalogSync": "Scheduled sync of products, SKUs, families and units from the website marketplace catalog",
+        "priceBooks": "Price books per country and currency, with a standard book and regional books",
+        "lineItems": "Opportunity line items with quantity, unit price and discount; the amount is calculated from the lines",
+        "multiCurrency": "Each opportunity is priced from a price book in its own currency",
+        "activeFlag": "Retired products stay on past deals but can no longer be added to new ones"
+      },
+      "dependencies": {
+        "websiteCatalogApi": "A read API on the website marketplace that exposes products by SKU.",
+        "opportunityLineItems": "A crm_opportunity_line_items table linking opportunities to price book entries."
+      }
+    },
+    "quotes": {
+      "title": "Quotes",
+      "summary": "Branded quotes built from an opportunity, with approval when discounts run high.",
+      "description": "A rep creates a quote from an opportunity. Its line items come from the price book, and the rep sets discounts, taxes and a validity date. The quote produces a branded PDF in the customer's language. When a discount goes above the configured threshold, the quote goes to approval before it can be sent. A quote that started as a website RFQ keeps the RFQ reference, so the request, the quote and the deal stay linked.",
+      "capabilities": {
+        "fromOpportunity": "Create a quote from an opportunity, copying its account, contact and line items",
+        "pricing": "Line discounts, header discount, taxes and a validity date",
+        "pdf": "Branded PDF in the customer's language, ready to email",
+        "approvalThreshold": "Discounts above the threshold require approval before sending",
+        "rfqLink": "Keeps the website RFQ reference from the original request",
+        "versions": "Several versions per opportunity, with one marked as the synced quote"
+      },
+      "dependencies": {
+        "products": "Line items and prices come from products and price books.",
+        "approvals": "Discounts above the threshold are routed through an approval policy."
+      }
+    },
+    "orders": {
+      "title": "Orders",
+      "summary": "Orders created from won deals and accepted quotes, handed off to the ERP.",
+      "description": "When an opportunity is Closed Won or a quote is accepted, an order is created with the agreed lines, prices and delivery terms. The order tracks its fulfilment status (draft, confirmed, in production, shipped, delivered) and is sent to the ERP, which becomes the system of record for invoicing. Sales can follow delivery without leaving the account.",
+      "capabilities": {
+        "fromClosedWon": "Create an order automatically when an opportunity is Closed Won",
+        "fromQuote": "Convert an accepted quote into an order with the same lines and prices",
+        "fulfilment": "Fulfilment status from draft to delivered, with dates per step",
+        "erpHandoff": "Send confirmed orders to the ERP and store the ERP order number",
+        "accountHistory": "Order history on the account and contact record pages"
+      },
+      "dependencies": {
+        "quotes": "Orders inherit lines, prices and terms from the accepted quote.",
+        "erpIntegration": "The ERP receives confirmed orders and reports their status back."
+      }
+    },
+    "campaigns": {
+      "title": "Campaigns",
+      "summary": "Trade shows, digital and email campaigns, with attribution and ROI.",
+      "description": "Campaigns group the marketing actions that bring in business: trade shows, digital ads, webinars and email sends. Leads and contacts are added as members with a status (sent, responded, attended). Leads and opportunities record the campaign that sourced them, so the pipeline and won revenue of each campaign can be compared with its cost.",
+      "capabilities": {
+        "types": "Campaign types: trade show, digital, email, webinar and partner event",
+        "members": "Member lists of leads and contacts with a response status",
+        "attribution": "Primary campaign source on leads and opportunities",
+        "costRoi": "Budget, actual cost, pipeline generated and won revenue per campaign",
+        "hierarchy": "Parent campaigns that roll up several actions, such as one trade show season"
+      },
+      "dependencies": {
+        "campaignIdColumns": "A nullable campaign_id column on leads and opportunities, added without a breaking change."
+      }
+    },
+    "email": {
+      "title": "Email",
+      "summary": "Mailbox sync, templates and sending from the record page, logged on the timeline.",
+      "description": "Each user connects a Microsoft 365 or Gmail mailbox. Emails with known leads and contacts are logged on the activity timeline of the matching records. Reps send emails from a record page with templates in the customer's language, and replies appear on the same timeline.",
+      "capabilities": {
+        "mailboxSync": "Microsoft 365 and Gmail mailbox connection per user",
+        "templates": "Email templates per locale with merge fields from the record",
+        "sendFromRecord": "Compose and send from the lead, contact or opportunity page",
+        "autoLogging": "Sent and received emails logged automatically on the activity timeline",
+        "tracking": "Reply detection and a last-contacted date on the record"
+      },
+      "dependencies": {
+        "integrations": "Mailbox connections use the OAuth integrations with Microsoft and Google."
+      }
+    },
+    "reports": {
+      "title": "Reports & Dashboards",
+      "summary": "A report builder on CRM objects, with saved reports and team dashboards.",
+      "description": "Users build reports on leads, accounts, contacts, opportunities and activities. They choose the columns, add filters, group rows and add a chart. Reports can be saved, shared with a team or with everyone, and placed on dashboards. Every report respects the record visibility of the person viewing it.",
+      "capabilities": {
+        "builder": "Report builder with columns and filters on every CRM object",
+        "grouping": "Group by rows and columns with sums, averages and counts",
+        "charts": "Bar, line, funnel and donut charts in brand colors",
+        "sharing": "Private, team and public report folders",
+        "dashboards": "Custom dashboards per team made from saved reports",
+        "export": "CSV export that follows the viewer's record visibility"
+      },
+      "dependencies": {}
+    },
+    "forecasting": {
+      "title": "Forecasting",
+      "summary": "Forecasts by rep, team, company and period, measured against quotas.",
+      "description": "Forecasting rolls open opportunities up by close date into monthly and quarterly periods. It shows the forecast per rep, team and group company against each person's quota. The weighted pipeline (amount × probability) sits next to the forecast categories: pipeline, best case, commit and closed. All currencies are converted into one reporting currency.",
+      "capabilities": {
+        "hierarchy": "Forecast by rep, team, group company and period",
+        "quotas": "Quotas per user and period, with attainment",
+        "weighted": "Weighted pipeline from amount × stage probability",
+        "categories": "Commit, best case and pipeline categories that reps can adjust",
+        "currencyRollup": "Multi-currency rollup into one reporting currency"
+      },
+      "dependencies": {
+        "reports": "Forecast views reuse the reporting engine and its filters.",
+        "fxRates": "Conversion rates per period, synced instead of the static table in Settings."
+      }
+    },
+    "cases": {
+      "title": "Cases",
+      "summary": "Post-sale support tickets for accounts and contacts, with SLA tracking.",
+      "description": "Cases record the support requests that customers raise after a sale: product questions, delivery problems and complaints. Each case is linked to an account and a contact, has a priority and an SLA clock, and moves from new to resolved with a resolution note. Emails to the support address become cases automatically.",
+      "capabilities": {
+        "tickets": "Cases linked to an account, a contact and optionally an order",
+        "priority": "Priority, type and owner queue per case",
+        "sla": "SLA clock per priority, with breach warnings",
+        "emailToCase": "Emails to the support address create or update cases",
+        "resolution": "Resolution notes and time-to-resolve reporting"
+      },
+      "dependencies": {
+        "email": "Email-to-case and replies use the mailbox integration."
+      }
+    },
+    "automation": {
+      "title": "Automation",
+      "summary": "Assignment rules, stage-based tasks, alerts and SLA escalation.",
+      "description": "Automation replaces repetitive manual steps. Assignment rules route new leads by country, group company or round-robin. Stage changes create follow-up tasks. Alerts notify owners about stalled deals. When a lead misses its first-response SLA, it is escalated to the owner's manager.",
+      "capabilities": {
+        "assignmentRules": "Lead assignment rules by country, group company and round-robin",
+        "stageTasks": "Tasks created automatically when an opportunity enters a stage",
+        "alerts": "Alerts for stalled deals and overdue tasks",
+        "slaEscalation": "Escalation to the manager when the first-response SLA is missed",
+        "auditTrail": "Every automated change is recorded in the audit log"
+      },
+      "dependencies": {}
+    },
+    "approvals": {
+      "title": "Approvals",
+      "summary": "Discount and deal approvals with policies, approvers and history.",
+      "description": "Approvals reuse the website's change-request model. A policy defines when approval is needed (for example, a discount above 15% or a deal above an amount) and who approves it. Requests are pending, approved or rejected, with a comment, and approvers work from one inbox. The record stays locked while it waits for approval.",
+      "capabilities": {
+        "policies": "Approval policies with conditions on discount, amount and group company",
+        "approvers": "Approvers by user, role or the requester's manager",
+        "statuses": "Pending, approved and rejected states with required comments",
+        "inbox": "One inbox for approvers, with counts in the sidebar",
+        "history": "Full approval history on the record and in the audit log"
+      },
+      "dependencies": {
+        "quotes": "Quote discounts are the first thing that needs approval."
+      }
+    },
+    "ai-assistant": {
+      "title": "AI Assistant",
+      "summary": "Lead scoring, record summaries, next-best actions and email drafts.",
+      "description": "The assistant works on the record page with the Claude API. It scores incoming leads, summarises the history of an account or opportunity, suggests the next best action and drafts emails in the customer's language. It only sees the records the current user can see, and a person reviews every suggestion before anything is saved or sent.",
+      "capabilities": {
+        "leadScoring": "Lead score with the reasons behind it",
+        "summaries": "One-paragraph summaries of an account, contact or opportunity",
+        "nextBestAction": "Suggested next step based on stage, activities and similar deals",
+        "emailDrafts": "Email drafts in the customer's language, ready to edit",
+        "guardrails": "Respects record visibility; a person approves every output"
+      },
+      "dependencies": {
+        "email": "Drafts are sent through the email module and use email history as context.",
+        "reports": "Scoring and suggestions learn from historical won and lost data."
+      }
+    },
+    "integrations": {
+      "title": "Integrations",
+      "summary": "Website forms and RFQs, ERP, WhatsApp Business and calendars.",
+      "description": "Integrations connect the CRM to the systems around it. The website contact and RFQ forms post to the signed inbound endpoint, which is live and still needs to be wired on the website side. The ERP exchanges accounts and orders. WhatsApp Business conversations are logged as activities, and meetings sync with Google and Microsoft calendars.",
+      "capabilities": {
+        "websiteForms": "Website contact and RFQ forms create leads through the signed inbound endpoint",
+        "erp": "ERP sync for accounts, orders and invoices",
+        "whatsapp": "WhatsApp Business conversations logged on the timeline",
+        "calendar": "Two-way meeting sync with Google and Microsoft calendars",
+        "health": "Connection status, last sync time and error log per integration"
+      },
+      "dependencies": {}
+    },
+    "data-import": {
+      "title": "Data Import",
+      "summary": "A spreadsheet import wizard with mapping, preview and dedupe.",
+      "description": "The import wizard loads leads, accounts and contacts from CSV or Excel files. Users map spreadsheet columns to CRM fields and preview the rows with validation errors highlighted. Duplicates are checked against existing records, and each row is either created, updated or skipped. Every import keeps a log with downloadable error rows.",
+      "capabilities": {
+        "wizard": "Step-by-step import of CSV and Excel files",
+        "mapping": "Column-to-field mapping with saved mapping templates",
+        "preview": "Validation preview of every row before anything is written",
+        "dedupe": "Create, update or skip for rows that match existing records",
+        "importLog": "Import history with counts and a file of rejected rows"
+      },
+      "dependencies": {
+        "duplicates": "Imports use the same matching rules as duplicate management."
+      }
+    },
+    "duplicates": {
+      "title": "Duplicate Management",
+      "summary": "Matching rules, duplicate alerts and side-by-side merge.",
+      "description": "Duplicate management keeps one record per real customer. Matching rules compare email, and company name with country after normalisation. Users see a warning when they create a likely duplicate. A merge screen shows two records side by side, lets the user pick the value to keep for each field, and moves related activities and opportunities to the surviving record.",
+      "capabilities": {
+        "matchingRules": "Matching on email, and on normalised company name with country",
+        "alertsOnCreate": "Duplicate warning when creating or editing a record",
+        "merge": "Side-by-side merge with a field-by-field choice",
+        "mergeAudit": "Merges are recorded in the audit log, with related records moved"
+      },
+      "dependencies": {}
+    }
+  }
+}

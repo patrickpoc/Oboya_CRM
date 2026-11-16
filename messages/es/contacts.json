@@ -1,0 +1,22 @@
+{
+  "title": "Contactos",
+  "singular": "Contacto",
+  "fields": {
+    "name": "Nombre",
+    "firstName": "Nombre",
+    "lastName": "Apellidos",
+    "account": "Cuenta",
+    "title": "Cargo",
+    "email": "Correo electrónico",
+    "phone": "Teléfono",
+    "mobile": "Móvil",
+    "country": "País",
+    "owner": "Propietario",
+    "description": "Descripción",
+    "createdAt": "Creado",
+    "updatedAt": "Última modificación"
+  },
+  "related": {
+    "opportunities": "Oportunidades"
+  }
+}

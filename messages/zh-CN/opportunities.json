@@ -1,0 +1,71 @@
+{
+  "title": "商机",
+  "singular": "商机",
+  "pipelineTitle": "销售管道",
+  "pipelineLimit": "仅显示前 {limit} 个商机。缩小筛选范围以查看其余商机。",
+  "inactiveStage": "已停用的阶段",
+  "editLoss": "编辑原因",
+  "fields": {
+    "name": "商机名称",
+    "account": "客户",
+    "primaryContact": "主要联系人",
+    "stage": "阶段",
+    "status": "状态",
+    "probability": "赢率",
+    "amount": "金额",
+    "currency": "币种",
+    "closeDate": "预计成交日期",
+    "leadSource": "线索来源",
+    "entity": "集团公司",
+    "owner": "负责人",
+    "nextStep": "下一步",
+    "lossReason": "输单原因",
+    "lossNote": "输单备注",
+    "description": "描述",
+    "closedAt": "关闭时间",
+    "createdAt": "创建时间",
+    "updatedAt": "最后修改时间"
+  },
+  "status": {
+    "open": "进行中",
+    "won": "赢单",
+    "lost": "输单"
+  },
+  "currencies": {
+    "BRL": "BRL – 巴西雷亚尔",
+    "USD": "USD – 美元",
+    "EUR": "EUR – 欧元",
+    "CNY": "CNY – 人民币"
+  },
+  "lostDialog": {
+    "title": "移至 {stage}",
+    "description": "{name} 为什么输单？",
+    "reason": "输单原因",
+    "reasonPlaceholder": "选择原因…",
+    "reasonRequired": "请选择输单原因。",
+    "note": "备注（可选）",
+    "confirm": "标记为输单"
+  },
+  "toast": {
+    "moved": "已移至 {stage}"
+  },
+  "viewToggle": {
+    "label": "视图",
+    "list": "列表",
+    "kanban": "看板"
+  },
+  "owner": {
+    "mine": "我的商机",
+    "all": "全部"
+  },
+  "kanban": {
+    "total": "合计",
+    "weighted": "加权",
+    "empty": "无商机",
+    "owner": "负责人：{name}",
+    "overdue": "已逾期：",
+    "moveTo": "将 {name} 移至…",
+    "movePlaceholder": "移至…",
+    "moved": "{name} 已移至 {stage}"
+  }
+}

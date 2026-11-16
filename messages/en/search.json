@@ -1,0 +1,19 @@
+{
+  "placeholder": "Search leads, accounts, contacts…",
+  "label": "Global search",
+  "open": "Open search",
+  "close": "Close search",
+  "shortcut": "Press {shortcut} to search",
+  "minChars": "Type at least {count} characters.",
+  "searching": "Searching…",
+  "noResults": "No results for “{q}”.",
+  "failed": "Search failed. Try again.",
+  "seeAll": "See all in {object}",
+  "hint": "↑↓ to move · Enter to open · Esc to close",
+  "groups": {
+    "lead": "Leads",
+    "account": "Accounts",
+    "contact": "Contacts",
+    "opportunity": "Opportunities"
+  }
+}

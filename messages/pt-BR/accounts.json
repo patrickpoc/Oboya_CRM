@@ -1,0 +1,39 @@
+{
+  "title": "Contas",
+  "singular": "Conta",
+  "fields": {
+    "name": "Nome da conta",
+    "type": "Tipo",
+    "entities": "Empresas do grupo",
+    "primaryEntity": "Empresa principal",
+    "country": "País",
+    "segment": "Segmento",
+    "industry": "Setor",
+    "phone": "Telefone",
+    "email": "E-mail",
+    "website": "Site",
+    "taxId": "CNPJ/ID fiscal",
+    "parentAccount": "Conta principal",
+    "owner": "Proprietário",
+    "billingStreet": "Endereço de cobrança",
+    "billingCity": "Cidade de cobrança",
+    "billingState": "Estado de cobrança",
+    "billingPostalCode": "CEP de cobrança",
+    "billingCountry": "País de cobrança",
+    "description": "Descrição",
+    "createdAt": "Criado em",
+    "updatedAt": "Última modificação"
+  },
+  "types": {
+    "customer": "Cliente",
+    "prospect": "Prospect",
+    "distributor": "Distribuidor",
+    "partner": "Parceiro",
+    "other": "Outro"
+  },
+  "related": {
+    "contacts": "Contatos",
+    "opportunities": "Oportunidades",
+    "children": "Contas filhas"
+  }
+}

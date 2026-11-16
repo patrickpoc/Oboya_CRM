@@ -1,0 +1,84 @@
+{
+  "objects": {
+    "lead": "线索",
+    "account": "客户",
+    "contact": "联系人",
+    "opportunity": "商机",
+    "activity": "活动"
+  },
+  "tabs": {
+    "details": "详情",
+    "related": "相关"
+  },
+  "actions": {
+    "save": "保存",
+    "cancel": "取消",
+    "changeOwner": "更改负责人",
+    "delete": "删除"
+  },
+  "owner": "负责人",
+  "yes": "是",
+  "no": "否",
+  "primary": "主要",
+  "setPrimary": "设为主要",
+  "clear": "清除",
+  "select": "选择…",
+  "saving": "保存中…",
+  "lookupPlaceholder": "搜索…",
+  "lookupNoResults": "无匹配项",
+  "tagsPlaceholder": "输入后按 Enter",
+  "removeValue": "移除 {value}",
+  "fieldInvalid": "请输入有效值。",
+  "fieldEdit": "编辑{field}",
+  "createTitle": "新建{object}",
+  "toast": {
+    "saved": "已保存",
+    "created": "已创建 {name}",
+    "deleted": "记录已删除"
+  },
+  "errors": {
+    "invalid": "部分值无效，请检查表单后重试。",
+    "forbidden": "你没有执行此操作的权限。",
+    "not_found": "此记录已不存在或你无权查看。",
+    "duplicate": "已存在具有相同信息的记录。",
+    "unauthenticated": "会话已过期，请重新登录。",
+    "rule": "未保存：此更改违反了业务规则。",
+    "unavailable": "出现错误，请重试。",
+    "rules": {
+      "lead_converted": "此线索已转换，处于只读状态。",
+      "reason_required": "请填写原因，才能将此线索标记为不合格。",
+      "loss_reason_required": "请选择输单原因，才能将此商机移至输单阶段。",
+      "stage_unavailable": "此阶段已不可用。请刷新页面并选择其他阶段。",
+      "one_primary_required": "请选择且仅选择一家主要集团公司。",
+      "duplicate": "已存在具有相同信息的记录。",
+      "forbidden": "你没有执行此操作的权限。"
+    }
+  },
+  "deleteDialog": {
+    "title": "删除此记录？",
+    "description": "{name} 将从列表中移除。管理员可以将其恢复。",
+    "confirm": "删除"
+  },
+  "ownerDialog": {
+    "title": "更改负责人",
+    "description": "为 {name} 选择新的负责人。",
+    "confirm": "更改负责人"
+  },
+  "related": {
+    "none": "没有相关列表。",
+    "new": "新建",
+    "empty": "暂无记录。",
+    "viewAll": "查看全部"
+  },
+  "path": {
+    "label": "阶段",
+    "current": "当前阶段",
+    "completed": "已完成",
+    "markCurrent": "标记为当前阶段"
+  },
+  "timeline": {
+    "title": "活动",
+    "empty": "暂无活动",
+    "emptyHint": "电话、会议、任务和备注会显示在这里。"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "title": "Cuentas",
+  "singular": "Cuenta",
+  "fields": {
+    "name": "Nombre de la cuenta",
+    "type": "Tipo",
+    "entities": "Empresas del grupo",
+    "primaryEntity": "Empresa principal",
+    "country": "País",
+    "segment": "Segmento",
+    "industry": "Sector",
+    "phone": "Teléfono",
+    "email": "Correo electrónico",
+    "website": "Sitio web",
+    "taxId": "ID fiscal",
+    "parentAccount": "Cuenta principal",
+    "owner": "Propietario",
+    "billingStreet": "Dirección de facturación",
+    "billingCity": "Ciudad de facturación",
+    "billingState": "Estado/provincia de facturación",
+    "billingPostalCode": "Código postal de facturación",
+    "billingCountry": "País de facturación",
+    "description": "Descripción",
+    "createdAt": "Creado",
+    "updatedAt": "Última modificación"
+  },
+  "types": {
+    "customer": "Cliente",
+    "prospect": "Prospecto",
+    "distributor": "Distribuidor",
+    "partner": "Socio",
+    "other": "Otro"
+  },
+  "related": {
+    "contacts": "Contactos",
+    "opportunities": "Oportunidades",
+    "children": "Cuentas secundarias"
+  }
+}

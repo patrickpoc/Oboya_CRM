@@ -1,0 +1,62 @@
+{
+  "title": "首页",
+  "greeting": "欢迎回来，{name}",
+  "description": "一览你的销售管道、线索和任务。",
+  "entityFilter": "公司",
+  "allEntities": "所有公司",
+  "entityHint": "公司筛选适用于线索和商机。",
+  "failed": "无法加载仪表板。",
+  "kpi": {
+    "openLeads": "未结线索",
+    "slaOverdue": "{count, plural, =0 {无 SLA 逾期} one {# 条 SLA 逾期} other {# 条 SLA 逾期}}",
+    "pipelineValue": "销售管道金额",
+    "pipelineCount": "{count, plural, =0 {无进行中的商机} one {# 个进行中的商机} other {# 个进行中的商机}}",
+    "wonThisMonth": "本月赢单",
+    "wonCount": "{count, plural, =0 {无赢单} one {赢单 # 笔} other {赢单 # 笔}}",
+    "tasksToday": "今天到期的任务",
+    "tasksOverdue": "{count, plural, =0 {无逾期} one {# 项逾期} other {# 项逾期}}",
+    "totalIn": "以 {currency} 计的合计（固定汇率）",
+    "noFx": "设置中没有汇率表：合计仅按币种显示。",
+    "missingRates": "未换算（无汇率）：{currencies}"
+  },
+  "chart": {
+    "title": "按阶段划分的销售管道",
+    "amount": "金额",
+    "count": "数量",
+    "metric": "图表指标",
+    "amountIn": "以 {currency} 计的金额",
+    "noFx": "按金额显示需要在设置中配置汇率表；当前显示数量。",
+    "empty": "暂无进行中的商机。",
+    "tableCaption": "各阶段进行中的商机",
+    "stage": "阶段",
+    "opportunities": "商机"
+  },
+  "tasks": {
+    "title": "我的任务",
+    "viewAll": "查看全部",
+    "empty": "没有未完成的任务，干得好。",
+    "noDue": "无截止日期",
+    "complete": "标记为已完成",
+    "completed": "任务已完成"
+  },
+  "recent": {
+    "title": "最近的记录",
+    "empty": "你打开过的记录会显示在这里。"
+  },
+  "quick": {
+    "title": "快速访问",
+    "newLead": "新建线索",
+    "newAccount": "新建客户",
+    "pipeline": "销售管道",
+    "myTasks": "我的任务",
+    "reports": "报表",
+    "soon": "即将推出"
+  },
+  "objects": {
+    "lead": "线索",
+    "account": "客户",
+    "contact": "联系人",
+    "opportunity": "商机",
+    "activity": "活动"
+  }
+}

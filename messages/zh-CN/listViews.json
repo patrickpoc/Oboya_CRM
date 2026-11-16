@@ -1,0 +1,15 @@
+{
+  "views": {
+    "mine": "我的记录",
+    "all": "全部",
+    "recent": "最近查看"
+  },
+  "searchPlaceholder": "搜索…",
+  "filterAll": "全部",
+  "exportCsv": "导出 CSV",
+  "new": "新建",
+  "empty": "没有符合这些筛选条件的记录。",
+  "emptyRecent": "你还没有查看过任何记录。",
+  "rangeFrom": "{field} 起",
+  "rangeTo": "{field} 止"
+}

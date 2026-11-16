@@ -1,0 +1,39 @@
+{
+  "title": "客户",
+  "singular": "客户",
+  "fields": {
+    "name": "客户名称",
+    "type": "类型",
+    "entities": "集团公司",
+    "primaryEntity": "主要公司",
+    "country": "国家/地区",
+    "segment": "细分市场",
+    "industry": "行业",
+    "phone": "电话",
+    "email": "电子邮件",
+    "website": "网站",
+    "taxId": "税号",
+    "parentAccount": "上级客户",
+    "owner": "负责人",
+    "billingStreet": "账单街道",
+    "billingCity": "账单城市",
+    "billingState": "账单省/州",
+    "billingPostalCode": "账单邮编",
+    "billingCountry": "账单国家/地区",
+    "description": "描述",
+    "createdAt": "创建时间",
+    "updatedAt": "最后修改时间"
+  },
+  "types": {
+    "customer": "客户",
+    "prospect": "潜在客户",
+    "distributor": "经销商",
+    "partner": "合作伙伴",
+    "other": "其他"
+  },
+  "related": {
+    "contacts": "联系人",
+    "opportunities": "商机",
+    "children": "下级客户"
+  }
+}

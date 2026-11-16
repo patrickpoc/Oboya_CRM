@@ -1,0 +1,226 @@
+{
+  "statusPlanned": "A fazer",
+  "statusLive": "Disponível",
+  "aboutTitle": "O que este módulo fará",
+  "capabilitiesTitle": "Recursos planejados",
+  "dependenciesTitle": "Depende de",
+  "noDependencies": "Sem dependências. Este módulo pode ser construído a qualquer momento.",
+  "plannedModuleLink": "Módulo planejado",
+  "external": {
+    "websiteCatalogApi": "API do catálogo do site",
+    "opportunityLineItems": "Itens de linha da oportunidade",
+    "erpIntegration": "Integração com o ERP",
+    "campaignIdColumns": "Vínculo de campanha em leads e oportunidades",
+    "fxRates": "Taxas de câmbio"
+  },
+  "modules": {
+    "products": {
+      "title": "Produtos e tabelas de preço",
+      "summary": "Um único catálogo de produtos compartilhado com a loja do site, com preços por país e moeda.",
+      "description": "Os produtos são sincronizados a partir do catálogo do marketplace do site, para que cada produto mantenha o mesmo SKU na loja, nas cotações e no CRM. As tabelas de preço guardam o preço de lista de cada produto por país e moeda (BRL, USD, EUR, CNY). Os vendedores adicionam produtos da tabela de preço correta à oportunidade como itens de linha, e o valor da oportunidade passa a ser calculado a partir desses itens, em vez de digitado à mão.",
+      "capabilities": {
+        "catalogSync": "Sincronização agendada de produtos, SKUs, famílias e unidades a partir do catálogo do marketplace do site",
+        "priceBooks": "Tabelas de preço por país e moeda, com uma tabela padrão e tabelas regionais",
+        "lineItems": "Itens de linha na oportunidade com quantidade, preço unitário e desconto; o valor é calculado a partir dos itens",
+        "multiCurrency": "Cada oportunidade é precificada a partir de uma tabela de preço na sua própria moeda",
+        "activeFlag": "Produtos descontinuados continuam nos negócios antigos, mas não podem mais ser adicionados a novos"
+      },
+      "dependencies": {
+        "websiteCatalogApi": "Uma API de leitura no marketplace do site que expõe os produtos por SKU.",
+        "opportunityLineItems": "Uma tabela crm_opportunity_line_items que vincula oportunidades a entradas da tabela de preço."
+      }
+    },
+    "quotes": {
+      "title": "Cotações",
+      "summary": "Cotações com a identidade da marca, geradas a partir da oportunidade, com aprovação quando o desconto é alto.",
+      "description": "O vendedor cria uma cotação a partir de uma oportunidade. Os itens vêm da tabela de preço, e o vendedor define descontos, impostos e a data de validade. A cotação gera um PDF com a identidade da marca no idioma do cliente. Quando um desconto ultrapassa o limite configurado, a cotação passa por aprovação antes de ser enviada. Uma cotação que começou como uma RFQ do site mantém a referência da RFQ, para que a solicitação, a cotação e o negócio fiquem vinculados.",
+      "capabilities": {
+        "fromOpportunity": "Criar uma cotação a partir de uma oportunidade, copiando conta, contato e itens de linha",
+        "pricing": "Descontos por item, desconto geral, impostos e data de validade",
+        "pdf": "PDF com a identidade da marca no idioma do cliente, pronto para enviar por e-mail",
+        "approvalThreshold": "Descontos acima do limite exigem aprovação antes do envio",
+        "rfqLink": "Mantém a referência da RFQ do site da solicitação original",
+        "versions": "Várias versões por oportunidade, com uma marcada como a cotação sincronizada"
+      },
+      "dependencies": {
+        "products": "Os itens de linha e os preços vêm dos produtos e das tabelas de preço.",
+        "approvals": "Descontos acima do limite passam por uma política de aprovação."
+      }
+    },
+    "orders": {
+      "title": "Pedidos",
+      "summary": "Pedidos gerados a partir de negócios ganhos e cotações aceitas, enviados ao ERP.",
+      "description": "Quando uma oportunidade é marcada como Fechada/Ganha ou uma cotação é aceita, um pedido é criado com os itens, preços e condições de entrega combinados. O pedido acompanha o status de atendimento (rascunho, confirmado, em produção, enviado, entregue) e é enviado ao ERP, que passa a ser o sistema de referência para o faturamento. A equipe de vendas acompanha a entrega sem sair da conta.",
+      "capabilities": {
+        "fromClosedWon": "Criar um pedido automaticamente quando uma oportunidade é Fechada/Ganha",
+        "fromQuote": "Converter uma cotação aceita em pedido com os mesmos itens e preços",
+        "fulfilment": "Status de atendimento do rascunho à entrega, com datas por etapa",
+        "erpHandoff": "Enviar pedidos confirmados ao ERP e guardar o número do pedido no ERP",
+        "accountHistory": "Histórico de pedidos nas páginas da conta e do contato"
+      },
+      "dependencies": {
+        "quotes": "Os pedidos herdam itens, preços e condições da cotação aceita.",
+        "erpIntegration": "O ERP recebe os pedidos confirmados e devolve o status de cada um."
+      }
+    },
+    "campaigns": {
+      "title": "Campanhas",
+      "summary": "Feiras, campanhas digitais e de e-mail, com atribuição e ROI.",
+      "description": "As campanhas agrupam as ações de marketing que geram negócios: feiras, anúncios digitais, webinars e envios de e-mail. Leads e contatos entram como membros com um status (enviado, respondeu, compareceu). Leads e oportunidades registram a campanha de origem, para que o pipeline e a receita ganha de cada campanha possam ser comparados com o seu custo.",
+      "capabilities": {
+        "types": "Tipos de campanha: feira, digital, e-mail, webinar e evento de parceiro",
+        "members": "Listas de membros com leads e contatos e um status de resposta",
+        "attribution": "Campanha de origem principal em leads e oportunidades",
+        "costRoi": "Orçamento, custo real, pipeline gerado e receita ganha por campanha",
+        "hierarchy": "Campanhas principais que consolidam várias ações, como uma temporada de feiras"
+      },
+      "dependencies": {
+        "campaignIdColumns": "Uma coluna campaign_id opcional em leads e oportunidades, adicionada sem quebrar a compatibilidade."
+      }
+    },
+    "email": {
+      "title": "E-mail",
+      "summary": "Sincronização da caixa de e-mail, modelos e envio a partir do registro, com histórico na linha do tempo.",
+      "description": "Cada usuário conecta uma caixa de e-mail do Microsoft 365 ou do Gmail. Os e-mails trocados com leads e contatos conhecidos são registrados na linha do tempo de atividades dos registros correspondentes. Os vendedores enviam e-mails a partir da página do registro, com modelos no idioma do cliente, e as respostas aparecem na mesma linha do tempo.",
+      "capabilities": {
+        "mailboxSync": "Conexão da caixa de e-mail do Microsoft 365 e do Gmail por usuário",
+        "templates": "Modelos de e-mail por idioma, com campos de mesclagem do registro",
+        "sendFromRecord": "Escrever e enviar a partir da página do lead, do contato ou da oportunidade",
+        "autoLogging": "E-mails enviados e recebidos registrados automaticamente na linha do tempo de atividades",
+        "tracking": "Detecção de respostas e data do último contato no registro"
+      },
+      "dependencies": {
+        "integrations": "As conexões de caixa de e-mail usam as integrações OAuth com a Microsoft e o Google."
+      }
+    },
+    "reports": {
+      "title": "Relatórios e painéis",
+      "summary": "Um construtor de relatórios sobre os objetos do CRM, com relatórios salvos e painéis por equipe.",
+      "description": "Os usuários criam relatórios sobre leads, contas, contatos, oportunidades e atividades. Eles escolhem as colunas, adicionam filtros, agrupam linhas e incluem um gráfico. Os relatórios podem ser salvos, compartilhados com uma equipe ou com todos e incluídos em painéis. Cada relatório respeita a visibilidade de registros de quem o está visualizando.",
+      "capabilities": {
+        "builder": "Construtor de relatórios com colunas e filtros em todos os objetos do CRM",
+        "grouping": "Agrupamento por linhas e colunas com somas, médias e contagens",
+        "charts": "Gráficos de barras, linhas, funil e rosca nas cores da marca",
+        "sharing": "Pastas de relatórios privadas, da equipe e públicas",
+        "dashboards": "Painéis personalizados por equipe, montados a partir de relatórios salvos",
+        "export": "Exportação em CSV que respeita a visibilidade de registros de quem visualiza"
+      },
+      "dependencies": {}
+    },
+    "forecasting": {
+      "title": "Previsão de vendas",
+      "summary": "Previsões por vendedor, equipe, empresa e período, comparadas com as metas.",
+      "description": "A previsão de vendas consolida as oportunidades em aberto pela data de fechamento, em períodos mensais e trimestrais. Ela mostra a previsão por vendedor, equipe e empresa do grupo em relação à meta de cada pessoa. O pipeline ponderado (valor × probabilidade) aparece ao lado das categorias de previsão: pipeline, melhor cenário, compromisso e fechado. Todas as moedas são convertidas para uma única moeda de relatório.",
+      "capabilities": {
+        "hierarchy": "Previsão por vendedor, equipe, empresa do grupo e período",
+        "quotas": "Metas por usuário e período, com percentual de atingimento",
+        "weighted": "Pipeline ponderado a partir do valor × probabilidade da etapa",
+        "categories": "Categorias compromisso, melhor cenário e pipeline, ajustáveis pelos vendedores",
+        "currencyRollup": "Consolidação multimoeda em uma única moeda de relatório"
+      },
+      "dependencies": {
+        "reports": "As visões de previsão reaproveitam o mecanismo de relatórios e seus filtros.",
+        "fxRates": "Taxas de conversão por período, sincronizadas em vez da tabela fixa em Configurações."
+      }
+    },
+    "cases": {
+      "title": "Casos",
+      "summary": "Chamados de suporte pós-venda para contas e contatos, com acompanhamento de SLA.",
+      "description": "Os casos registram as solicitações de suporte que os clientes abrem depois da venda: dúvidas sobre produtos, problemas de entrega e reclamações. Cada caso está vinculado a uma conta e a um contato, tem uma prioridade e um prazo de SLA, e avança de novo a resolvido com uma nota de resolução. E-mails enviados ao endereço de suporte viram casos automaticamente.",
+      "capabilities": {
+        "tickets": "Casos vinculados a uma conta, a um contato e, opcionalmente, a um pedido",
+        "priority": "Prioridade, tipo e fila responsável por caso",
+        "sla": "Prazo de SLA por prioridade, com alertas de descumprimento",
+        "emailToCase": "E-mails ao endereço de suporte criam ou atualizam casos",
+        "resolution": "Notas de resolução e relatórios de tempo de resolução"
+      },
+      "dependencies": {
+        "email": "O e-mail para caso e as respostas usam a integração de caixa de e-mail."
+      }
+    },
+    "automation": {
+      "title": "Automação",
+      "summary": "Regras de atribuição, tarefas por etapa, alertas e escalonamento de SLA.",
+      "description": "A automação substitui etapas manuais repetitivas. As regras de atribuição distribuem os novos leads por país, empresa do grupo ou rodízio. Mudanças de etapa criam tarefas de acompanhamento. Alertas avisam os proprietários sobre negócios parados. Quando um lead perde o SLA de primeira resposta, ele é escalonado para o gestor do proprietário.",
+      "capabilities": {
+        "assignmentRules": "Regras de atribuição de leads por país, empresa do grupo e rodízio",
+        "stageTasks": "Tarefas criadas automaticamente quando uma oportunidade entra em uma etapa",
+        "alerts": "Alertas para negócios parados e tarefas atrasadas",
+        "slaEscalation": "Escalonamento para o gestor quando o SLA de primeira resposta não é cumprido",
+        "auditTrail": "Toda alteração automática fica registrada no log de auditoria"
+      },
+      "dependencies": {}
+    },
+    "approvals": {
+      "title": "Aprovações",
+      "summary": "Aprovações de descontos e negócios, com políticas, aprovadores e histórico.",
+      "description": "As aprovações reaproveitam o modelo de solicitações de alteração do site. Uma política define quando a aprovação é necessária (por exemplo, um desconto acima de 15% ou um negócio acima de um valor) e quem aprova. As solicitações ficam pendentes, aprovadas ou rejeitadas, com um comentário, e os aprovadores trabalham a partir de uma única caixa de entrada. O registro fica bloqueado enquanto aguarda aprovação.",
+      "capabilities": {
+        "policies": "Políticas de aprovação com condições sobre desconto, valor e empresa do grupo",
+        "approvers": "Aprovadores por usuário, perfil ou gestor do solicitante",
+        "statuses": "Status pendente, aprovado e rejeitado, com comentários obrigatórios",
+        "inbox": "Uma única caixa de entrada para aprovadores, com contadores na barra lateral",
+        "history": "Histórico completo de aprovações no registro e no log de auditoria"
+      },
+      "dependencies": {
+        "quotes": "Os descontos em cotações são o primeiro caso que exige aprovação."
+      }
+    },
+    "ai-assistant": {
+      "title": "Assistente de IA",
+      "summary": "Pontuação de leads, resumos de registros, próximas melhores ações e rascunhos de e-mail.",
+      "description": "O assistente atua na página do registro com a API do Claude. Ele pontua os leads recebidos, resume o histórico de uma conta ou oportunidade, sugere a próxima melhor ação e redige e-mails no idioma do cliente. Ele só enxerga os registros que o usuário atual pode ver, e uma pessoa revisa cada sugestão antes que algo seja salvo ou enviado.",
+      "capabilities": {
+        "leadScoring": "Pontuação do lead com os motivos que a justificam",
+        "summaries": "Resumos de um parágrafo de uma conta, contato ou oportunidade",
+        "nextBestAction": "Próximo passo sugerido com base na etapa, nas atividades e em negócios semelhantes",
+        "emailDrafts": "Rascunhos de e-mail no idioma do cliente, prontos para editar",
+        "guardrails": "Respeita a visibilidade dos registros; uma pessoa aprova cada resultado"
+      },
+      "dependencies": {
+        "email": "Os rascunhos são enviados pelo módulo de e-mail e usam o histórico de e-mails como contexto.",
+        "reports": "A pontuação e as sugestões aprendem com o histórico de negócios ganhos e perdidos."
+      }
+    },
+    "integrations": {
+      "title": "Integrações",
+      "summary": "Formulários e RFQs do site, ERP, WhatsApp Business e calendários.",
+      "description": "As integrações conectam o CRM aos sistemas ao seu redor. Os formulários de contato e de RFQ do site enviam dados ao endpoint de entrada assinado, que já está no ar e ainda precisa ser conectado do lado do site. O ERP troca contas e pedidos com o CRM. As conversas do WhatsApp Business são registradas como atividades, e as reuniões são sincronizadas com os calendários do Google e da Microsoft.",
+      "capabilities": {
+        "websiteForms": "Os formulários de contato e de RFQ do site criam leads pelo endpoint de entrada assinado",
+        "erp": "Sincronização com o ERP de contas, pedidos e faturas",
+        "whatsapp": "Conversas do WhatsApp Business registradas na linha do tempo",
+        "calendar": "Sincronização bidirecional de reuniões com os calendários do Google e da Microsoft",
+        "health": "Status da conexão, horário da última sincronização e log de erros por integração"
+      },
+      "dependencies": {}
+    },
+    "data-import": {
+      "title": "Importação de dados",
+      "summary": "Um assistente de importação de planilhas com mapeamento, pré-visualização e deduplicação.",
+      "description": "O assistente de importação carrega leads, contas e contatos a partir de arquivos CSV ou Excel. Os usuários mapeiam as colunas da planilha para os campos do CRM e pré-visualizam as linhas, com os erros de validação destacados. Os duplicados são verificados em relação aos registros existentes, e cada linha é criada, atualizada ou ignorada. Cada importação mantém um log com as linhas com erro disponíveis para download.",
+      "capabilities": {
+        "wizard": "Importação passo a passo de arquivos CSV e Excel",
+        "mapping": "Mapeamento de colunas para campos, com modelos de mapeamento salvos",
+        "preview": "Pré-visualização com validação de cada linha antes de qualquer gravação",
+        "dedupe": "Criar, atualizar ou ignorar linhas que correspondem a registros existentes",
+        "importLog": "Histórico de importações com contagens e um arquivo das linhas rejeitadas"
+      },
+      "dependencies": {
+        "duplicates": "As importações usam as mesmas regras de correspondência da gestão de duplicados."
+      }
+    },
+    "duplicates": {
+      "title": "Gestão de duplicados",
+      "summary": "Regras de correspondência, alertas de duplicidade e mesclagem lado a lado.",
+      "description": "A gestão de duplicados mantém um único registro por cliente real. As regras de correspondência comparam o e-mail e, após a normalização, o nome da empresa com o país. Os usuários veem um aviso quando criam um provável duplicado. Uma tela de mesclagem mostra dois registros lado a lado, permite escolher o valor a manter em cada campo e transfere as atividades e oportunidades relacionadas para o registro que permanece.",
+      "capabilities": {
+        "matchingRules": "Correspondência por e-mail e por nome da empresa normalizado com o país",
+        "alertsOnCreate": "Aviso de duplicidade ao criar ou editar um registro",
+        "merge": "Mesclagem lado a lado com escolha campo a campo",
+        "mergeAudit": "As mesclagens ficam registradas no log de auditoria, com os registros relacionados transferidos"
+      },
+      "dependencies": {}
+    }
+  }
+}

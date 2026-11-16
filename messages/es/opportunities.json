@@ -1,0 +1,71 @@
+{
+  "title": "Oportunidades",
+  "singular": "Oportunidad",
+  "pipelineTitle": "Pipeline",
+  "pipelineLimit": "Se muestran las primeras {limit} oportunidades. Ajusta los filtros para ver el resto.",
+  "inactiveStage": "Etapa inactiva",
+  "editLoss": "Editar motivo",
+  "fields": {
+    "name": "Nombre de la oportunidad",
+    "account": "Cuenta",
+    "primaryContact": "Contacto principal",
+    "stage": "Etapa",
+    "status": "Estado",
+    "probability": "Probabilidad",
+    "amount": "Importe",
+    "currency": "Moneda",
+    "closeDate": "Fecha de cierre",
+    "leadSource": "Origen del lead",
+    "entity": "Empresa del grupo",
+    "owner": "Propietario",
+    "nextStep": "Próximo paso",
+    "lossReason": "Motivo de pérdida",
+    "lossNote": "Nota de pérdida",
+    "description": "Descripción",
+    "closedAt": "Cerrada",
+    "createdAt": "Creado",
+    "updatedAt": "Última modificación"
+  },
+  "status": {
+    "open": "Abierta",
+    "won": "Ganada",
+    "lost": "Perdida"
+  },
+  "currencies": {
+    "BRL": "BRL – Real brasileño",
+    "USD": "USD – Dólar estadounidense",
+    "EUR": "EUR – Euro",
+    "CNY": "CNY – Yuan chino"
+  },
+  "lostDialog": {
+    "title": "Mover a {stage}",
+    "description": "¿Por qué se perdió {name}?",
+    "reason": "Motivo de pérdida",
+    "reasonPlaceholder": "Selecciona un motivo…",
+    "reasonRequired": "Elige un motivo de pérdida.",
+    "note": "Nota (opcional)",
+    "confirm": "Marcar como perdida"
+  },
+  "toast": {
+    "moved": "Movida a {stage}"
+  },
+  "viewToggle": {
+    "label": "Vista",
+    "list": "Lista",
+    "kanban": "Kanban"
+  },
+  "owner": {
+    "mine": "Mis oportunidades",
+    "all": "Todas"
+  },
+  "kanban": {
+    "total": "Total",
+    "weighted": "Ponderado",
+    "empty": "Sin oportunidades",
+    "owner": "Propietario: {name}",
+    "overdue": "Vencida:",
+    "moveTo": "Mover {name} a…",
+    "movePlaceholder": "Mover a…",
+    "moved": "{name} movida a {stage}"
+  }
+}

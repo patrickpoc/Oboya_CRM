@@ -1,0 +1,62 @@
+{
+  "title": "Início",
+  "greeting": "Bem-vindo de volta, {name}",
+  "description": "Seu pipeline, leads e tarefas em um só lugar.",
+  "entityFilter": "Empresa",
+  "allEntities": "Todas as empresas",
+  "entityHint": "O filtro de empresa se aplica a leads e oportunidades.",
+  "failed": "Não foi possível carregar o painel.",
+  "kpi": {
+    "openLeads": "Leads em aberto",
+    "slaOverdue": "{count, plural, =0 {Nenhum SLA vencido} one {# SLA vencido} other {# SLAs vencidos}}",
+    "pipelineValue": "Valor do pipeline",
+    "pipelineCount": "{count, plural, =0 {Nenhuma oportunidade em aberto} one {# oportunidade em aberto} other {# oportunidades em aberto}}",
+    "wonThisMonth": "Ganhos no mês",
+    "wonCount": "{count, plural, =0 {Nenhum negócio ganho} one {# negócio ganho} other {# negócios ganhos}}",
+    "tasksToday": "Tarefas para hoje",
+    "tasksOverdue": "{count, plural, =0 {Nada atrasado} one {# atrasada} other {# atrasadas}}",
+    "totalIn": "Total em {currency} (câmbio fixo)",
+    "noFx": "Sem tabela de câmbio nas configurações: totais apenas por moeda.",
+    "missingRates": "Não convertido (sem taxa): {currencies}"
+  },
+  "chart": {
+    "title": "Pipeline por etapa",
+    "amount": "Valor",
+    "count": "Quantidade",
+    "metric": "Métrica do gráfico",
+    "amountIn": "Valor em {currency}",
+    "noFx": "O valor exige uma tabela de câmbio nas configurações; exibindo a quantidade.",
+    "empty": "Ainda não há oportunidades em aberto.",
+    "tableCaption": "Oportunidades em aberto por etapa",
+    "stage": "Etapa",
+    "opportunities": "Oportunidades"
+  },
+  "tasks": {
+    "title": "Minhas tarefas",
+    "viewAll": "Ver todas",
+    "empty": "Nenhuma tarefa em aberto. Bom trabalho.",
+    "noDue": "Sem prazo",
+    "complete": "Marcar como concluída",
+    "completed": "Tarefa concluída"
+  },
+  "recent": {
+    "title": "Registros recentes",
+    "empty": "Os registros que você abrir aparecerão aqui."
+  },
+  "quick": {
+    "title": "Acesso rápido",
+    "newLead": "Novo lead",
+    "newAccount": "Nova conta",
+    "pipeline": "Pipeline",
+    "myTasks": "Minhas tarefas",
+    "reports": "Relatórios",
+    "soon": "Em breve"
+  },
+  "objects": {
+    "lead": "Lead",
+    "account": "Conta",
+    "contact": "Contato",
+    "opportunity": "Oportunidade",
+    "activity": "Atividade"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "title": "Accounts",
+  "singular": "Account",
+  "fields": {
+    "name": "Account name",
+    "type": "Type",
+    "entities": "Group companies",
+    "primaryEntity": "Primary company",
+    "country": "Country",
+    "segment": "Segment",
+    "industry": "Industry",
+    "phone": "Phone",
+    "email": "Email",
+    "website": "Website",
+    "taxId": "Tax ID",
+    "parentAccount": "Parent account",
+    "owner": "Owner",
+    "billingStreet": "Billing street",
+    "billingCity": "Billing city",
+    "billingState": "Billing state",
+    "billingPostalCode": "Billing postal code",
+    "billingCountry": "Billing country",
+    "description": "Description",
+    "createdAt": "Created",
+    "updatedAt": "Last modified"
+  },
+  "types": {
+    "customer": "Customer",
+    "prospect": "Prospect",
+    "distributor": "Distributor",
+    "partner": "Partner",
+    "other": "Other"
+  },
+  "related": {
+    "contacts": "Contacts",
+    "opportunities": "Opportunities",
+    "children": "Child accounts"
+  }
+}

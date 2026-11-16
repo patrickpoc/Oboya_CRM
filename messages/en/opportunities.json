@@ -1,0 +1,71 @@
+{
+  "title": "Opportunities",
+  "singular": "Opportunity",
+  "pipelineTitle": "Pipeline",
+  "pipelineLimit": "Showing the first {limit} opportunities. Narrow the filters to see the rest.",
+  "inactiveStage": "Inactive stage",
+  "editLoss": "Edit reason",
+  "fields": {
+    "name": "Opportunity name",
+    "account": "Account",
+    "primaryContact": "Primary contact",
+    "stage": "Stage",
+    "status": "Status",
+    "probability": "Probability",
+    "amount": "Amount",
+    "currency": "Currency",
+    "closeDate": "Close date",
+    "leadSource": "Lead source",
+    "entity": "Group company",
+    "owner": "Owner",
+    "nextStep": "Next step",
+    "lossReason": "Loss reason",
+    "lossNote": "Loss note",
+    "description": "Description",
+    "closedAt": "Closed",
+    "createdAt": "Created",
+    "updatedAt": "Last modified"
+  },
+  "status": {
+    "open": "Open",
+    "won": "Won",
+    "lost": "Lost"
+  },
+  "currencies": {
+    "BRL": "BRL – Brazilian real",
+    "USD": "USD – US dollar",
+    "EUR": "EUR – Euro",
+    "CNY": "CNY – Chinese yuan"
+  },
+  "lostDialog": {
+    "title": "Move to {stage}",
+    "description": "Why was {name} lost?",
+    "reason": "Loss reason",
+    "reasonPlaceholder": "Select a reason…",
+    "reasonRequired": "Choose a loss reason.",
+    "note": "Note (optional)",
+    "confirm": "Mark as lost"
+  },
+  "toast": {
+    "moved": "Moved to {stage}"
+  },
+  "viewToggle": {
+    "label": "View",
+    "list": "List",
+    "kanban": "Kanban"
+  },
+  "owner": {
+    "mine": "My opportunities",
+    "all": "All"
+  },
+  "kanban": {
+    "total": "Total",
+    "weighted": "Weighted",
+    "empty": "No opportunities",
+    "owner": "Owner: {name}",
+    "overdue": "Overdue:",
+    "moveTo": "Move {name} to…",
+    "movePlaceholder": "Move to…",
+    "moved": "{name} moved to {stage}"
+  }
+}

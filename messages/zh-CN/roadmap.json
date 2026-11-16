@@ -1,0 +1,226 @@
+{
+  "statusPlanned": "待开发",
+  "statusLive": "已上线",
+  "aboutTitle": "此模块的功能",
+  "capabilitiesTitle": "计划功能",
+  "dependenciesTitle": "依赖项",
+  "noDependencies": "无依赖项，此模块可随时开发。",
+  "plannedModuleLink": "计划中的模块",
+  "external": {
+    "websiteCatalogApi": "网站产品目录 API",
+    "opportunityLineItems": "商机产品明细",
+    "erpIntegration": "ERP 集成",
+    "campaignIdColumns": "线索和商机上的营销活动关联",
+    "fxRates": "汇率"
+  },
+  "modules": {
+    "products": {
+      "title": "产品与价格表",
+      "summary": "与网站商城共用一套产品目录，按国家和币种定价。",
+      "description": "产品从网站商城目录同步而来，因此同一产品在商城、报价单和 CRM 中使用相同的 SKU。价格表按国家和币种（BRL、USD、EUR、CNY）记录每个产品的标价。销售人员从对应的价格表中选择产品，作为产品明细添加到商机中，商机金额随即根据这些明细自动计算，无需手动填写。",
+      "capabilities": {
+        "catalogSync": "定期从网站商城目录同步产品、SKU、产品系列和计量单位",
+        "priceBooks": "按国家和币种设置价格表，包括一个标准价格表和多个区域价格表",
+        "lineItems": "商机产品明细包含数量、单价和折扣，金额根据明细自动计算",
+        "multiCurrency": "每个商机按其自身币种的价格表定价",
+        "activeFlag": "已停售的产品会保留在历史交易中，但不能再添加到新交易"
+      },
+      "dependencies": {
+        "websiteCatalogApi": "网站商城需提供按 SKU 查询产品的只读 API。",
+        "opportunityLineItems": "需要一张 crm_opportunity_line_items 表，将商机与价格表条目关联。"
+      }
+    },
+    "quotes": {
+      "title": "报价",
+      "summary": "基于商机生成带品牌标识的报价单，折扣较高时需经审批。",
+      "description": "销售人员基于商机创建报价单。报价明细来自价格表，销售人员可设置折扣、税费和有效期。报价单会以客户的语言生成带品牌标识的 PDF。当折扣超过设定的阈值时，报价单需先经审批才能发送。由网站 RFQ（询价）转来的报价单会保留 RFQ 编号，使询价、报价和交易始终关联在一起。",
+      "capabilities": {
+        "fromOpportunity": "基于商机创建报价单，自动带入客户、联系人和产品明细",
+        "pricing": "明细折扣、整单折扣、税费和有效期",
+        "pdf": "以客户语言生成带品牌标识的 PDF，可直接通过邮件发送",
+        "approvalThreshold": "超过阈值的折扣需审批后才能发送",
+        "rfqLink": "保留原始询价中的网站 RFQ 编号",
+        "versions": "每个商机可有多个报价版本，其中一个标记为同步报价"
+      },
+      "dependencies": {
+        "products": "产品明细和价格来自产品与价格表。",
+        "approvals": "超过阈值的折扣按审批策略流转。"
+      }
+    },
+    "orders": {
+      "title": "订单",
+      "summary": "由赢单商机和已接受的报价生成订单，并传递至 ERP。",
+      "description": "当商机赢单关闭或报价被接受时，系统会按约定的明细、价格和交货条款创建订单。订单会跟踪履约状态（草稿、已确认、生产中、已发货、已交付），并发送至 ERP，由 ERP 作为开票的权威系统。销售人员无需离开客户页面即可跟进交付进度。",
+      "capabilities": {
+        "fromClosedWon": "商机赢单关闭时自动创建订单",
+        "fromQuote": "将已接受的报价转换为订单，保留相同的明细和价格",
+        "fulfilment": "从草稿到交付的履约状态，并记录每一步的日期",
+        "erpHandoff": "将已确认的订单发送至 ERP，并保存 ERP 订单号",
+        "accountHistory": "在客户和联系人记录页面显示订单历史"
+      },
+      "dependencies": {
+        "quotes": "订单沿用已接受报价中的明细、价格和条款。",
+        "erpIntegration": "ERP 接收已确认的订单并回传订单状态。"
+      }
+    },
+    "campaigns": {
+      "title": "营销活动",
+      "summary": "展会、数字营销和邮件营销活动，支持归因分析和 ROI 统计。",
+      "description": "营销活动汇总带来业务的各类市场行动：展会、数字广告、网络研讨会和邮件群发。线索和联系人以成员身份加入活动，并带有状态（已发送、已回复、已参加）。线索和商机会记录其来源营销活动，从而可以将每个活动带来的销售管道和赢单收入与其成本进行对比。",
+      "capabilities": {
+        "types": "营销活动类型：展会、数字营销、邮件、网络研讨会和合作伙伴活动",
+        "members": "由线索和联系人组成的成员列表，带有响应状态",
+        "attribution": "线索和商机上的主要来源营销活动",
+        "costRoi": "每个营销活动的预算、实际成本、产生的销售管道和赢单收入",
+        "hierarchy": "可汇总多个行动的上级营销活动，例如一整个展会季"
+      },
+      "dependencies": {
+        "campaignIdColumns": "在线索和商机上新增一个可为空的 campaign_id 列，不会造成破坏性变更。"
+      }
+    },
+    "email": {
+      "title": "电子邮件",
+      "summary": "邮箱同步、邮件模板，以及从记录页面发送邮件，并记录在时间线上。",
+      "description": "每位用户可连接一个 Microsoft 365 或 Gmail 邮箱。与已知线索和联系人往来的邮件会记录在对应记录的活动时间线上。销售人员可在记录页面使用客户语言的模板发送邮件，回复也会显示在同一时间线上。",
+      "capabilities": {
+        "mailboxSync": "每位用户可连接 Microsoft 365 和 Gmail 邮箱",
+        "templates": "按语言区分的邮件模板，可插入记录中的合并字段",
+        "sendFromRecord": "在线索、联系人或商机页面撰写并发送邮件",
+        "autoLogging": "收发的邮件自动记录在活动时间线上",
+        "tracking": "识别回复，并在记录上显示最近联系日期"
+      },
+      "dependencies": {
+        "integrations": "邮箱连接使用与 Microsoft 和 Google 的 OAuth 集成。"
+      }
+    },
+    "reports": {
+      "title": "报表与仪表板",
+      "summary": "基于 CRM 对象的报表构建器，支持保存报表和团队仪表板。",
+      "description": "用户可以基于线索、客户、联系人、商机和活动创建报表：选择列、添加筛选条件、对行进行分组并添加图表。报表可以保存、共享给团队或所有人，并放到仪表板上。每份报表都遵循查看者本人的记录可见范围。",
+      "capabilities": {
+        "builder": "可对所有 CRM 对象设置列和筛选条件的报表构建器",
+        "grouping": "按行和列分组，支持求和、平均值和计数",
+        "charts": "采用品牌配色的柱状图、折线图、漏斗图和环形图",
+        "sharing": "私人、团队和公共报表文件夹",
+        "dashboards": "由已保存报表组成的团队自定义仪表板",
+        "export": "按查看者记录可见范围导出 CSV"
+      },
+      "dependencies": {}
+    },
+    "forecasting": {
+      "title": "销售预测",
+      "summary": "按销售人员、团队、公司和期间进行预测，并与业绩指标对比。",
+      "description": "销售预测按预计成交日期将进行中的商机汇总到月度和季度期间，按销售人员、团队和集团公司展示预测数据，并与每个人的业绩指标进行对比。加权销售管道（金额 × 赢率）与各预测类别并列显示：销售管道、最佳情况、承诺和已成交。所有币种都会换算为统一的报告币种。",
+      "capabilities": {
+        "hierarchy": "按销售人员、团队、集团公司和期间进行预测",
+        "quotas": "按用户和期间设置业绩指标，并显示达成率",
+        "weighted": "根据金额 × 阶段赢率计算加权销售管道",
+        "categories": "承诺、最佳情况和销售管道类别，可由销售人员调整",
+        "currencyRollup": "多币种汇总为统一的报告币种"
+      },
+      "dependencies": {
+        "reports": "预测视图复用报表引擎及其筛选功能。",
+        "fxRates": "按期间同步汇率，取代设置中的固定汇率表。"
+      }
+    },
+    "cases": {
+      "title": "服务工单",
+      "summary": "面向客户和联系人的售后支持工单，支持 SLA 跟踪。",
+      "description": "服务工单用于记录客户在售后提出的支持请求，例如产品咨询、交付问题和投诉。每个工单都关联一个客户和一个联系人，设有优先级和 SLA 计时，从新建推进到已解决，并附上解决说明。发送到支持邮箱的邮件会自动生成工单。",
+      "capabilities": {
+        "tickets": "工单关联客户、联系人，并可选关联订单",
+        "priority": "每个工单的优先级、类型和负责队列",
+        "sla": "按优先级设置 SLA 计时，并提供超时预警",
+        "emailToCase": "发送到支持邮箱的邮件会创建或更新工单",
+        "resolution": "解决说明及解决时长报表"
+      },
+      "dependencies": {
+        "email": "邮件转工单及回复功能使用邮箱集成。"
+      }
+    },
+    "automation": {
+      "title": "自动化",
+      "summary": "分配规则、基于阶段的任务、提醒和 SLA 升级。",
+      "description": "自动化可以取代重复的手动操作。分配规则按国家、集团公司或轮流分配的方式分派新线索。阶段变更时会自动创建跟进任务。提醒功能会通知负责人停滞不前的交易。当线索错过首次响应 SLA 时，会升级给负责人的主管。",
+      "capabilities": {
+        "assignmentRules": "按国家、集团公司和轮流分配的线索分配规则",
+        "stageTasks": "商机进入某个阶段时自动创建任务",
+        "alerts": "针对停滞交易和逾期任务的提醒",
+        "slaEscalation": "错过首次响应 SLA 时升级给主管",
+        "auditTrail": "每一次自动变更都会记录在审计日志中"
+      },
+      "dependencies": {}
+    },
+    "approvals": {
+      "title": "审批",
+      "summary": "折扣和交易审批，包含审批策略、审批人和审批历史。",
+      "description": "审批功能沿用网站的变更申请模型。审批策略规定何时需要审批（例如折扣超过 15% 或交易金额超过某一数值）以及由谁审批。申请分为待审批、已批准和已拒绝三种状态，并附带意见，审批人在统一的收件箱中处理。等待审批期间，记录保持锁定。",
+      "capabilities": {
+        "policies": "可按折扣、金额和集团公司设定条件的审批策略",
+        "approvers": "审批人可以是指定用户、角色或申请人的主管",
+        "statuses": "待审批、已批准和已拒绝状态，必须填写意见",
+        "inbox": "审批人统一收件箱，侧边栏显示待办数量",
+        "history": "在记录和审计日志中保留完整的审批历史"
+      },
+      "dependencies": {
+        "quotes": "报价折扣是首个需要审批的场景。"
+      }
+    },
+    "ai-assistant": {
+      "title": "AI 助手",
+      "summary": "线索评分、记录摘要、最佳下一步行动和邮件草稿。",
+      "description": "AI 助手借助 Claude API 在记录页面上工作。它会为新进线索评分，总结客户或商机的历史，建议最佳下一步行动，并以客户的语言起草邮件。它只能看到当前用户有权查看的记录，并且所有建议都需经人工审核后才会保存或发送。",
+      "capabilities": {
+        "leadScoring": "线索评分及其评分依据",
+        "summaries": "客户、联系人或商机的一段式摘要",
+        "nextBestAction": "根据阶段、活动和类似交易建议下一步行动",
+        "emailDrafts": "以客户语言撰写的邮件草稿，可直接编辑",
+        "guardrails": "遵循记录可见范围；每项输出都需人工确认"
+      },
+      "dependencies": {
+        "email": "草稿通过电子邮件模块发送，并以邮件往来记录作为上下文。",
+        "reports": "评分和建议基于历史赢单与输单数据进行学习。"
+      }
+    },
+    "integrations": {
+      "title": "集成",
+      "summary": "网站表单与 RFQ、ERP、WhatsApp Business 和日历。",
+      "description": "集成将 CRM 与周边系统连接起来。网站的联系表单和 RFQ 表单会提交到已签名的入站接口，该接口已上线，但网站端仍需完成对接。ERP 与 CRM 交换客户和订单数据。WhatsApp Business 对话会记录为活动，会议则与 Google 和 Microsoft 日历同步。",
+      "capabilities": {
+        "websiteForms": "网站联系表单和 RFQ 表单通过已签名的入站接口创建线索",
+        "erp": "与 ERP 同步客户、订单和发票",
+        "whatsapp": "WhatsApp Business 对话记录在时间线上",
+        "calendar": "与 Google 和 Microsoft 日历双向同步会议",
+        "health": "每个集成的连接状态、最近同步时间和错误日志"
+      },
+      "dependencies": {}
+    },
+    "data-import": {
+      "title": "数据导入",
+      "summary": "电子表格导入向导，支持字段映射、预览和去重。",
+      "description": "导入向导可从 CSV 或 Excel 文件导入线索、客户和联系人。用户将表格列映射到 CRM 字段，并在预览中查看每一行，校验错误会突出显示。系统会将数据与现有记录比对查重，每一行可选择新建、更新或跳过。每次导入都会保留日志，出错的行可供下载。",
+      "capabilities": {
+        "wizard": "分步导入 CSV 和 Excel 文件",
+        "mapping": "列与字段映射，可保存为映射模板",
+        "preview": "写入前对每一行进行校验预览",
+        "dedupe": "对与现有记录匹配的行选择新建、更新或跳过",
+        "importLog": "导入历史，包含数量统计和被拒绝行的文件"
+      },
+      "dependencies": {
+        "duplicates": "导入使用与重复数据管理相同的匹配规则。"
+      }
+    },
+    "duplicates": {
+      "title": "重复数据管理",
+      "summary": "匹配规则、重复提醒和并排合并。",
+      "description": "重复数据管理确保每个真实客户只对应一条记录。匹配规则会比较电子邮件，以及规范化处理后的公司名称和国家。用户在创建可能重复的记录时会看到提醒。合并界面将两条记录并排显示，用户可以逐个字段选择要保留的值，相关的活动和商机会转移到保留的记录上。",
+      "capabilities": {
+        "matchingRules": "按电子邮件匹配，以及按规范化的公司名称加国家匹配",
+        "alertsOnCreate": "创建或编辑记录时提示可能重复",
+        "merge": "并排合并，逐个字段选择",
+        "mergeAudit": "合并操作记录在审计日志中，相关记录随之转移"
+      },
+      "dependencies": {}
+    }
+  }
+}

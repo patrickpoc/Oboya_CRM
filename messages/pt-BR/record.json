@@ -1,0 +1,84 @@
+{
+  "objects": {
+    "lead": "Lead",
+    "account": "Conta",
+    "contact": "Contato",
+    "opportunity": "Oportunidade",
+    "activity": "Atividade"
+  },
+  "tabs": {
+    "details": "Detalhes",
+    "related": "Relacionados"
+  },
+  "actions": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "changeOwner": "Alterar proprietário",
+    "delete": "Excluir"
+  },
+  "owner": "Proprietário",
+  "yes": "Sim",
+  "no": "Não",
+  "primary": "Principal",
+  "setPrimary": "Definir como principal",
+  "clear": "Limpar",
+  "select": "Selecionar…",
+  "saving": "Salvando…",
+  "lookupPlaceholder": "Pesquisar…",
+  "lookupNoResults": "Nenhum resultado",
+  "tagsPlaceholder": "Digite e pressione Enter",
+  "removeValue": "Remover {value}",
+  "fieldInvalid": "Informe um valor válido.",
+  "fieldEdit": "Editar {field}",
+  "createTitle": "Novo registro: {object}",
+  "toast": {
+    "saved": "Salvo",
+    "created": "{name} criado",
+    "deleted": "Registro excluído"
+  },
+  "errors": {
+    "invalid": "Alguns valores não são válidos. Verifique o formulário e tente novamente.",
+    "forbidden": "Você não tem permissão para fazer isso.",
+    "not_found": "Este registro não existe mais ou não está visível para você.",
+    "duplicate": "Já existe um registro com esses dados.",
+    "unauthenticated": "Sua sessão expirou. Faça login novamente.",
+    "rule": "Não salvo: esta alteração não é permitida por uma regra de negócio.",
+    "unavailable": "Algo deu errado. Tente novamente.",
+    "rules": {
+      "lead_converted": "Este lead foi convertido e é somente leitura.",
+      "reason_required": "Informe um motivo para marcar este lead como Desqualificado.",
+      "loss_reason_required": "Escolha um motivo da perda para mover esta oportunidade para uma etapa de perda.",
+      "stage_unavailable": "Esta etapa não está mais disponível. Atualize a página e escolha outra etapa.",
+      "one_primary_required": "Escolha exatamente uma empresa do grupo como principal.",
+      "duplicate": "Já existe um registro com esses dados.",
+      "forbidden": "Você não tem permissão para fazer isso."
+    }
+  },
+  "deleteDialog": {
+    "title": "Excluir este registro?",
+    "description": "{name} será removido das listas. Um administrador pode restaurá-lo.",
+    "confirm": "Excluir"
+  },
+  "ownerDialog": {
+    "title": "Alterar proprietário",
+    "description": "Escolha o novo proprietário de {name}.",
+    "confirm": "Alterar proprietário"
+  },
+  "related": {
+    "none": "Nenhuma lista relacionada.",
+    "new": "Novo",
+    "empty": "Nenhum registro ainda.",
+    "viewAll": "Ver todos"
+  },
+  "path": {
+    "label": "Etapa",
+    "current": "Etapa atual",
+    "completed": "Concluída",
+    "markCurrent": "Marcar como etapa atual"
+  },
+  "timeline": {
+    "title": "Atividade",
+    "empty": "Nenhuma atividade ainda",
+    "emptyHint": "Ligações, reuniões, tarefas e notas aparecerão aqui."
+  }
+}

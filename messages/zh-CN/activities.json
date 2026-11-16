@@ -1,0 +1,122 @@
+{
+  "title": "活动",
+  "singular": "活动",
+  "fields": {
+    "subject": "主题",
+    "type": "类型",
+    "status": "状态",
+    "priority": "优先级",
+    "dueAt": "截止时间",
+    "dueRange": "截止时间",
+    "whatObject": "关联对象",
+    "related": "关联记录",
+    "contact": "联系人",
+    "owner": "分配给",
+    "body": "描述",
+    "completedAt": "完成时间",
+    "createdAt": "创建时间",
+    "updatedAt": "最后修改时间"
+  },
+  "types": {
+    "task": "任务",
+    "call": "电话",
+    "meeting": "会议",
+    "note": "备注",
+    "email": "电子邮件"
+  },
+  "statuses": {
+    "open": "未完成",
+    "done": "已完成"
+  },
+  "priorities": {
+    "low": "低",
+    "normal": "普通",
+    "high": "高",
+    "urgent": "紧急"
+  },
+  "dueRanges": {
+    "overdue": "已逾期",
+    "next7": "未来 7 天",
+    "later": "以后",
+    "none": "无截止日期"
+  },
+  "objects": {
+    "lead": "线索",
+    "account": "客户",
+    "contact": "联系人",
+    "opportunity": "商机"
+  },
+  "composer": {
+    "label": "新建活动",
+    "tabs": {
+      "task": "新建任务",
+      "call": "记录电话",
+      "meeting": "新建会议",
+      "note": "备注"
+    },
+    "subject": "主题",
+    "subjectPlaceholder": {
+      "task": "需要做什么？",
+      "call": "电话主题",
+      "meeting": "会议主题",
+      "note": "主题"
+    },
+    "body": "详情",
+    "bodyPlaceholder": "添加详情（可选）",
+    "notePlaceholder": "写一条备注…",
+    "noteSubject": "备注",
+    "due": "截止时间",
+    "when": "时间",
+    "saving": "保存中…",
+    "submit": {
+      "task": "添加任务",
+      "call": "记录电话",
+      "meeting": "添加会议",
+      "note": "保存备注"
+    },
+    "created": {
+      "task": "任务已创建",
+      "call": "电话已记录",
+      "meeting": "会议已创建",
+      "note": "备注已保存"
+    }
+  },
+  "timeline": {
+    "upcoming": "即将到期和已逾期",
+    "past": "历史活动",
+    "overdue": "已逾期",
+    "complete": "标记为已完成",
+    "reopen": "重新打开",
+    "failed": "无法加载活动。",
+    "retry": "重试",
+    "audit": {
+      "create": "由 {actor} 创建",
+      "stage_change": "由 {actor} 更改阶段",
+      "owner_change": "由 {actor} 更改负责人",
+      "convert": "由 {actor} 转换"
+    }
+  },
+  "myTasks": {
+    "title": "我的任务",
+    "description": "你的未完成任务。日期按你设备的时区计算。",
+    "failed": "无法加载你的任务。",
+    "empty": "没有未完成的任务，干得好！",
+    "sections": {
+      "overdue": "已逾期",
+      "today": "今天",
+      "next7": "未来 7 天",
+      "later": "以后",
+      "none": "无日期",
+      "completed": "已完成（最近 14 天）"
+    },
+    "showCompleted": "显示最近 14 天已完成的任务（{count}）",
+    "hideCompleted": "隐藏已完成",
+    "noCompleted": "最近 14 天没有已完成的任务。",
+    "quickAdd": {
+      "subject": "新任务",
+      "placeholder": "添加任务…",
+      "due": "截止时间（可选）",
+      "submit": "添加"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "title": "联系人",
+  "singular": "联系人",
+  "fields": {
+    "name": "姓名",
+    "firstName": "名",
+    "lastName": "姓",
+    "account": "客户",
+    "title": "职务",
+    "email": "电子邮件",
+    "phone": "电话",
+    "mobile": "手机",
+    "country": "国家/地区",
+    "owner": "负责人",
+    "description": "描述",
+    "createdAt": "创建时间",
+    "updatedAt": "最后修改时间"
+  },
+  "related": {
+    "opportunities": "商机"
+  }
+}

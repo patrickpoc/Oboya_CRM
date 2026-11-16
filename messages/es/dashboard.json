@@ -1,0 +1,62 @@
+{
+  "title": "Inicio",
+  "greeting": "Bienvenido de nuevo, {name}",
+  "description": "Tu pipeline, leads y tareas de un vistazo.",
+  "entityFilter": "Empresa",
+  "allEntities": "Todas las empresas",
+  "entityHint": "El filtro de empresa se aplica a leads y oportunidades.",
+  "failed": "No se pudo cargar el panel.",
+  "kpi": {
+    "openLeads": "Leads abiertos",
+    "slaOverdue": "{count, plural, =0 {Ningún SLA vencido} one {# SLA vencido} other {# SLA vencidos}}",
+    "pipelineValue": "Valor del pipeline",
+    "pipelineCount": "{count, plural, =0 {Ninguna oportunidad abierta} one {# oportunidad abierta} other {# oportunidades abiertas}}",
+    "wonThisMonth": "Ganado este mes",
+    "wonCount": "{count, plural, =0 {Ningún negocio ganado} one {# negocio ganado} other {# negocios ganados}}",
+    "tasksToday": "Tareas para hoy",
+    "tasksOverdue": "{count, plural, =0 {Nada vencido} one {# vencida} other {# vencidas}}",
+    "totalIn": "Total en {currency} (tipos de cambio fijos)",
+    "noFx": "No hay tabla de tipos de cambio en la configuración: los totales son solo por moneda.",
+    "missingRates": "Sin convertir (sin tipo de cambio): {currencies}"
+  },
+  "chart": {
+    "title": "Pipeline por etapa",
+    "amount": "Importe",
+    "count": "Cantidad",
+    "metric": "Métrica del gráfico",
+    "amountIn": "Importe en {currency}",
+    "noFx": "El importe requiere una tabla de tipos de cambio en la configuración; se muestra la cantidad.",
+    "empty": "Aún no hay oportunidades abiertas.",
+    "tableCaption": "Oportunidades abiertas por etapa",
+    "stage": "Etapa",
+    "opportunities": "Oportunidades"
+  },
+  "tasks": {
+    "title": "Mis tareas",
+    "viewAll": "Ver todas",
+    "empty": "No hay tareas abiertas. Buen trabajo.",
+    "noDue": "Sin fecha de vencimiento",
+    "complete": "Marcar como completada",
+    "completed": "Tarea completada"
+  },
+  "recent": {
+    "title": "Registros recientes",
+    "empty": "Los registros que abras aparecerán aquí."
+  },
+  "quick": {
+    "title": "Acceso rápido",
+    "newLead": "Nuevo lead",
+    "newAccount": "Nueva cuenta",
+    "pipeline": "Pipeline",
+    "myTasks": "Mis tareas",
+    "reports": "Informes",
+    "soon": "Próximamente"
+  },
+  "objects": {
+    "lead": "Lead",
+    "account": "Cuenta",
+    "contact": "Contacto",
+    "opportunity": "Oportunidad",
+    "activity": "Actividad"
+  }
+}

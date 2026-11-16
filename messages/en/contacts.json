@@ -1,0 +1,22 @@
+{
+  "title": "Contacts",
+  "singular": "Contact",
+  "fields": {
+    "name": "Name",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "account": "Account",
+    "title": "Title",
+    "email": "Email",
+    "phone": "Phone",
+    "mobile": "Mobile",
+    "country": "Country",
+    "owner": "Owner",
+    "description": "Description",
+    "createdAt": "Created",
+    "updatedAt": "Last modified"
+  },
+  "related": {
+    "opportunities": "Opportunities"
+  }
+}

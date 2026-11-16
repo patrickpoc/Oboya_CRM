@@ -1,0 +1,84 @@
+{
+  "objects": {
+    "lead": "Lead",
+    "account": "Cuenta",
+    "contact": "Contacto",
+    "opportunity": "Oportunidad",
+    "activity": "Actividad"
+  },
+  "tabs": {
+    "details": "Detalles",
+    "related": "Relacionados"
+  },
+  "actions": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "changeOwner": "Cambiar propietario",
+    "delete": "Eliminar"
+  },
+  "owner": "Propietario",
+  "yes": "Sí",
+  "no": "No",
+  "primary": "Principal",
+  "setPrimary": "Establecer como principal",
+  "clear": "Borrar",
+  "select": "Seleccionar…",
+  "saving": "Guardando…",
+  "lookupPlaceholder": "Buscar…",
+  "lookupNoResults": "Sin coincidencias",
+  "tagsPlaceholder": "Escribe y pulsa Enter",
+  "removeValue": "Quitar {value}",
+  "fieldInvalid": "Introduce un valor válido.",
+  "fieldEdit": "Editar {field}",
+  "createTitle": "Nuevo registro: {object}",
+  "toast": {
+    "saved": "Guardado",
+    "created": "{name} creado",
+    "deleted": "Registro eliminado"
+  },
+  "errors": {
+    "invalid": "Algunos valores no son válidos. Revisa el formulario e inténtalo de nuevo.",
+    "forbidden": "No tienes permiso para hacer esto.",
+    "not_found": "Este registro ya no existe o no es visible para ti.",
+    "duplicate": "Ya existe un registro con estos datos.",
+    "unauthenticated": "Tu sesión ha caducado. Vuelve a iniciar sesión.",
+    "rule": "No se guardó: una regla de negocio no permite este cambio.",
+    "unavailable": "Algo salió mal. Inténtalo de nuevo.",
+    "rules": {
+      "lead_converted": "Este lead se ha convertido y es de solo lectura.",
+      "reason_required": "Indica un motivo para marcar este lead como Descalificado.",
+      "loss_reason_required": "Elige un motivo de pérdida para mover esta oportunidad a una etapa de pérdida.",
+      "stage_unavailable": "Esta etapa ya no está disponible. Actualiza la página y elige otra etapa.",
+      "one_primary_required": "Elige exactamente una empresa del grupo como principal.",
+      "duplicate": "Ya existe un registro con estos datos.",
+      "forbidden": "No tienes permiso para hacer esto."
+    }
+  },
+  "deleteDialog": {
+    "title": "¿Eliminar este registro?",
+    "description": "{name} se quitará de las listas. Un administrador puede restaurarlo.",
+    "confirm": "Eliminar"
+  },
+  "ownerDialog": {
+    "title": "Cambiar propietario",
+    "description": "Elige el nuevo propietario de {name}.",
+    "confirm": "Cambiar propietario"
+  },
+  "related": {
+    "none": "No hay listas relacionadas.",
+    "new": "Nuevo",
+    "empty": "Aún no hay registros.",
+    "viewAll": "Ver todos"
+  },
+  "path": {
+    "label": "Etapa",
+    "current": "Etapa actual",
+    "completed": "Completada",
+    "markCurrent": "Marcar como etapa actual"
+  },
+  "timeline": {
+    "title": "Actividad",
+    "empty": "Aún no hay actividad",
+    "emptyHint": "Las llamadas, reuniones, tareas y notas aparecerán aquí."
+  }
+}

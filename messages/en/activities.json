@@ -1,0 +1,122 @@
+{
+  "title": "Activities",
+  "singular": "Activity",
+  "fields": {
+    "subject": "Subject",
+    "type": "Type",
+    "status": "Status",
+    "priority": "Priority",
+    "dueAt": "Due",
+    "dueRange": "Due",
+    "whatObject": "Related to",
+    "related": "Related record",
+    "contact": "Contact",
+    "owner": "Assigned to",
+    "body": "Description",
+    "completedAt": "Completed",
+    "createdAt": "Created",
+    "updatedAt": "Last modified"
+  },
+  "types": {
+    "task": "Task",
+    "call": "Call",
+    "meeting": "Meeting",
+    "note": "Note",
+    "email": "Email"
+  },
+  "statuses": {
+    "open": "Open",
+    "done": "Done"
+  },
+  "priorities": {
+    "low": "Low",
+    "normal": "Normal",
+    "high": "High",
+    "urgent": "Urgent"
+  },
+  "dueRanges": {
+    "overdue": "Overdue",
+    "next7": "Next 7 days",
+    "later": "Later",
+    "none": "No due date"
+  },
+  "objects": {
+    "lead": "Lead",
+    "account": "Account",
+    "contact": "Contact",
+    "opportunity": "Opportunity"
+  },
+  "composer": {
+    "label": "New activity",
+    "tabs": {
+      "task": "New Task",
+      "call": "Log a Call",
+      "meeting": "New Meeting",
+      "note": "Note"
+    },
+    "subject": "Subject",
+    "subjectPlaceholder": {
+      "task": "What needs to be done?",
+      "call": "Call subject",
+      "meeting": "Meeting subject",
+      "note": "Subject"
+    },
+    "body": "Details",
+    "bodyPlaceholder": "Add details (optional)",
+    "notePlaceholder": "Write a note…",
+    "noteSubject": "Note",
+    "due": "Due",
+    "when": "When",
+    "saving": "Saving…",
+    "submit": {
+      "task": "Add task",
+      "call": "Log call",
+      "meeting": "Add meeting",
+      "note": "Save note"
+    },
+    "created": {
+      "task": "Task created",
+      "call": "Call logged",
+      "meeting": "Meeting created",
+      "note": "Note saved"
+    }
+  },
+  "timeline": {
+    "upcoming": "Upcoming & overdue",
+    "past": "Past activity",
+    "overdue": "Overdue",
+    "complete": "Mark as done",
+    "reopen": "Reopen",
+    "failed": "Could not load activity.",
+    "retry": "Retry",
+    "audit": {
+      "create": "Created by {actor}",
+      "stage_change": "Stage changed by {actor}",
+      "owner_change": "Owner changed by {actor}",
+      "convert": "Converted by {actor}"
+    }
+  },
+  "myTasks": {
+    "title": "My tasks",
+    "description": "Your open tasks. Days follow your device's time zone.",
+    "failed": "Could not load your tasks.",
+    "empty": "No open tasks. Nice work!",
+    "sections": {
+      "overdue": "Overdue",
+      "today": "Today",
+      "next7": "Next 7 days",
+      "later": "Later",
+      "none": "No date",
+      "completed": "Completed (last 14 days)"
+    },
+    "showCompleted": "Show completed, last 14 days ({count})",
+    "hideCompleted": "Hide completed",
+    "noCompleted": "No tasks completed in the last 14 days.",
+    "quickAdd": {
+      "subject": "New task",
+      "placeholder": "Add a task…",
+      "due": "Due (optional)",
+      "submit": "Add"
+    }
+  }
+}

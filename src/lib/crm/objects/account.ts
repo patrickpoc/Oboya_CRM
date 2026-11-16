@@ -1,0 +1,131 @@
+import { Building2, Trash2, UserRoundCog } from "lucide-react";
+import type { RecordConfig } from "./types";
+
+/**
+ * Accounts (crm_accounts). `entities` is virtual: crm_account_entities
+ * (many-to-many with a primary flag, D5), saved by repositories/virtual-fields.ts.
+ * `primary_entity` is a read-only virtual mirror of the primary link (highlights).
+ * The owner highlight is rendered by RecordView for every object.
+ */
+export const accountConfig: RecordConfig = {
+  object: "account",
+  table: "crm_accounts",
+  module: "accounts",
+  namespace: "accounts",
+  basePath: "/accounts",
+  icon: Building2,
+  nameFields: ["name"],
+  fields: [
+    {
+      key: "name",
+      labelKey: "fields.name",
+      type: "text",
+      required: true,
+      max: 200,
+      listable: true,
+      sortable: true,
+      searchable: true,
+    },
+    {
+      key: "type",
+      labelKey: "fields.type",
+      type: "picklist",
+      required: true,
+      defaultValue: "prospect",
+      picklist: {
+        kind: "static",
+        options: [
+          { value: "customer", labelKey: "types.customer", tone: "success" },
+          { value: "prospect", labelKey: "types.prospect", tone: "info" },
+          { value: "distributor", labelKey: "types.distributor", tone: "brand" },
+          { value: "partner", labelKey: "types.partner", tone: "highlight" },
+          { value: "other", labelKey: "types.other", tone: "neutral" },
+        ],
+      },
+      listable: true,
+      sortable: true,
+      filterable: true,
+    },
+    {
+      key: "entities",
+      labelKey: "fields.entities",
+      type: "entity",
+      multiple: true,
+      virtual: true,
+      listable: true,
+      filterable: true,
+      wide: true,
+    },
+    {
+      key: "primary_entity",
+      labelKey: "fields.primaryEntity",
+      type: "entity",
+      virtual: true,
+      editable: false,
+      hideInDetails: true,
+    },
+    { key: "country_code", labelKey: "fields.country", type: "country", listable: true, sortable: true, filterable: true },
+    {
+      key: "segment",
+      labelKey: "fields.segment",
+      type: "picklist",
+      picklist: { kind: "picklist", picklist: "segment" },
+      listable: true,
+      sortable: true,
+      filterable: true,
+    },
+    {
+      key: "industry",
+      labelKey: "fields.industry",
+      type: "picklist",
+      picklist: { kind: "picklist", picklist: "industry" },
+      sortable: true,
+    },
+    { key: "phone", labelKey: "fields.phone", type: "phone", searchable: true },
+    { key: "email", labelKey: "fields.email", type: "email", searchable: true },
+    { key: "website", labelKey: "fields.website", type: "url", searchable: true },
+    { key: "tax_id", labelKey: "fields.taxId", type: "text", max: 60, searchable: true },
+    { key: "parent_account_id", labelKey: "fields.parentAccount", type: "lookup", lookup: "account", filterable: true },
+    { key: "owner_id", labelKey: "fields.owner", type: "owner", listable: true, filterable: true },
+    { key: "billing_street", labelKey: "fields.billingStreet", type: "text", wide: true },
+    { key: "billing_city", labelKey: "fields.billingCity", type: "text", max: 120, searchable: true },
+    { key: "billing_state", labelKey: "fields.billingState", type: "text", max: 120 },
+    { key: "billing_postal_code", labelKey: "fields.billingPostalCode", type: "text", max: 20 },
+    { key: "billing_country_code", labelKey: "fields.billingCountry", type: "country" },
+    { key: "description", labelKey: "fields.description", type: "textarea", wide: true },
+    {
+      key: "created_at",
+      labelKey: "fields.createdAt",
+      type: "datetime",
+      editable: false,
+      listable: true,
+      sortable: true,
+    },
+    { key: "updated_at", labelKey: "fields.updatedAt", type: "datetime", editable: false, sortable: true },
+  ],
+  highlights: ["type", "primary_entity", "country_code"],
+  listColumns: ["name", "type", "country_code", "segment", "entities", "owner_id", "created_at"],
+  defaultSort: { field: "name", dir: "asc" },
+  relatedLists: [
+    {
+      key: "contacts",
+      object: "contact",
+      foreignKey: "account_id",
+      columns: ["title", "email", "phone"],
+      labelKey: "related.contacts",
+    },
+    {
+      key: "opportunities",
+      object: "opportunity",
+      foreignKey: "account_id",
+      columns: ["stage_id", "amount", "close_date"],
+      labelKey: "related.opportunities",
+    },
+    { key: "children", object: "account", foreignKey: "parent_account_id", columns: ["type", "country_code"], labelKey: "related.children" },
+  ],
+  actions: [
+    { key: "changeOwner", labelKey: "changeOwner", permission: "edit", kind: "changeOwner", icon: UserRoundCog },
+    { key: "delete", labelKey: "delete", permission: "delete", kind: "delete", icon: Trash2 },
+  ],
+  timeline: true,
+};

@@ -1,0 +1,122 @@
+{
+  "title": "Atividades",
+  "singular": "Atividade",
+  "fields": {
+    "subject": "Assunto",
+    "type": "Tipo",
+    "status": "Status",
+    "priority": "Prioridade",
+    "dueAt": "Prazo",
+    "dueRange": "Prazo",
+    "whatObject": "Relacionado a",
+    "related": "Registro relacionado",
+    "contact": "Contato",
+    "owner": "Atribuído a",
+    "body": "Descrição",
+    "completedAt": "Concluído em",
+    "createdAt": "Criado em",
+    "updatedAt": "Última modificação"
+  },
+  "types": {
+    "task": "Tarefa",
+    "call": "Ligação",
+    "meeting": "Reunião",
+    "note": "Nota",
+    "email": "E-mail"
+  },
+  "statuses": {
+    "open": "Aberta",
+    "done": "Concluída"
+  },
+  "priorities": {
+    "low": "Baixa",
+    "normal": "Normal",
+    "high": "Alta",
+    "urgent": "Urgente"
+  },
+  "dueRanges": {
+    "overdue": "Atrasadas",
+    "next7": "Próximos 7 dias",
+    "later": "Mais tarde",
+    "none": "Sem prazo"
+  },
+  "objects": {
+    "lead": "Lead",
+    "account": "Conta",
+    "contact": "Contato",
+    "opportunity": "Oportunidade"
+  },
+  "composer": {
+    "label": "Nova atividade",
+    "tabs": {
+      "task": "Nova tarefa",
+      "call": "Registrar ligação",
+      "meeting": "Nova reunião",
+      "note": "Nota"
+    },
+    "subject": "Assunto",
+    "subjectPlaceholder": {
+      "task": "O que precisa ser feito?",
+      "call": "Assunto da ligação",
+      "meeting": "Assunto da reunião",
+      "note": "Assunto"
+    },
+    "body": "Detalhes",
+    "bodyPlaceholder": "Adicione detalhes (opcional)",
+    "notePlaceholder": "Escreva uma nota…",
+    "noteSubject": "Nota",
+    "due": "Prazo",
+    "when": "Quando",
+    "saving": "Salvando…",
+    "submit": {
+      "task": "Adicionar tarefa",
+      "call": "Registrar ligação",
+      "meeting": "Adicionar reunião",
+      "note": "Salvar nota"
+    },
+    "created": {
+      "task": "Tarefa criada",
+      "call": "Ligação registrada",
+      "meeting": "Reunião criada",
+      "note": "Nota salva"
+    }
+  },
+  "timeline": {
+    "upcoming": "Próximas e atrasadas",
+    "past": "Atividades anteriores",
+    "overdue": "Atrasada",
+    "complete": "Marcar como concluída",
+    "reopen": "Reabrir",
+    "failed": "Não foi possível carregar as atividades.",
+    "retry": "Tentar novamente",
+    "audit": {
+      "create": "Criado por {actor}",
+      "stage_change": "Etapa alterada por {actor}",
+      "owner_change": "Proprietário alterado por {actor}",
+      "convert": "Convertido por {actor}"
+    }
+  },
+  "myTasks": {
+    "title": "Minhas tarefas",
+    "description": "Suas tarefas em aberto. Os dias seguem o fuso horário do seu dispositivo.",
+    "failed": "Não foi possível carregar suas tarefas.",
+    "empty": "Nenhuma tarefa em aberto. Bom trabalho!",
+    "sections": {
+      "overdue": "Atrasadas",
+      "today": "Hoje",
+      "next7": "Próximos 7 dias",
+      "later": "Mais tarde",
+      "none": "Sem data",
+      "completed": "Concluídas (últimos 14 dias)"
+    },
+    "showCompleted": "Mostrar concluídas nos últimos 14 dias ({count})",
+    "hideCompleted": "Ocultar concluídas",
+    "noCompleted": "Nenhuma tarefa concluída nos últimos 14 dias.",
+    "quickAdd": {
+      "subject": "Nova tarefa",
+      "placeholder": "Adicionar uma tarefa…",
+      "due": "Prazo (opcional)",
+      "submit": "Adicionar"
+    }
+  }
+}

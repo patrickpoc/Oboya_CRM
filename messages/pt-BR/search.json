@@ -1,0 +1,19 @@
+{
+  "placeholder": "Pesquisar leads, contas, contatos…",
+  "label": "Pesquisa global",
+  "open": "Abrir pesquisa",
+  "close": "Fechar pesquisa",
+  "shortcut": "Pressione {shortcut} para pesquisar",
+  "minChars": "Digite pelo menos {count} caracteres.",
+  "searching": "Pesquisando…",
+  "noResults": "Nenhum resultado para “{q}”.",
+  "failed": "A pesquisa falhou. Tente novamente.",
+  "seeAll": "Ver tudo em {object}",
+  "hint": "↑↓ para navegar · Enter para abrir · Esc para fechar",
+  "groups": {
+    "lead": "Leads",
+    "account": "Contas",
+    "contact": "Contatos",
+    "opportunity": "Oportunidades"
+  }
+}

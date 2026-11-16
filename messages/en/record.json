@@ -1,0 +1,84 @@
+{
+  "objects": {
+    "lead": "Lead",
+    "account": "Account",
+    "contact": "Contact",
+    "opportunity": "Opportunity",
+    "activity": "Activity"
+  },
+  "tabs": {
+    "details": "Details",
+    "related": "Related"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "changeOwner": "Change owner",
+    "delete": "Delete"
+  },
+  "owner": "Owner",
+  "yes": "Yes",
+  "no": "No",
+  "primary": "Primary",
+  "setPrimary": "Set as primary",
+  "clear": "Clear",
+  "select": "Select…",
+  "saving": "Saving…",
+  "lookupPlaceholder": "Search…",
+  "lookupNoResults": "No matches",
+  "tagsPlaceholder": "Type and press Enter",
+  "removeValue": "Remove {value}",
+  "fieldInvalid": "Enter a valid value.",
+  "fieldEdit": "Edit {field}",
+  "createTitle": "New {object}",
+  "toast": {
+    "saved": "Saved",
+    "created": "{name} created",
+    "deleted": "Record deleted"
+  },
+  "errors": {
+    "invalid": "Some values are not valid. Check the form and try again.",
+    "forbidden": "You do not have permission to do this.",
+    "not_found": "This record no longer exists or is not visible to you.",
+    "duplicate": "A record with these details already exists.",
+    "unauthenticated": "Your session has expired. Sign in again.",
+    "rule": "Not saved: this change is not allowed by a business rule.",
+    "unavailable": "Something went wrong. Please try again.",
+    "rules": {
+      "lead_converted": "This lead has been converted and is read-only.",
+      "reason_required": "Enter a reason to mark this lead as Unqualified.",
+      "loss_reason_required": "Choose a loss reason to move this opportunity to a lost stage.",
+      "stage_unavailable": "This stage is no longer available. Refresh the page and pick another stage.",
+      "one_primary_required": "Choose exactly one primary group company.",
+      "duplicate": "A record with these details already exists.",
+      "forbidden": "You do not have permission to do this."
+    }
+  },
+  "deleteDialog": {
+    "title": "Delete this record?",
+    "description": "{name} will be removed from lists. An administrator can restore it.",
+    "confirm": "Delete"
+  },
+  "ownerDialog": {
+    "title": "Change owner",
+    "description": "Choose the new owner of {name}.",
+    "confirm": "Change owner"
+  },
+  "related": {
+    "none": "No related lists.",
+    "new": "New",
+    "empty": "No records yet.",
+    "viewAll": "View all"
+  },
+  "path": {
+    "label": "Stage",
+    "current": "Current stage",
+    "completed": "Completed",
+    "markCurrent": "Mark as current stage"
+  },
+  "timeline": {
+    "title": "Activity",
+    "empty": "No activity yet",
+    "emptyHint": "Calls, meetings, tasks and notes will appear here."
+  }
+}

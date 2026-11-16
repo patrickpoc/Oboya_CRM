@@ -1,0 +1,122 @@
+{
+  "title": "Actividades",
+  "singular": "Actividad",
+  "fields": {
+    "subject": "Asunto",
+    "type": "Tipo",
+    "status": "Estado",
+    "priority": "Prioridad",
+    "dueAt": "Vencimiento",
+    "dueRange": "Vencimiento",
+    "whatObject": "Relacionado con",
+    "related": "Registro relacionado",
+    "contact": "Contacto",
+    "owner": "Asignado a",
+    "body": "Descripción",
+    "completedAt": "Completado",
+    "createdAt": "Creado",
+    "updatedAt": "Última modificación"
+  },
+  "types": {
+    "task": "Tarea",
+    "call": "Llamada",
+    "meeting": "Reunión",
+    "note": "Nota",
+    "email": "Correo electrónico"
+  },
+  "statuses": {
+    "open": "Abierta",
+    "done": "Completada"
+  },
+  "priorities": {
+    "low": "Baja",
+    "normal": "Normal",
+    "high": "Alta",
+    "urgent": "Urgente"
+  },
+  "dueRanges": {
+    "overdue": "Vencidas",
+    "next7": "Próximos 7 días",
+    "later": "Más adelante",
+    "none": "Sin fecha de vencimiento"
+  },
+  "objects": {
+    "lead": "Lead",
+    "account": "Cuenta",
+    "contact": "Contacto",
+    "opportunity": "Oportunidad"
+  },
+  "composer": {
+    "label": "Nueva actividad",
+    "tabs": {
+      "task": "Nueva tarea",
+      "call": "Registrar llamada",
+      "meeting": "Nueva reunión",
+      "note": "Nota"
+    },
+    "subject": "Asunto",
+    "subjectPlaceholder": {
+      "task": "¿Qué hay que hacer?",
+      "call": "Asunto de la llamada",
+      "meeting": "Asunto de la reunión",
+      "note": "Asunto"
+    },
+    "body": "Detalles",
+    "bodyPlaceholder": "Añade detalles (opcional)",
+    "notePlaceholder": "Escribe una nota…",
+    "noteSubject": "Nota",
+    "due": "Vencimiento",
+    "when": "Cuándo",
+    "saving": "Guardando…",
+    "submit": {
+      "task": "Añadir tarea",
+      "call": "Registrar llamada",
+      "meeting": "Añadir reunión",
+      "note": "Guardar nota"
+    },
+    "created": {
+      "task": "Tarea creada",
+      "call": "Llamada registrada",
+      "meeting": "Reunión creada",
+      "note": "Nota guardada"
+    }
+  },
+  "timeline": {
+    "upcoming": "Próximas y vencidas",
+    "past": "Actividad anterior",
+    "overdue": "Vencida",
+    "complete": "Marcar como completada",
+    "reopen": "Reabrir",
+    "failed": "No se pudo cargar la actividad.",
+    "retry": "Reintentar",
+    "audit": {
+      "create": "Creado por {actor}",
+      "stage_change": "Etapa cambiada por {actor}",
+      "owner_change": "Propietario cambiado por {actor}",
+      "convert": "Convertido por {actor}"
+    }
+  },
+  "myTasks": {
+    "title": "Mis tareas",
+    "description": "Tus tareas abiertas. Los días siguen la zona horaria de tu dispositivo.",
+    "failed": "No se pudieron cargar tus tareas.",
+    "empty": "No hay tareas abiertas. ¡Buen trabajo!",
+    "sections": {
+      "overdue": "Vencidas",
+      "today": "Hoy",
+      "next7": "Próximos 7 días",
+      "later": "Más adelante",
+      "none": "Sin fecha",
+      "completed": "Completadas (últimos 14 días)"
+    },
+    "showCompleted": "Mostrar completadas en los últimos 14 días ({count})",
+    "hideCompleted": "Ocultar completadas",
+    "noCompleted": "No hay tareas completadas en los últimos 14 días.",
+    "quickAdd": {
+      "subject": "Nueva tarea",
+      "placeholder": "Añadir una tarea…",
+      "due": "Vencimiento (opcional)",
+      "submit": "Añadir"
+    }
+  }
+}

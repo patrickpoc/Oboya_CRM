@@ -1,0 +1,18 @@
+{
+  "appName": "Oboya CRM",
+  "tagline": "Oboya Horticulture 客户关系管理",
+  "comingSoon": "CRM 工作区正在配置中。",
+  "loading": "加载中…",
+  "save": "保存",
+  "saving": "保存中…",
+  "cancel": "取消",
+  "close": "关闭",
+  "delete": "删除",
+  "edit": "编辑",
+  "create": "创建",
+  "search": "搜索",
+  "back": "返回",
+  "retry": "重试",
+  "language": "语言",
+  "errorGeneric": "出现错误，请重试。"
+}

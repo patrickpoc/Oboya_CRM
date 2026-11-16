@@ -1,0 +1,110 @@
+{
+  "title": "线索",
+  "singular": "线索",
+  "fields": {
+    "name": "姓名",
+    "firstName": "名",
+    "lastName": "姓",
+    "company": "公司",
+    "title": "职务",
+    "email": "电子邮件",
+    "phone": "电话",
+    "country": "国家/地区",
+    "entity": "集团公司",
+    "status": "状态",
+    "unqualifiedReason": "不合格原因",
+    "sla": "SLA",
+    "priority": "优先级",
+    "source": "线索来源",
+    "rating": "评级",
+    "tags": "标签",
+    "message": "留言",
+    "owner": "负责人",
+    "createdAt": "创建时间",
+    "firstRespondedAt": "首次响应时间",
+    "convertedAt": "转换时间",
+    "convertedAccount": "转换后的客户",
+    "convertedContact": "转换后的联系人",
+    "convertedOpportunity": "转换后的商机",
+    "updatedAt": "最后修改时间"
+  },
+  "statuses": {
+    "new": "新建",
+    "working": "跟进中",
+    "qualified": "合格",
+    "unqualified": "不合格"
+  },
+  "sla": {
+    "on_track": "按时",
+    "warning": "延迟",
+    "overdue": "已逾期"
+  },
+  "priorities": {
+    "low": "低",
+    "normal": "普通",
+    "high": "高",
+    "urgent": "紧急"
+  },
+  "ratings": {
+    "hot": "热",
+    "warm": "温",
+    "cold": "冷"
+  },
+  "list": {
+    "slaOnTrack": "新建，未响应不足 {hours} 小时",
+    "slaWarning": "新建，未响应已达 {hours} 小时或以上",
+    "slaOverdue": "新建，未响应已达 {hours} 小时或以上"
+  },
+  "path": {
+    "saved": "状态已更新"
+  },
+  "unqualifyDialog": {
+    "title": "标记为不合格",
+    "description": "告诉团队这条线索为何不合适。原因会保留在线索上。",
+    "cancel": "取消",
+    "confirm": "标记为不合格"
+  },
+  "banner": {
+    "title": "此线索已转换。",
+    "account": "客户",
+    "contact": "联系人",
+    "opportunity": "商机"
+  },
+  "convert": {
+    "action": "转换",
+    "title": "转换线索",
+    "description": "将 {name} 转换为客户、联系人以及（可选）商机。转换后线索将变为只读。",
+    "account": {
+      "heading": "客户",
+      "new": "新建客户：{name}",
+      "existing": "选择现有客户"
+    },
+    "contact": {
+      "heading": "联系人",
+      "note": "将为 {name} 创建联系人（如所选客户下已有相同电子邮件的联系人，则会复用该联系人）。"
+    },
+    "opportunity": {
+      "heading": "商机",
+      "create": "创建商机",
+      "name": "商机名称",
+      "amount": "金额",
+      "currency": "币种",
+      "closeDate": "预计成交日期"
+    },
+    "cancel": "取消",
+    "confirm": "转换",
+    "converting": "正在转换…",
+    "success": "线索已转换",
+    "errors": {
+      "accountRequired": "请选择一个客户，或新建一个。",
+      "invalid": "部分值无效，请检查表单后重试。",
+      "already_converted": "此线索已被转换。",
+      "account_not_found": "该客户已不存在或你无权查看。",
+      "no_open_stage": "默认销售管道没有进行中的阶段，请联系管理员添加。",
+      "forbidden": "你没有创建这些记录的权限。",
+      "not_found": "此线索已不存在或你无权查看。",
+      "duplicate": "已存在具有相同信息的记录。",
+      "unavailable": "出现错误，请重试。"
+    }
+  }
+}

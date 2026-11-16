@@ -1,0 +1,110 @@
+{
+  "title": "Leads",
+  "singular": "Lead",
+  "fields": {
+    "name": "Name",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "company": "Company",
+    "title": "Job title",
+    "email": "Email",
+    "phone": "Phone",
+    "country": "Country",
+    "entity": "Group company",
+    "status": "Status",
+    "unqualifiedReason": "Unqualified reason",
+    "sla": "SLA",
+    "priority": "Priority",
+    "source": "Lead source",
+    "rating": "Rating",
+    "tags": "Tags",
+    "message": "Message",
+    "owner": "Owner",
+    "createdAt": "Created",
+    "firstRespondedAt": "First responded",
+    "convertedAt": "Converted",
+    "convertedAccount": "Converted account",
+    "convertedContact": "Converted contact",
+    "convertedOpportunity": "Converted opportunity",
+    "updatedAt": "Last modified"
+  },
+  "statuses": {
+    "new": "New",
+    "working": "Working",
+    "qualified": "Qualified",
+    "unqualified": "Unqualified"
+  },
+  "sla": {
+    "on_track": "On time",
+    "warning": "Late",
+    "overdue": "Overdue"
+  },
+  "priorities": {
+    "low": "Low",
+    "normal": "Normal",
+    "high": "High",
+    "urgent": "Urgent"
+  },
+  "ratings": {
+    "hot": "Hot",
+    "warm": "Warm",
+    "cold": "Cold"
+  },
+  "list": {
+    "slaOnTrack": "New, under {hours} h without a response",
+    "slaWarning": "New, {hours} h or more without a response",
+    "slaOverdue": "New, {hours} h or more without a response"
+  },
+  "path": {
+    "saved": "Status updated"
+  },
+  "unqualifyDialog": {
+    "title": "Mark as unqualified",
+    "description": "Tell the team why this lead is not a fit. The reason is kept on the lead.",
+    "cancel": "Cancel",
+    "confirm": "Mark unqualified"
+  },
+  "banner": {
+    "title": "This lead was converted.",
+    "account": "Account",
+    "contact": "Contact",
+    "opportunity": "Opportunity"
+  },
+  "convert": {
+    "action": "Convert",
+    "title": "Convert lead",
+    "description": "Turn {name} into an account, a contact and, optionally, an opportunity. The lead becomes read-only.",
+    "account": {
+      "heading": "Account",
+      "new": "Create a new account: {name}",
+      "existing": "Choose an existing account"
+    },
+    "contact": {
+      "heading": "Contact",
+      "note": "A contact is created for {name} (an existing contact with the same email on the chosen account is reused)."
+    },
+    "opportunity": {
+      "heading": "Opportunity",
+      "create": "Create an opportunity",
+      "name": "Opportunity name",
+      "amount": "Amount",
+      "currency": "Currency",
+      "closeDate": "Close date"
+    },
+    "cancel": "Cancel",
+    "confirm": "Convert",
+    "converting": "Converting…",
+    "success": "Lead converted",
+    "errors": {
+      "accountRequired": "Choose an account, or create a new one.",
+      "invalid": "Some values are not valid. Check the form and try again.",
+      "already_converted": "This lead was already converted.",
+      "account_not_found": "That account no longer exists or is not visible to you.",
+      "no_open_stage": "The default pipeline has no open stage. Ask an administrator to add one.",
+      "forbidden": "You do not have permission to create these records.",
+      "not_found": "This lead no longer exists or is not visible to you.",
+      "duplicate": "A record with these details already exists.",
+      "unavailable": "Something went wrong. Please try again."
+    }
+  }
+}

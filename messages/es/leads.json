@@ -1,0 +1,110 @@
+{
+  "title": "Leads",
+  "singular": "Lead",
+  "fields": {
+    "name": "Nombre",
+    "firstName": "Nombre",
+    "lastName": "Apellidos",
+    "company": "Empresa",
+    "title": "Cargo",
+    "email": "Correo electrónico",
+    "phone": "Teléfono",
+    "country": "País",
+    "entity": "Empresa del grupo",
+    "status": "Estado",
+    "unqualifiedReason": "Motivo de descalificación",
+    "sla": "SLA",
+    "priority": "Prioridad",
+    "source": "Origen del lead",
+    "rating": "Calificación",
+    "tags": "Etiquetas",
+    "message": "Mensaje",
+    "owner": "Propietario",
+    "createdAt": "Creado",
+    "firstRespondedAt": "Primera respuesta",
+    "convertedAt": "Convertido",
+    "convertedAccount": "Cuenta convertida",
+    "convertedContact": "Contacto convertido",
+    "convertedOpportunity": "Oportunidad convertida",
+    "updatedAt": "Última modificación"
+  },
+  "statuses": {
+    "new": "Nuevo",
+    "working": "En gestión",
+    "qualified": "Calificado",
+    "unqualified": "Descalificado"
+  },
+  "sla": {
+    "on_track": "A tiempo",
+    "warning": "Con retraso",
+    "overdue": "Vencido"
+  },
+  "priorities": {
+    "low": "Baja",
+    "normal": "Normal",
+    "high": "Alta",
+    "urgent": "Urgente"
+  },
+  "ratings": {
+    "hot": "Caliente",
+    "warm": "Templado",
+    "cold": "Frío"
+  },
+  "list": {
+    "slaOnTrack": "Nuevo, menos de {hours} h sin respuesta",
+    "slaWarning": "Nuevo, {hours} h o más sin respuesta",
+    "slaOverdue": "Nuevo, {hours} h o más sin respuesta"
+  },
+  "path": {
+    "saved": "Estado actualizado"
+  },
+  "unqualifyDialog": {
+    "title": "Marcar como descalificado",
+    "description": "Explica al equipo por qué este lead no encaja. El motivo queda guardado en el lead.",
+    "cancel": "Cancelar",
+    "confirm": "Descalificar"
+  },
+  "banner": {
+    "title": "Este lead se ha convertido.",
+    "account": "Cuenta",
+    "contact": "Contacto",
+    "opportunity": "Oportunidad"
+  },
+  "convert": {
+    "action": "Convertir",
+    "title": "Convertir lead",
+    "description": "Convierte a {name} en una cuenta, un contacto y, opcionalmente, una oportunidad. El lead pasa a ser de solo lectura.",
+    "account": {
+      "heading": "Cuenta",
+      "new": "Crear una cuenta nueva: {name}",
+      "existing": "Elegir una cuenta existente"
+    },
+    "contact": {
+      "heading": "Contacto",
+      "note": "Se crea un contacto para {name} (si ya existe un contacto con el mismo correo en la cuenta elegida, se reutiliza)."
+    },
+    "opportunity": {
+      "heading": "Oportunidad",
+      "create": "Crear una oportunidad",
+      "name": "Nombre de la oportunidad",
+      "amount": "Importe",
+      "currency": "Moneda",
+      "closeDate": "Fecha de cierre"
+    },
+    "cancel": "Cancelar",
+    "confirm": "Convertir",
+    "converting": "Convirtiendo…",
+    "success": "Lead convertido",
+    "errors": {
+      "accountRequired": "Elige una cuenta o crea una nueva.",
+      "invalid": "Algunos valores no son válidos. Revisa el formulario e inténtalo de nuevo.",
+      "already_converted": "Este lead ya se ha convertido.",
+      "account_not_found": "Esa cuenta ya no existe o no es visible para ti.",
+      "no_open_stage": "El pipeline predeterminado no tiene ninguna etapa abierta. Pide a un administrador que añada una.",
+      "forbidden": "No tienes permiso para crear estos registros.",
+      "not_found": "Este lead ya no existe o no es visible para ti.",
+      "duplicate": "Ya existe un registro con estos datos.",
+      "unavailable": "Algo salió mal. Inténtalo de nuevo."
+    }
+  }
+}

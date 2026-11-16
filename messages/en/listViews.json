@@ -1,0 +1,15 @@
+{
+  "views": {
+    "mine": "My records",
+    "all": "All",
+    "recent": "Recently viewed"
+  },
+  "searchPlaceholder": "Search…",
+  "filterAll": "All",
+  "exportCsv": "Export CSV",
+  "new": "New",
+  "empty": "No records match these filters.",
+  "emptyRecent": "You have not viewed any records yet.",
+  "rangeFrom": "{field} from",
+  "rangeTo": "{field} to"
+}

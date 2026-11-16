@@ -1,0 +1,22 @@
+{
+  "title": "Contatos",
+  "singular": "Contato",
+  "fields": {
+    "name": "Nome",
+    "firstName": "Nome",
+    "lastName": "Sobrenome",
+    "account": "Conta",
+    "title": "Cargo",
+    "email": "E-mail",
+    "phone": "Telefone",
+    "mobile": "Celular",
+    "country": "País",
+    "owner": "Proprietário",
+    "description": "Descrição",
+    "createdAt": "Criado em",
+    "updatedAt": "Última modificação"
+  },
+  "related": {
+    "opportunities": "Oportunidades"
+  }
+}

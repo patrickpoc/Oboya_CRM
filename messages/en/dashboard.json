@@ -1,0 +1,62 @@
+{
+  "title": "Home",
+  "greeting": "Welcome back, {name}",
+  "description": "Your pipeline, leads and tasks at a glance.",
+  "entityFilter": "Company",
+  "allEntities": "All companies",
+  "entityHint": "Company filter applies to leads and opportunities.",
+  "failed": "Could not load the dashboard.",
+  "kpi": {
+    "openLeads": "Open leads",
+    "slaOverdue": "{count, plural, =0 {No SLA overdue} one {# SLA overdue} other {# SLA overdue}}",
+    "pipelineValue": "Pipeline value",
+    "pipelineCount": "{count, plural, =0 {No open opportunities} one {# open opportunity} other {# open opportunities}}",
+    "wonThisMonth": "Won this month",
+    "wonCount": "{count, plural, =0 {No deals won} one {# deal won} other {# deals won}}",
+    "tasksToday": "Tasks due today",
+    "tasksOverdue": "{count, plural, =0 {Nothing overdue} one {# overdue} other {# overdue}}",
+    "totalIn": "Total in {currency} (static FX rates)",
+    "noFx": "No FX table in settings: totals are per currency only.",
+    "missingRates": "Not converted (no rate): {currencies}"
+  },
+  "chart": {
+    "title": "Pipeline by stage",
+    "amount": "Amount",
+    "count": "Count",
+    "metric": "Chart metric",
+    "amountIn": "Amount in {currency}",
+    "noFx": "Amount needs an FX table in settings; showing count.",
+    "empty": "No open opportunities yet.",
+    "tableCaption": "Open opportunities per stage",
+    "stage": "Stage",
+    "opportunities": "Opportunities"
+  },
+  "tasks": {
+    "title": "My tasks",
+    "viewAll": "View all",
+    "empty": "No open tasks. Nice work.",
+    "noDue": "No due date",
+    "complete": "Mark as done",
+    "completed": "Task completed"
+  },
+  "recent": {
+    "title": "Recent records",
+    "empty": "Records you open will show up here."
+  },
+  "quick": {
+    "title": "Quick access",
+    "newLead": "New lead",
+    "newAccount": "New account",
+    "pipeline": "Pipeline",
+    "myTasks": "My tasks",
+    "reports": "Reports",
+    "soon": "Soon"
+  },
+  "objects": {
+    "lead": "Lead",
+    "account": "Account",
+    "contact": "Contact",
+    "opportunity": "Opportunity",
+    "activity": "Activity"
+  }
+}

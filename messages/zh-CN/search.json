@@ -1,0 +1,19 @@
+{
+  "placeholder": "搜索线索、客户、联系人…",
+  "label": "全局搜索",
+  "open": "打开搜索",
+  "close": "关闭搜索",
+  "shortcut": "按 {shortcut} 搜索",
+  "minChars": "请至少输入 {count} 个字符。",
+  "searching": "正在搜索…",
+  "noResults": "没有找到“{q}”的结果。",
+  "failed": "搜索失败，请重试。",
+  "seeAll": "在{object}中查看全部",
+  "hint": "↑↓ 移动 · Enter 打开 · Esc 关闭",
+  "groups": {
+    "lead": "线索",
+    "account": "客户",
+    "contact": "联系人",
+    "opportunity": "商机"
+  }
+}

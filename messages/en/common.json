@@ -1,0 +1,18 @@
+{
+  "appName": "Oboya CRM",
+  "tagline": "Customer relationship management for Oboya Horticulture",
+  "comingSoon": "The CRM workspace is being set up.",
+  "loading": "Loading…",
+  "save": "Save",
+  "saving": "Saving…",
+  "cancel": "Cancel",
+  "close": "Close",
+  "delete": "Delete",
+  "edit": "Edit",
+  "create": "Create",
+  "search": "Search",
+  "back": "Back",
+  "retry": "Try again",
+  "language": "Language",
+  "errorGeneric": "Something went wrong. Please try again."
+}
