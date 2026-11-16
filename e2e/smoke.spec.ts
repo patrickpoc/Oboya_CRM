@@ -76,6 +76,11 @@ test("rep: lead → convert → stage moves → planned page", async ({ page, ba
   await expect(page.getByRole("heading", { name: "Quotes", level: 1 })).toBeVisible();
   await expect(page.getByText("To be done", { exact: true })).toBeVisible();
   await expect(page.getByText("What this module will do")).toBeVisible();
+
+  // 8. Insights / Industry news (live module, read-only for the demo rep)
+  await page.goto("/industry-news");
+  await expect(page.getByRole("heading", { name: "Industry News", level: 1 })).toBeVisible();
+  await expect(page.getByRole("tab", { name: "Configuration" })).toBeVisible();
 });
 
 test.describe("mobile 375px", () => {

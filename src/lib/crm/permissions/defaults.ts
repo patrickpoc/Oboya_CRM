@@ -36,6 +36,7 @@ export const BUILTIN_MATRIX: AccessMatrix = {
     contacts: FULL,
     opportunities: FULL,
     activities: FULL,
+    industry_news: ["view", "create", "edit"],
     audit_logs: VIEW,
   }),
   sales_rep: row(NONE, {
@@ -45,6 +46,7 @@ export const BUILTIN_MATRIX: AccessMatrix = {
     contacts: ["view", "create", "edit", "export"],
     opportunities: ["view", "create", "edit", "export"],
     activities: ["view", "create", "edit", "delete"],
+    industry_news: VIEW,
   }),
   read_only: row(NONE, {
     home: VIEW,
@@ -53,6 +55,7 @@ export const BUILTIN_MATRIX: AccessMatrix = {
     contacts: READ_EXPORT,
     opportunities: READ_EXPORT,
     activities: READ_EXPORT,
+    industry_news: VIEW,
   }),
 };
 

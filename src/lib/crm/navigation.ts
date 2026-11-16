@@ -60,15 +60,20 @@ const GROUP_LABELS: Record<RoadmapGroup, string> = {
   platform: "Platform",
 };
 
-function plannedItems(group: RoadmapGroup): CrmNavItem[] {
+/**
+ * Roadmap entries in a sidebar group. Planned entries keep the "Soon" flag and
+ * stay visible to everyone; live entries carry their permission module.
+ */
+function roadmapItems(group: RoadmapGroup): CrmNavItem[] {
   return roadmap
-    .filter((entry) => entry.group === group && entry.status === "planned")
+    .filter((entry) => entry.group === group)
     .map((entry) => ({
       labelKey: entry.id,
       label: entry.id,
       href: entry.href,
       icon: entry.icon,
-      soon: true,
+      module: entry.module,
+      soon: entry.status === "planned",
     }));
 }
 
@@ -97,7 +102,7 @@ const salesGroup: CrmNavItem = {
     },
     { labelKey: "activities", label: "Activities", href: "/activities", icon: CalendarCheck, module: "activities" },
     { labelKey: "tasks", label: "My tasks", href: "/tasks", icon: ListChecks, module: "activities", badge: "tasksDue" },
-    ...plannedItems("sales"),
+    ...roadmapItems("sales"),
   ],
 };
 
@@ -106,7 +111,7 @@ const plannedGroups: CrmNavItem[] = ROADMAP_GROUPS.filter((group) => group !== "
     labelKey: group,
     label: GROUP_LABELS[group],
     icon: GROUP_ICONS[group],
-    children: plannedItems(group),
+    children: roadmapItems(group),
   }))
   .filter((group) => group.children.length > 0);
 

@@ -1,0 +1,117 @@
+{
+  "title": "Industry News",
+  "description": "Monitor industry topics across hot lists and RSS feeds.",
+  "common": {
+    "add": "Add",
+    "remove": "Remove",
+    "save": "Save"
+  },
+  "tabs": {
+    "news": "News feed",
+    "config": "Configuration"
+  },
+  "actions": {
+    "fetch": "Fetch now"
+  },
+  "stats": {
+    "articles": "Articles",
+    "sources": "Sources",
+    "keywords": "Topics",
+    "matched": "Appearances",
+    "updated": "Updated {time}"
+  },
+  "filters": {
+    "search": "Search headlines",
+    "allKeywords": "All topics",
+    "keyword": "Topic",
+    "allSources": "All sources",
+    "source": "Source",
+    "allIndustries": "All industries",
+    "industry": "Industry",
+    "allRegions": "All regions",
+    "region": "Region",
+    "clear": "Clear"
+  },
+  "news": {
+    "title": "Latest headlines",
+    "chartTitle": "Stories by topic",
+    "new": "New",
+    "seen": "{count} appearances",
+    "weight": "Score {value}",
+    "emptyTitle": "No headlines yet",
+    "emptyDescription": "Configure your sources and topics, then choose Fetch now to collect the latest news."
+  },
+  "config": {
+    "saved": "Configuration saved",
+    "industries": {
+      "title": "Industries",
+      "description": "Each industry adds a ready-made group of keywords to monitor."
+    },
+    "regions": {
+      "title": "Regions",
+      "description": "Region groups focus the feed on a geographic market."
+    },
+    "keywords": {
+      "title": "Keywords & topics",
+      "description": "Words are alternatives; required words must all match and excluded words drop a story.",
+      "addGroup": "Add topic",
+      "newGroup": "New topic",
+      "empty": "No topics yet. Add a topic or choose an industry above.",
+      "groupName": "Topic name",
+      "wordPlaceholder": "Add a keyword and press Enter",
+      "required": "Required words (comma separated)",
+      "exclude": "Excluded words (comma separated)",
+      "maxItems": "Max items"
+    },
+    "globalExcludes": {
+      "title": "Global exclusions",
+      "description": "Matching stories containing any of these words are dropped everywhere.",
+      "placeholder": "clickbait, rumour"
+    },
+    "sources": {
+      "title": "Information sources",
+      "description": "Choose the hot lists and RSS feeds to collect from. No API key is required.",
+      "hotlists": "Hot lists",
+      "rss": "RSS feeds",
+      "hint": "Toggle a source to include it in the next fetch.",
+      "feedName": "Feed name",
+      "feedUrl": "Feed URL",
+      "addFeed": "Add feed"
+    },
+    "report": {
+      "title": "Report settings",
+      "description": "Control ranking, display and how fresh a story must be.",
+      "mode": "Report mode",
+      "modeDaily": "Daily summary",
+      "modeCurrent": "Current board",
+      "modeIncremental": "New items only",
+      "displayMode": "Sort by",
+      "displayKeyword": "Topic / score",
+      "displayPlatform": "Source",
+      "rankThreshold": "Hot-list rank threshold",
+      "maxNews": "Max stories per topic (0 = unlimited)",
+      "freshness": "Maximum age in days (0 = all)"
+    }
+  },
+  "presets": {
+    "industries": {
+      "horticulture": "Horticulture",
+      "agriculture": "Agriculture",
+      "gardenRetail": "Garden retail",
+      "landscape": "Landscaping",
+      "logistics": "Logistics",
+      "sustainability": "Sustainability"
+    },
+    "regions": {
+      "global": "Global",
+      "china": "China",
+      "eastAsia": "East Asia",
+      "europe": "Europe",
+      "northAmerica": "North America",
+      "latinAmerica": "Latin America"
+    }
+  },
+  "ingest": {
+    "done": "Added {added} and updated {updated} stories"
+  }
+}

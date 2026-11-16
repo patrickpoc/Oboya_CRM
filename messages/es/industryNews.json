@@ -1,0 +1,117 @@
+{
+  "title": "Noticias del sector",
+  "description": "Supervise temas del sector en listas tendencia y fuentes RSS.",
+  "common": {
+    "add": "Añadir",
+    "remove": "Eliminar",
+    "save": "Guardar"
+  },
+  "tabs": {
+    "news": "Noticias",
+    "config": "Configuración"
+  },
+  "actions": {
+    "fetch": "Obtener ahora"
+  },
+  "stats": {
+    "articles": "Artículos",
+    "sources": "Fuentes",
+    "keywords": "Temas",
+    "matched": "Apariciones",
+    "updated": "Actualizado {time}"
+  },
+  "filters": {
+    "search": "Buscar titulares",
+    "allKeywords": "Todos los temas",
+    "keyword": "Tema",
+    "allSources": "Todas las fuentes",
+    "source": "Fuente",
+    "allIndustries": "Todas las industrias",
+    "industry": "Industria",
+    "allRegions": "Todas las regiones",
+    "region": "Región",
+    "clear": "Limpiar"
+  },
+  "news": {
+    "title": "Últimas noticias",
+    "chartTitle": "Noticias por tema",
+    "new": "Nueva",
+    "seen": "{count} apariciones",
+    "weight": "Puntuación {value}",
+    "emptyTitle": "Todavía no hay noticias",
+    "emptyDescription": "Configure las fuentes y los temas, después pulse Obtener ahora para recoger las últimas noticias."
+  },
+  "config": {
+    "saved": "Configuración guardada",
+    "industries": {
+      "title": "Industrias",
+      "description": "Cada industria añade un grupo de palabras clave listo para supervisar."
+    },
+    "regions": {
+      "title": "Regiones",
+      "description": "Los grupos regionales centran las noticias en un mercado geográfico."
+    },
+    "keywords": {
+      "title": "Palabras clave y temas",
+      "description": "Las palabras son alternativas; las obligatorias deben coincidir todas y las excluidas descartan la noticia.",
+      "addGroup": "Añadir tema",
+      "newGroup": "Nuevo tema",
+      "empty": "Todavía no hay temas. Añada uno o elija una industria arriba.",
+      "groupName": "Nombre del tema",
+      "wordPlaceholder": "Escriba una palabra clave y pulse Intro",
+      "required": "Palabras obligatorias (separadas por comas)",
+      "exclude": "Palabras excluidas (separadas por comas)",
+      "maxItems": "Máximo de artículos"
+    },
+    "globalExcludes": {
+      "title": "Exclusiones globales",
+      "description": "Se descartan en todos los temas las noticias que contengan estas palabras.",
+      "placeholder": "rumor, clickbait"
+    },
+    "sources": {
+      "title": "Fuentes de información",
+      "description": "Elija las listas tendencia y fuentes RSS a recoger. No se necesita clave API.",
+      "hotlists": "Listas tendencia",
+      "rss": "Fuentes RSS",
+      "hint": "Active una fuente para incluirla en la próxima recogida.",
+      "feedName": "Nombre de la fuente",
+      "feedUrl": "URL de la fuente",
+      "addFeed": "Añadir fuente"
+    },
+    "report": {
+      "title": "Ajustes del informe",
+      "description": "Controle la clasificación, la visualización y la antigüedad de las noticias.",
+      "mode": "Modo de informe",
+      "modeDaily": "Resumen diario",
+      "modeCurrent": "Lista actual",
+      "modeIncremental": "Solo novedades",
+      "displayMode": "Ordenar por",
+      "displayKeyword": "Tema / puntuación",
+      "displayPlatform": "Fuente",
+      "rankThreshold": "Umbral de posición",
+      "maxNews": "Máximo por tema (0 = sin límite)",
+      "freshness": "Antigüedad máxima en días (0 = todas)"
+    }
+  },
+  "presets": {
+    "industries": {
+      "horticulture": "Horticultura",
+      "agriculture": "Agricultura",
+      "gardenRetail": "Venta de jardinería",
+      "landscape": "Paisajismo",
+      "logistics": "Logística",
+      "sustainability": "Sostenibilidad"
+    },
+    "regions": {
+      "global": "Global",
+      "china": "China",
+      "eastAsia": "Asia oriental",
+      "europe": "Europa",
+      "northAmerica": "Norteamérica",
+      "latinAmerica": "Latinoamérica"
+    }
+  },
+  "ingest": {
+    "done": "Se añadieron {added} y se actualizaron {updated} noticias"
+  }
+}

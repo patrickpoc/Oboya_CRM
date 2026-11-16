@@ -107,6 +107,19 @@
       },
       "dependencies": {}
     },
+    "industry-news": {
+      "title": "Noticias del sector",
+      "summary": "Seguimiento de listas tendencia y fuentes RSS para los sectores de Oboya, inspirado en TrendRadar.",
+      "description": "Noticias del sector reúne en un solo lugar lo que ocurre en horticultura, agricultura y mercados afines. Los administradores configuran grupos de palabras clave, industrias, regiones y fuentes en un editor gráfico; una recogida obtiene titulares de listas tendencia chinas y fuentes RSS, los compara con los grupos y conserva el historial de posición de cada noticia. El resultado es un listado ponderado y filtrable que ayuda a detectar temas emergentes antes de que lleguen al embudo de ventas.",
+      "capabilities": {
+        "sources": "Catálogo de listas tendencia y fuentes RSS con activación rápida y feeds personalizados",
+        "keywords": "Grupos de palabras clave con términos obligatorios, excluidos y expresiones regulares",
+        "regions": "Grupos geográficos para centrar las noticias en un mercado",
+        "ranking": "Ponderación inspirada en TrendRadar: posición, frecuencia y relevancia",
+        "freshness": "Modos de informe y filtros de antigüedad para mantener el listado actualizado"
+      },
+      "dependencies": {}
+    },
     "forecasting": {
       "title": "Previsiones",
       "summary": "Previsiones por comercial, equipo, empresa y periodo, comparadas con las cuotas.",

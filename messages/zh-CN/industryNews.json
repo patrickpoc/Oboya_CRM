@@ -1,0 +1,117 @@
+{
+  "title": "行业新闻",
+  "description": "跨平台热榜与 RSS 订阅源，持续跟踪行业动态。",
+  "common": {
+    "add": "添加",
+    "remove": "移除",
+    "save": "保存"
+  },
+  "tabs": {
+    "news": "新闻列表",
+    "config": "配置"
+  },
+  "actions": {
+    "fetch": "立即采集"
+  },
+  "stats": {
+    "articles": "文章数",
+    "sources": "信息源",
+    "keywords": "主题数",
+    "matched": "上榜次数",
+    "updated": "更新于 {time}"
+  },
+  "filters": {
+    "search": "搜索标题",
+    "allKeywords": "全部主题",
+    "keyword": "主题",
+    "allSources": "全部来源",
+    "source": "来源",
+    "allIndustries": "全部行业",
+    "industry": "行业",
+    "allRegions": "全部地区",
+    "region": "地区",
+    "clear": "清除"
+  },
+  "news": {
+    "title": "最新资讯",
+    "chartTitle": "各主题资讯数量",
+    "new": "新增",
+    "seen": "出现 {count} 次",
+    "weight": "热度 {value}",
+    "emptyTitle": "暂无资讯",
+    "emptyDescription": "请先配置信息源和关键词，然后点击「立即采集」获取最新新闻。"
+  },
+  "config": {
+    "saved": "配置已保存",
+    "industries": {
+      "title": "行业",
+      "description": "选择行业后会自动添加一组预设关键词。"
+    },
+    "regions": {
+      "title": "地区",
+      "description": "地区关键词组可将资讯聚焦到特定市场。"
+    },
+    "keywords": {
+      "title": "关键词与主题",
+      "description": "关键词之间为「或」关系；必含词必须全部匹配，排除词会过滤掉资讯。",
+      "addGroup": "添加主题",
+      "newGroup": "新主题",
+      "empty": "暂无主题。请添加主题或在上方选择行业。",
+      "groupName": "主题名称",
+      "wordPlaceholder": "输入关键词后按回车",
+      "required": "必含词（逗号分隔）",
+      "exclude": "排除词（逗号分隔）",
+      "maxItems": "最大条数"
+    },
+    "globalExcludes": {
+      "title": "全局排除词",
+      "description": "所有主题中包含这些词的资讯都会被过滤。",
+      "placeholder": "震惊, 传闻"
+    },
+    "sources": {
+      "title": "信息来源",
+      "description": "选择要采集的热榜和 RSS 订阅源，无需 API 密钥。",
+      "hotlists": "热榜",
+      "rss": "RSS 订阅源",
+      "hint": "勾选信息源即可在下一次采集中启用。",
+      "feedName": "订阅源名称",
+      "feedUrl": "订阅源地址",
+      "addFeed": "添加订阅源"
+    },
+    "report": {
+      "title": "报告设置",
+      "description": "控制排序方式、展示模式以及资讯时效。",
+      "mode": "报告模式",
+      "modeDaily": "当日汇总",
+      "modeCurrent": "当前榜单",
+      "modeIncremental": "仅新增",
+      "displayMode": "排序方式",
+      "displayKeyword": "主题 / 热度",
+      "displayPlatform": "来源",
+      "rankThreshold": "热榜排名阈值",
+      "maxNews": "每个主题最大条数（0 为不限）",
+      "freshness": "最大天数（0 为不限）"
+    }
+  },
+  "presets": {
+    "industries": {
+      "horticulture": "园艺",
+      "agriculture": "农业",
+      "gardenRetail": "园艺零售",
+      "landscape": "园林绿化",
+      "logistics": "物流",
+      "sustainability": "可持续发展"
+    },
+    "regions": {
+      "global": "全球",
+      "china": "中国",
+      "eastAsia": "东亚",
+      "europe": "欧洲",
+      "northAmerica": "北美",
+      "latinAmerica": "拉美"
+    }
+  },
+  "ingest": {
+    "done": "新增 {added} 条，更新 {updated} 条资讯"
+  }
+}

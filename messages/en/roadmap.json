@@ -107,6 +107,19 @@
       },
       "dependencies": {}
     },
+    "industry-news": {
+      "title": "Industry News",
+      "summary": "TrendRadar-style monitoring of hot lists and RSS feeds for the industries Oboya serves.",
+      "description": "Industry News gives the team one place to follow what is happening in horticulture, agriculture and adjacent markets. Administrators configure keyword groups, industries, regions and information sources in a graphical editor; a fetch collects headlines from Chinese hot lists and RSS feeds, matches them against those groups and keeps each story's rank history. Results appear as a weighted, filterable feed so reps can spot emerging topics before they reach the sales pipeline.",
+      "capabilities": {
+        "sources": "Hot-list and RSS source catalogue with one-click enablement and custom feeds",
+        "keywords": "Keyword groups with required, excluded and regular-expression words",
+        "regions": "Geographic keyword groups to focus the feed on a market",
+        "ranking": "TrendRadar-style weighting from rank, frequency and hotness",
+        "freshness": "Report modes and age filters that keep the feed current"
+      },
+      "dependencies": {}
+    },
     "forecasting": {
       "title": "Forecasting",
       "summary": "Forecasts by rep, team, company and period, measured against quotas.",

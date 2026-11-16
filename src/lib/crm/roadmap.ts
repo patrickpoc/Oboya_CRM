@@ -9,12 +9,14 @@ import {
   LifeBuoy,
   Mail,
   Megaphone,
+  Newspaper,
   Package,
   Plug,
   ShoppingCart,
   TrendingUp,
   Workflow,
 } from "lucide-react";
+import type { CrmModule } from "@/lib/crm/types";
 
 export const ROADMAP_GROUPS = ["sales", "service", "marketing", "insights", "platform"] as const;
 export type RoadmapGroup = (typeof ROADMAP_GROUPS)[number];
@@ -27,6 +29,8 @@ export type RoadmapModule = {
   icon: LucideIcon;
   href: string;
   status: RoadmapStatus;
+  /** Permission module for live entries; planned entries omit it. */
+  module?: CrmModule;
   /** Keys under `roadmap.modules.<id>.capabilities` */
   capabilityKeys: string[];
   /**
@@ -94,6 +98,16 @@ export const roadmap: RoadmapModule[] = [
     href: "/reports",
     status: "planned",
     capabilityKeys: ["builder", "grouping", "charts", "sharing", "dashboards", "export"],
+    dependencyKeys: [],
+  },
+  {
+    id: "industry-news",
+    group: "insights",
+    icon: Newspaper,
+    href: "/industry-news",
+    status: "live",
+    module: "industry_news",
+    capabilityKeys: ["sources", "keywords", "regions", "ranking", "freshness"],
     dependencyKeys: [],
   },
   {

@@ -15,8 +15,8 @@ import type { CrmModule } from "@/lib/crm/types";
 const hrefs = (items = crmNavigation) => flattenNavigation(items).map((item) => item.href);
 
 describe("roadmap registry", () => {
-  it("has the 14 planned modules with full copy", () => {
-    expect(roadmap).toHaveLength(14);
+  it("has the 15 roadmap modules with full copy", () => {
+    expect(roadmap).toHaveLength(15);
     const modules = roadmapMessages.modules as Record<
       string,
       { title: string; description: string; capabilities: Record<string, string>; dependencies: Record<string, string> }
@@ -38,9 +38,18 @@ describe("roadmap registry", () => {
 
   it("puts every planned module in the sidebar with a Soon flag", () => {
     const flat = flattenNavigation(crmNavigation);
-    for (const entry of roadmap) {
+    for (const entry of roadmap.filter((candidate) => candidate.status === "planned")) {
       const item = flat.find((i) => i.href === entry.href);
       expect(item?.soon, entry.id).toBe(true);
+    }
+  });
+
+  it("puts live modules in the sidebar with their permission module", () => {
+    const flat = flattenNavigation(crmNavigation);
+    for (const entry of roadmap.filter((candidate) => candidate.status === "live")) {
+      const item = flat.find((i) => i.href === entry.href);
+      expect(item?.module, entry.id).toBe(entry.module);
+      expect(item?.soon, entry.id).toBeFalsy();
     }
   });
 });

@@ -11,6 +11,7 @@ import record from "./record.json";
 import common from "./common.json";
 import nav from "./nav.json";
 import roadmap from "./roadmap.json";
+import industryNews from "./industryNews.json";
 import shell from "./shell.json";
 import auth from "./auth.json";
 
@@ -27,6 +28,7 @@ const messages = {
   accounts,
   nav,
   roadmap,
+  industryNews,
   shell,
   common,
   auth,
