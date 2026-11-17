@@ -4,6 +4,7 @@
   "tabs": {
     "mail": "E-mail",
     "drafts": "Rascunhos",
+    "sent": "Enviados locais",
     "accounts": "Caixas"
   },
   "actions": {
@@ -89,11 +90,26 @@
     "body": "Mensagem",
     "saved": "Rascunho salvo localmente",
     "sent": "Mensagem enviada",
-    "required": "Informe pelo menos um destinatário"
+    "required": "Informe pelo menos um destinatário",
+    "attachments": "Anexos",
+    "addAttachment": "Adicionar arquivos",
+    "removeAttachment": "Remover anexo",
+    "attachmentLimit": "Até {count} arquivos, {max} no total (não são salvos no servidor)",
+    "attachmentTooLarge": "Um arquivo ultrapassa o limite de {max}",
+    "attachmentTooMany": "São permitidos no máximo {count} anexos",
+    "attachmentTotalTooLarge": "Os anexos ultrapassam o limite de {max}"
   },
   "record": {
     "openHistory": "E-mails",
     "compose": "Escrever e-mail"
+  },
+  "sent": {
+    "empty": "Nenhum e-mail enviado localmente",
+    "emptyHint": "As mensagens que você enviar aparecem aqui com seus anexos. Nada é salvo no servidor.",
+    "deleted": "Mensagem excluída deste dispositivo",
+    "cleared": "Caixa de enviados locais esvaziada",
+    "clearAll": "Limpar tudo",
+    "summary": "{count} mensagens · {size} usados neste dispositivo"
   },
   "drafts": {
     "empty": "Nenhum rascunho local",

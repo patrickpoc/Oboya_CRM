@@ -5,10 +5,12 @@ import path from "node:path";
 vi.mock("server-only", () => ({}));
 
 import { decryptSecret, encryptSecret, hasCredentialsKey } from "../credentials";
+import { formatBytes, MAX_ATTACHMENT_BYTES, MAX_ATTACHMENT_COUNT, MAX_TOTAL_ATTACHMENT_BYTES } from "../attachment-limits";
 import { mapLimit } from "../map-limit";
 import { EMAIL_PRESETS, getEmailPreset, suggestAccountLabel } from "../presets";
 import { decodeAccountCursor, encodeAccountCursor } from "../rows";
 import { emailAccountInputSchema, emailSendSchema, emailSyncQuerySchema } from "../schemas";
+import { parseSendRequest } from "../send-payload";
 import { nextUidAfterBatch, uidWindow } from "../uid-range";
 
 afterEach(() => {
@@ -134,6 +136,78 @@ describe("email API authorisation", () => {
       expect(source).not.toContain("createServiceRoleClient");
       expect(source).not.toContain("supabaseAdmin");
     }
+  });
+});
+
+describe("outgoing attachments", () => {
+  const accountId = "11111111-1111-4111-8111-111111111111";
+  const payload = { accountId, to: ["buyer@example.com"], subject: "Hi", text: "Hello" };
+
+  function multipartRequest(files: { name: string; bytes: number; type?: string }[]): Request {
+    const form = new FormData();
+    form.set("payload", JSON.stringify(payload));
+    for (const file of files) {
+      form.append("attachments", new File([new Uint8Array(file.bytes)], file.name, {
+        type: file.type ?? "application/octet-stream",
+      }));
+    }
+    return new Request("http://localhost/api/crm/email/send", { method: "POST", body: form });
+  }
+
+  it("formats byte sizes for the UI", () => {
+    expect(formatBytes(512)).toBe("512 B");
+    expect(formatBytes(2048)).toBe("2 KB");
+    expect(formatBytes(3 * 1024 * 1024)).toBe("3.0 MB");
+  });
+
+  it("keeps the request body limit under the Vercel cap", () => {
+    expect(MAX_TOTAL_ATTACHMENT_BYTES).toBeLessThan(4.5 * 1024 * 1024);
+    expect(MAX_ATTACHMENT_BYTES).toBeLessThanOrEqual(MAX_TOTAL_ATTACHMENT_BYTES);
+    expect(MAX_ATTACHMENT_COUNT).toBeGreaterThan(0);
+  });
+
+  it("parses JSON sends with no attachments", async () => {
+    const request = new Request("http://localhost/api/crm/email/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const parsed = await parseSendRequest(request, emailSendSchema);
+    expect(parsed).not.toBeInstanceOf(Response);
+    if (parsed instanceof Response) return;
+    expect(parsed.attachments).toHaveLength(0);
+    expect(parsed.data.to).toEqual(["buyer@example.com"]);
+  });
+
+  it("reads multipart attachments into memory without persisting them", async () => {
+    const parsed = await parseSendRequest(
+      multipartRequest([{ name: "quote.pdf", bytes: 1024, type: "application/pdf" }]),
+      emailSendSchema
+    );
+    expect(parsed).not.toBeInstanceOf(Response);
+    if (parsed instanceof Response) return;
+    expect(parsed.attachments).toHaveLength(1);
+    expect(parsed.attachments[0].filename).toBe("quote.pdf");
+    expect(parsed.attachments[0].contentType).toBe("application/pdf");
+    expect(parsed.attachments[0].content.byteLength).toBe(1024);
+  });
+
+  it("rejects an oversized single attachment and an oversized total", async () => {
+    expect(await parseSendRequest(multipartRequest([{ name: "big.bin", bytes: MAX_ATTACHMENT_BYTES + 1 }]), emailSendSchema))
+      .toBeInstanceOf(Response);
+    const many = Array.from({ length: 3 }, (_, index) => ({
+      name: `part-${index}.bin`,
+      bytes: Math.floor(MAX_TOTAL_ATTACHMENT_BYTES / 2),
+    }));
+    expect(await parseSendRequest(multipartRequest(many), emailSendSchema)).toBeInstanceOf(Response);
+  });
+
+  it("rejects more attachments than the allowed count", async () => {
+    const files = Array.from({ length: MAX_ATTACHMENT_COUNT + 1 }, (_, index) => ({
+      name: `f-${index}.txt`,
+      bytes: 8,
+    }));
+    expect(await parseSendRequest(multipartRequest(files), emailSendSchema)).toBeInstanceOf(Response);
   });
 });
 

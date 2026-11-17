@@ -24,10 +24,11 @@ export type ApiFetchInit = RequestInit & {
 /** JSON fetch for `/api/crm/**`: no-store, JSON headers, throws ApiError on non-2xx. */
 export async function apiFetch<T>(url: string, init?: ApiFetchInit): Promise<T> {
   const { quiet, ...rest } = init ?? {};
+  const isForm = typeof FormData !== "undefined" && rest.body instanceof FormData;
   const response = await fetch(url, {
     ...rest,
     headers: {
-      "Content-Type": "application/json",
+      ...(isForm ? {} : { "Content-Type": "application/json" }),
       ...(quiet ? { [CRM_QUIET_HEADER]: "1" } : {}),
       ...(rest.headers ?? {}),
     },

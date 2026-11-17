@@ -16,6 +16,7 @@ import { EmailAccountEditor } from "./EmailAccountEditor";
 import { EmailComposer, type ComposeInitial } from "./EmailComposer";
 import { EmailList } from "./EmailList";
 import { EmailReader } from "./EmailReader";
+import { EmailSentBox } from "./EmailSentBox";
 import {
   applyMailAction,
   findCrmMatches,
@@ -30,7 +31,10 @@ import {
   cacheAccounts,
   deleteDraft,
   listDrafts,
+  listSent,
+  sentStorageBytes,
   type OutboxDraft,
+  type SentMessage,
 } from "@/lib/crm/email/local-db";
 import type { CrmEmailMatch, EmailAccount, EmailPreset, MailBody, MailHeader } from "@/lib/crm/email/types";
 
@@ -75,6 +79,8 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
   const [headers, setHeaders] = useState<MailHeader[]>([]);
   const [customerHeaders, setCustomerHeaders] = useState<MailHeader[]>([]);
   const [drafts, setDrafts] = useState<OutboxDraft[]>([]);
+  const [sent, setSent] = useState<SentMessage[]>([]);
+  const [sentBytes, setSentBytes] = useState(0);
   const [selected, setSelected] = useState<MailHeader | null>(null);
   const [body, setBody] = useState<MailBody | null>(null);
   const [match, setMatch] = useState<CrmEmailMatch | null>(null);
@@ -158,6 +164,17 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
     }
   }, []);
 
+  const refreshSent = useCallback(async () => {
+    try {
+      const [messages, bytes] = await Promise.all([listSent(), sentStorageBytes()]);
+      setSent(messages);
+      setSentBytes(bytes);
+    } catch {
+      setSent([]);
+      setSentBytes(0);
+    }
+  }, []);
+
   const refreshAccounts = useCallback(async () => {
     const [presetResponse, accountResponse] = await Promise.all([
       apiFetch<PresetResponse>("/api/crm/email/presets"),
@@ -181,7 +198,7 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
     void (async () => {
       try {
         const list = await refreshAccounts();
-        await refreshDrafts();
+        await Promise.all([refreshDrafts(), refreshSent()]);
         if (cancelled) return;
         const selectedAccount = chooseAccount(list);
         if (!initial.email) {
@@ -215,6 +232,7 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
   }, [
     refreshAccounts,
     refreshDrafts,
+    refreshSent,
     chooseAccount,
     initial.email,
     initial.folder,
@@ -374,6 +392,7 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
         <TabsList>
           <TabsTrigger value="mail">{t("tabs.mail")}</TabsTrigger>
           <TabsTrigger value="drafts">{t("tabs.drafts")}</TabsTrigger>
+          <TabsTrigger value="sent">{t("tabs.sent")}</TabsTrigger>
           <TabsTrigger value="accounts">{t("tabs.accounts")}</TabsTrigger>
         </TabsList>
         <TabsContent value="mail" className="mt-4">
@@ -487,6 +506,9 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
             </div>
           )}
         </TabsContent>
+        <TabsContent value="sent" className="mt-4">
+          <EmailSentBox messages={sent} storageBytes={sentBytes} onDeleted={() => refreshSent()} />
+        </TabsContent>
         <TabsContent value="accounts" className="mt-4">
           <EmailAccountEditor
             presets={presets}
@@ -506,6 +528,7 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
         initial={compose}
         onSent={() => {
           void refreshAccounts();
+          void refreshSent();
         }}
         onDraftsChanged={() => refreshDrafts()}
       />

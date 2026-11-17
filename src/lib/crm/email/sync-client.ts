@@ -14,7 +14,9 @@ import {
   attachmentKey,
   markHeaderFlags,
   removeCachedHeaders,
+  saveSentMessage,
 } from "./local-db";
+import type { SentMessage } from "./local-db";
 import type { CrmEmailMatch, EmailAccount, MailBody, MailHeader, MailSyncPage } from "./types";
 
 export type MailAction = "read" | "unread" | "flag" | "unflag" | "delete";
@@ -119,8 +121,60 @@ export type EmailDraftPayload = {
   logRecordType?: "contact" | "account";
 };
 
-export async function sendEmailMessage(payload: EmailDraftPayload): Promise<{ messageId: string }> {
-  return apiFetch("/api/crm/email/send", { method: "POST", body: JSON.stringify(payload) });
+/**
+ * Send a message. Attachments go up as multipart/form-data, are read into
+ * memory on the server and handed straight to SMTP — never persisted there.
+ * On success a full copy (including each attachment Blob) is written to the
+ * local sent box so it can be read again and deleted to reclaim space.
+ */
+export async function sendEmailMessage(
+  payload: EmailDraftPayload,
+  files: File[] = [],
+  account?: EmailAccount
+): Promise<{ messageId: string }> {
+  let body: BodyInit;
+  if (files.length) {
+    const form = new FormData();
+    form.set("payload", JSON.stringify(payload));
+    for (const file of files) form.append("attachments", file, file.name);
+    body = form;
+  } else {
+    body = JSON.stringify(payload);
+  }
+  const result = await apiFetch<{ messageId: string }>("/api/crm/email/send", {
+    method: "POST",
+    body,
+  });
+
+  const attachmentRows = files.map((file, index) => ({
+    id: `${index}:${file.name}:${file.size}`,
+    filename: file.name,
+    contentType: file.type || "application/octet-stream",
+    blob: file,
+    size: file.size,
+  }));
+  const bytes = new TextEncoder().encode(payload.text + payload.html).length +
+    attachmentRows.reduce((sum, row) => sum + row.size, 0);
+  const sent: SentMessage = {
+    id: crypto.randomUUID(),
+    accountId: payload.accountId,
+    accountLabel: account?.label ?? "",
+    from: account?.email ?? "",
+    to: payload.to,
+    cc: payload.cc,
+    subject: payload.subject,
+    text: payload.text,
+    html: payload.html,
+    date: new Date().toISOString(),
+    messageId: result.messageId,
+    inReplyTo: payload.inReplyTo,
+    attachments: attachmentRows,
+    bytes,
+    logRecordId: payload.logRecordId,
+    logRecordType: payload.logRecordType,
+  };
+  await saveSentMessage(sent).catch(() => undefined);
+  return result;
 }
 
 export async function findCrmMatches(emails: string[]): Promise<CrmEmailMatch[]> {

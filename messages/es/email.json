@@ -4,6 +4,7 @@
   "tabs": {
     "mail": "Correo",
     "drafts": "Borradores",
+    "sent": "Enviados locales",
     "accounts": "Buzones"
   },
   "actions": {
@@ -89,11 +90,26 @@
     "body": "Mensaje",
     "saved": "Borrador guardado localmente",
     "sent": "Mensaje enviado",
-    "required": "Añade al menos un destinatario"
+    "required": "Añade al menos un destinatario",
+    "attachments": "Adjuntos",
+    "addAttachment": "Añadir archivos",
+    "removeAttachment": "Quitar adjunto",
+    "attachmentLimit": "Hasta {count} archivos, {max} en total (no se guardan en el servidor)",
+    "attachmentTooLarge": "Un archivo supera el límite de {max}",
+    "attachmentTooMany": "Se permiten como máximo {count} adjuntos",
+    "attachmentTotalTooLarge": "Los adjuntos superan el límite de {max}"
   },
   "record": {
     "openHistory": "Correos",
     "compose": "Redactar correo"
+  },
+  "sent": {
+    "empty": "No hay correos enviados localmente",
+    "emptyHint": "Los mensajes que envíes aparecen aquí con sus adjuntos. Nada se guarda en el servidor.",
+    "deleted": "Mensaje eliminado de este dispositivo",
+    "cleared": "Bandeja de enviados locales vaciada",
+    "clearAll": "Vaciar todo",
+    "summary": "{count} mensajes · {size} usados en este dispositivo"
   },
   "drafts": {
     "empty": "No hay borradores locales",

@@ -4,6 +4,7 @@
   "tabs": {
     "mail": "Mail",
     "drafts": "Drafts",
+    "sent": "Local sent",
     "accounts": "Mailboxes"
   },
   "actions": {
@@ -89,11 +90,26 @@
     "body": "Message",
     "saved": "Draft saved locally",
     "sent": "Message sent",
-    "required": "Add at least one recipient"
+    "required": "Add at least one recipient",
+    "attachments": "Attachments",
+    "addAttachment": "Add files",
+    "removeAttachment": "Remove attachment",
+    "attachmentLimit": "Up to {count} files, {max} total (not stored on the server)",
+    "attachmentTooLarge": "A file exceeds the {max} limit",
+    "attachmentTooMany": "At most {count} attachments are allowed",
+    "attachmentTotalTooLarge": "Attachments exceed the {max} limit"
   },
   "record": {
     "openHistory": "Emails",
     "compose": "Write email"
+  },
+  "sent": {
+    "empty": "No locally sent mail",
+    "emptyHint": "Messages you send appear here with their attachments. Nothing is stored on the server.",
+    "deleted": "Message deleted from this device",
+    "cleared": "Local sent box cleared",
+    "clearAll": "Clear all",
+    "summary": "{count} messages · {size} used on this device"
   },
   "drafts": {
     "empty": "No local drafts",

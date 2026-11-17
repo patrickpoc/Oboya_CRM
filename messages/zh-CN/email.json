@@ -4,6 +4,7 @@
   "tabs": {
     "mail": "邮件",
     "drafts": "草稿",
+    "sent": "本地已发送",
     "accounts": "邮箱管理"
   },
   "actions": {
@@ -89,11 +90,26 @@
     "body": "正文",
     "saved": "草稿已保存到本地",
     "sent": "邮件已发送",
-    "required": "请至少填写一位收件人"
+    "required": "请至少填写一位收件人",
+    "attachments": "附件",
+    "addAttachment": "添加文件",
+    "removeAttachment": "移除附件",
+    "attachmentLimit": "最多 {count} 个文件，总计 {max}（不保存在服务器）",
+    "attachmentTooLarge": "单个文件超过 {max} 限制",
+    "attachmentTooMany": "最多只能添加 {count} 个附件",
+    "attachmentTotalTooLarge": "附件总大小超过 {max} 限制"
   },
   "record": {
     "openHistory": "往来邮件",
     "compose": "写邮件"
+  },
+  "sent": {
+    "empty": "暂无本地已发送邮件",
+    "emptyHint": "你发送的邮件及附件会保存在这里，不会存储到服务器。",
+    "deleted": "邮件已从此设备删除",
+    "cleared": "本地已发送箱已清空",
+    "clearAll": "清空全部",
+    "summary": "共 {count} 封 · 占用 {size} 本地空间"
   },
   "drafts": {
     "empty": "暂无本地草稿",

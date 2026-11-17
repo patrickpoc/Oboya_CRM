@@ -45,6 +45,34 @@ export type MailSyncState = {
   searchKey?: string;
 };
 
+/** A message sent from this browser. Everything, including attachments, lives only in IndexedDB. */
+export type SentAttachment = {
+  id: string;
+  filename: string;
+  contentType: string;
+  blob: Blob;
+  size: number;
+};
+
+export type SentMessage = {
+  id: string;
+  accountId: string;
+  accountLabel: string;
+  from: string;
+  to: string[];
+  cc: string[];
+  subject: string;
+  text: string;
+  html: string;
+  date: string;
+  messageId?: string;
+  inReplyTo?: string;
+  attachments: SentAttachment[];
+  bytes: number;
+  logRecordId?: string;
+  logRecordType?: "contact" | "account";
+};
+
 type CachedContact = CrmEmailMatch & { cachedAt: string };
 
 class EmailDatabase extends Dexie {
@@ -56,6 +84,7 @@ class EmailDatabase extends Dexie {
   drafts!: Table<OutboxDraft, string>;
   syncState!: Table<MailSyncState, string>;
   contacts!: Table<CachedContact, string>;
+  sent!: Table<SentMessage, string>;
 
   constructor() {
     super("oboya-email");
@@ -68,6 +97,9 @@ class EmailDatabase extends Dexie {
       drafts: "id, accountId, updatedAt, synced",
       syncState: "key, accountId, folder, [accountId+folder]",
       contacts: "id, email, cachedAt",
+    });
+    this.version(2).stores({
+      sent: "id, accountId, date, [accountId+date]",
     });
   }
 }
@@ -208,6 +240,36 @@ export function listDrafts(accountId?: string): Promise<OutboxDraft[]> {
 
 export async function deleteDraft(id: string): Promise<void> {
   await emailDb().drafts.delete(id);
+}
+
+/** Total bytes held by the local sent box, used to show reclaimable space. */
+export async function sentStorageBytes(): Promise<number> {
+  const rows = await emailDb().sent.toArray();
+  return rows.reduce((sum, row) => sum + row.bytes, 0);
+}
+
+export function listSent(accountId?: string): Promise<SentMessage[]> {
+  const table = emailDb().sent;
+  const query = accountId ? table.where("accountId").equals(accountId) : table.toCollection();
+  return query.reverse().sortBy("date");
+}
+
+export async function saveSentMessage(message: SentMessage): Promise<void> {
+  await emailDb().sent.put(message);
+}
+
+export async function deleteSentMessage(id: string): Promise<void> {
+  await emailDb().sent.delete(id);
+}
+
+export async function clearSentMessages(accountId?: string): Promise<void> {
+  const db = emailDb();
+  if (!accountId) {
+    await db.sent.clear();
+    return;
+  }
+  const keys = await db.sent.where("accountId").equals(accountId).primaryKeys();
+  await db.sent.bulkDelete(keys);
 }
 
 export function defaultTemplates(): EmailTemplate[] {

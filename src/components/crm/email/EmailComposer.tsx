@@ -1,17 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Send } from "lucide-react";
-import { apiFetch } from "@/components/crm/common/api";
+import { Paperclip, Send, X } from "lucide-react";
 import { selectClass } from "@/components/crm/setup/shared";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  MAX_ATTACHMENT_BYTES,
+  MAX_ATTACHMENT_COUNT,
+  MAX_TOTAL_ATTACHMENT_BYTES,
+  formatBytes,
+} from "@/lib/crm/email/attachment-limits";
 import { emailDb, deleteDraft, ensureTemplates, saveDraft, type EmailTemplate } from "@/lib/crm/email/local-db";
+import { sendEmailMessage } from "@/lib/crm/email/sync-client";
 import type { EmailAccount } from "@/lib/crm/email/types";
 
 export type ComposeInitial = {
@@ -24,6 +30,8 @@ export type ComposeInitial = {
   recordId?: string;
   recordType?: "contact" | "account";
 };
+
+type PickedFile = { id: string; file: File };
 
 export function EmailComposer({
   open,
@@ -41,12 +49,14 @@ export function EmailComposer({
   onDraftsChanged?: () => void | Promise<void>;
 }) {
   const t = useTranslations("email");
+  const fileInput = useRef<HTMLInputElement>(null);
   const [accountId, setAccountId] = useState("");
   const [to, setTo] = useState("");
   const [cc, setCc] = useState("");
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [draftId, setDraftId] = useState("");
+  const [files, setFiles] = useState<PickedFile[]>([]);
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
   const [busy, setBusy] = useState(false);
 
@@ -54,6 +64,7 @@ export function EmailComposer({
     if (!open) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- reset the form when the dialog opens
     setDraftId(initial?.id ?? "");
+    setFiles([]);
     void (async () => {
       const stored = initial?.id ? await emailDb().drafts.get(initial.id).catch(() => undefined) : undefined;
       setAccountId(stored?.accountId ?? accounts[0]?.id ?? "");
@@ -73,6 +84,32 @@ export function EmailComposer({
       .split(/[,;\n]/)
       .map((entry) => entry.trim())
       .filter(Boolean);
+
+  const totalSize = files.reduce((sum, entry) => sum + entry.file.size, 0);
+
+  const addFiles = (picked: FileList | null) => {
+    if (!picked?.length) return;
+    const incoming = Array.from(picked);
+    const next = [...files];
+    for (const file of incoming) {
+      if (file.size > MAX_ATTACHMENT_BYTES) {
+        toast.error(t("compose.attachmentTooLarge", { max: formatBytes(MAX_ATTACHMENT_BYTES) }));
+        continue;
+      }
+      if (next.length >= MAX_ATTACHMENT_COUNT) {
+        toast.error(t("compose.attachmentTooMany", { max: MAX_ATTACHMENT_COUNT }));
+        break;
+      }
+      next.push({ id: crypto.randomUUID(), file });
+    }
+    const sum = next.reduce((acc, entry) => acc + entry.file.size, 0);
+    if (sum > MAX_TOTAL_ATTACHMENT_BYTES) {
+      toast.error(t("compose.attachmentTotalTooLarge", { max: formatBytes(MAX_TOTAL_ATTACHMENT_BYTES) }));
+    } else {
+      setFiles(next);
+    }
+    if (fileInput.current) fileInput.current.value = "";
+  };
 
   const draft = () => ({
     id: draftId || crypto.randomUUID(),
@@ -104,11 +141,15 @@ export function EmailComposer({
       toast.error(t("compose.required"));
       return;
     }
+    if (totalSize > MAX_TOTAL_ATTACHMENT_BYTES) {
+      toast.error(t("compose.attachmentTotalTooLarge", { max: formatBytes(MAX_TOTAL_ATTACHMENT_BYTES) }));
+      return;
+    }
     setBusy(true);
     try {
-      await apiFetch("/api/crm/email/send", {
-        method: "POST",
-        body: JSON.stringify({
+      const account = accounts.find((entry) => entry.id === accountId);
+      await sendEmailMessage(
+        {
           accountId,
           to: list,
           cc: recipients(cc),
@@ -118,8 +159,10 @@ export function EmailComposer({
           inReplyTo: initial?.inReplyTo,
           logRecordId: initial?.recordId,
           logRecordType: initial?.recordType,
-        }),
-      });
+        },
+        files.map((entry) => entry.file),
+        account
+      );
       if (draftId) await deleteDraft(draftId).catch(() => undefined);
       toast.success(t("compose.sent"));
       onOpenChange(false);
@@ -183,7 +226,47 @@ export function EmailComposer({
           </div>
           <div className="space-y-1.5">
             <Label>{t("compose.body")}</Label>
-            <Textarea rows={10} value={body} onChange={(event) => setBody(event.target.value)} />
+            <Textarea rows={9} value={body} onChange={(event) => setBody(event.target.value)} />
+          </div>
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <Label>{t("compose.attachments")}</Label>
+              <span className="text-[11px] text-muted-foreground">
+                {t("compose.attachmentLimit", { max: formatBytes(MAX_TOTAL_ATTACHMENT_BYTES), count: MAX_ATTACHMENT_COUNT })}
+              </span>
+            </div>
+            <input
+              ref={fileInput}
+              type="file"
+              multiple
+              className="hidden"
+              onChange={(event) => addFiles(event.target.files)}
+            />
+            <Button size="sm" variant="outline" className="rounded-full" onClick={() => fileInput.current?.click()}>
+              <Paperclip className="size-3.5" /> {t("compose.addAttachment")}
+            </Button>
+            {files.length ? (
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {files.map((entry) => (
+                  <span
+                    key={entry.id}
+                    className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/40 py-0.5 pl-2 pr-1 text-xs"
+                  >
+                    <span className="max-w-[160px] truncate">{entry.file.name}</span>
+                    <span className="text-muted-foreground">{formatBytes(entry.file.size)}</span>
+                    <button
+                      type="button"
+                      className="rounded-full p-0.5 text-muted-foreground hover:text-destructive"
+                      onClick={() => setFiles((current) => current.filter((item) => item.id !== entry.id))}
+                      aria-label={t("compose.removeAttachment")}
+                    >
+                      <X className="size-3" />
+                    </button>
+                  </span>
+                ))}
+                <span className="self-center text-[11px] text-muted-foreground">{formatBytes(totalSize)}</span>
+              </div>
+            ) : null}
           </div>
         </div>
         <DialogFooter>

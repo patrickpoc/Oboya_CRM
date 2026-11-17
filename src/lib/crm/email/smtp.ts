@@ -26,9 +26,16 @@ export async function verifySmtp(config: SmtpConfig): Promise<void> {
   await transport(config).verify();
 }
 
+export type MailAttachment = {
+  filename: string;
+  contentType: string;
+  content: Buffer;
+};
+
 export async function sendMail(
   config: SmtpConfig,
-  input: Pick<EmailSendInput, "to" | "cc" | "subject" | "text" | "html" | "inReplyTo">
+  input: Pick<EmailSendInput, "to" | "cc" | "subject" | "text" | "html" | "inReplyTo">,
+  attachments: MailAttachment[] = []
 ): Promise<{ messageId: string }> {
   const info = await transport(config).sendMail({
     from: config.auth.user,
@@ -38,6 +45,13 @@ export async function sendMail(
     text: input.text,
     html: input.html || undefined,
     inReplyTo: input.inReplyTo,
+    attachments: attachments.length
+      ? attachments.map((attachment) => ({
+          filename: attachment.filename,
+          contentType: attachment.contentType,
+          content: attachment.content,
+        }))
+      : undefined,
   });
   return { messageId: info.messageId };
 }
