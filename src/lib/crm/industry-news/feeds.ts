@@ -4,6 +4,14 @@ import type { NewsSource, RawNewsItem, SourceError } from "./types";
 
 const HOTLIST_API = "https://newsnow.busiyi.world/api/s";
 const MAX_SUMMARY = 500;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** TrendRadar's per-feed max_age_days; 0 means no limit. Undated items survive. */
+function withinAge(item: RawNewsItem, maxAgeDays: number, now: number): boolean {
+  if (maxAgeDays <= 0 || !item.publishedAt) return true;
+  const time = Date.parse(item.publishedAt);
+  return Number.isNaN(time) || time >= now - maxAgeDays * DAY_MS;
+}
 
 function decodeEntities(value: string): string {
   return value
@@ -139,7 +147,7 @@ async function fetchHotlist(source: NewsSource, signal?: AbortSignal): Promise<R
     .slice(0, source.maxItems ?? 50);
 }
 
-async function fetchRss(source: NewsSource, signal?: AbortSignal): Promise<RawNewsItem[]> {
+async function fetchRss(source: NewsSource, signal: AbortSignal | undefined, defaultMaxAgeDays: number): Promise<RawNewsItem[]> {
   if (!source.url) throw new Error("missing feed URL");
   const response = await fetch(source.url, {
     signal,
@@ -149,17 +157,26 @@ async function fetchRss(source: NewsSource, signal?: AbortSignal): Promise<RawNe
     },
   });
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  return parseFeed(await response.text(), source).slice(0, source.maxItems ?? 30);
+  const maxAgeDays = source.maxAgeDays ?? defaultMaxAgeDays;
+  const now = Date.now();
+  return parseFeed(await response.text(), source)
+    .filter((item) => withinAge(item, maxAgeDays, now))
+    .slice(0, source.maxItems ?? 30);
 }
 
 /** Per-source failures never stop the other sources from being ingested. */
 export async function fetchSources(
   sources: NewsSource[],
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  defaultMaxAgeDays = 0
 ): Promise<{ items: RawNewsItem[]; errors: SourceError[] }> {
   const enabled = sources.filter((source) => source.enabled);
   const results = await Promise.allSettled(
-    enabled.map((source) => (source.type === "rss" ? fetchRss(source, signal) : fetchHotlist(source, signal)))
+    enabled.map((source) =>
+      source.type === "rss"
+        ? fetchRss(source, signal, defaultMaxAgeDays)
+        : fetchHotlist(source, signal)
+    )
   );
   const items: RawNewsItem[] = [];
   const errors: SourceError[] = [];

@@ -46,6 +46,7 @@
   },
   "config": {
     "saved": "Configuration saved",
+    "readOnlyHint": "Sources are managed globally by a super admin.",
     "industries": {
       "title": "Industries",
       "description": "Each industry adds a ready-made group of keywords to monitor."

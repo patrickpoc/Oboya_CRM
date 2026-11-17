@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { industryNewsConfigSchema } from "@/lib/crm/industry-news/schemas";
 import { loadStoredConfig, saveStoredConfig } from "@/lib/crm/industry-news/server";
 import { createDefaultConfig } from "@/lib/crm/industry-news/config";
+import { canManageIndustryNews } from "@/lib/crm/industry-news/permissions";
 import { dbErrorResponse, parseBody } from "@/lib/crm/setup/api.server";
 import { crmGuard } from "@/lib/crm/server/require-crm-auth";
 
@@ -27,6 +28,9 @@ export async function GET() {
 export async function PUT(request: Request) {
   const guard = await crmGuard("industry_news", "edit");
   if (guard instanceof NextResponse) return guard;
+  if (!canManageIndustryNews(guard.user)) {
+    return NextResponse.json({ error: "Forbidden", code: "forbidden" }, { status: 403 });
+  }
   const body = await parseBody(request, industryNewsConfigSchema);
   if (body instanceof NextResponse) return body;
   try {

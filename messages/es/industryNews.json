@@ -46,6 +46,7 @@
   },
   "config": {
     "saved": "Configuración guardada",
+    "readOnlyHint": "Las fuentes las gestiona globalmente un superadministrador.",
     "industries": {
       "title": "Industrias",
       "description": "Cada industria añade un grupo de palabras clave listo para supervisar."

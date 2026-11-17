@@ -15,6 +15,7 @@ import {
   cacheKey,
   invalidateIndustryNewsCache,
 } from "@/lib/crm/industry-news/client-cache";
+import { canManageIndustryNews } from "@/lib/crm/industry-news/permissions";
 import type { IndustryNewsConfig, NewsItem } from "@/lib/crm/industry-news/types";
 import { capPerKeyword, sortNewsItems } from "@/lib/crm/industry-news/matching";
 import { IndustryNewsConfigEditor } from "./IndustryNewsConfigEditor";
@@ -55,8 +56,8 @@ function cacheParams(filters: NewsFilters, cursor?: string | null) {
 export function IndustryNewsView() {
   const t = useTranslations("industryNews");
   const errorMessage = useApiErrorMessage("setup");
-  const { can, user } = useCrm();
-  const canEdit = can("industry_news", "edit");
+  const { user } = useCrm();
+  const canEdit = canManageIndustryNews(user);
 
   const [config, setConfig] = useState<IndustryNewsConfig | null>(null);
   const [configId, setConfigId] = useState("");
@@ -70,6 +71,7 @@ export function IndustryNewsView() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [busy, setBusy] = useState(false);
   const [tab, setTab] = useState("news");
+  const activeTab = canEdit ? tab : "news";
 
   /** Config + first page arrive together; repeat views come from session cache. */
   const loadInitial = useCallback(async () => {
@@ -183,6 +185,9 @@ export function IndustryNewsView() {
                 {t("stats.updated", { time: new Date(updatedAt).toLocaleString() })}
               </span>
             ) : null}
+            {!canEdit ? (
+              <span className="text-xs text-muted-foreground">{t("config.readOnlyHint")}</span>
+            ) : null}
           </div>
         }
         actions={
@@ -215,10 +220,10 @@ export function IndustryNewsView() {
       {error && !config ? (
         <ErrorState onRetry={() => void loadInitial()} />
       ) : !config ? null : (
-        <Tabs value={tab} onValueChange={setTab}>
+        <Tabs value={activeTab} onValueChange={setTab}>
           <TabsList>
             <TabsTrigger value="news">{t("tabs.news")}</TabsTrigger>
-            <TabsTrigger value="config">{t("tabs.config")}</TabsTrigger>
+            {canEdit ? <TabsTrigger value="config">{t("tabs.config")}</TabsTrigger> : null}
           </TabsList>
           <TabsContent value="news">
             <IndustryNewsFeed
@@ -238,16 +243,18 @@ export function IndustryNewsView() {
               onLoadMore={() => void loadMore()}
             />
           </TabsContent>
-          <TabsContent value="config">
-            <IndustryNewsConfigEditor
-              value={config}
-              disabled={!canEdit || busy}
-              onChange={(next) => {
-                setConfig(next);
-                setDirty(true);
-              }}
-            />
-          </TabsContent>
+          {canEdit ? (
+            <TabsContent value="config">
+              <IndustryNewsConfigEditor
+                value={config}
+                disabled={busy}
+                onChange={(next) => {
+                  setConfig(next);
+                  setDirty(true);
+                }}
+              />
+            </TabsContent>
+          ) : null}
         </Tabs>
       )}
     </>

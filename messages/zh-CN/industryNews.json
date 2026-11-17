@@ -46,6 +46,7 @@
   },
   "config": {
     "saved": "配置已保存",
+    "readOnlyHint": "信息来源由超级管理员全局管理。",
     "industries": {
       "title": "行业",
       "description": "选择行业后会自动添加一组预设关键词。"

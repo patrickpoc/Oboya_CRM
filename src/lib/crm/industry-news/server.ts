@@ -30,14 +30,15 @@ const CONFIG_COLUMNS = "id, owner_id, name, config, updated_at";
 const INGEST_COLUMNS =
   "id, source_id, url, ranks, rank_timeline, seen_count, first_seen_at, published_at, summary, author, news_date";
 
+/** The whole CRM shares one global config row (is_global = true). */
 export async function loadStoredConfig(
   supabase: CrmSupabaseClient,
-  userId: string
+  _userId: string
 ): Promise<StoredConfig | null> {
   const { data, error } = await supabase
     .from("crm_industry_news_configs")
     .select(CONFIG_COLUMNS)
-    .eq("owner_id", userId)
+    .eq("is_global", true)
     .is("deleted_at", null)
     .maybeSingle();
   if (error) throw error;
@@ -192,7 +193,11 @@ export async function ingestNews(
   stored: StoredConfig
 ): Promise<IngestResult> {
   const config = stored.config;
-  const { items: rawItems, errors } = await fetchSources(config.sources, AbortSignal.timeout(30_000));
+  const { items: rawItems, errors } = await fetchSources(
+    config.sources,
+    AbortSignal.timeout(30_000),
+    config.freshnessDays
+  );
   const result: IngestResult = {
     fetched: rawItems.length,
     added: 0,

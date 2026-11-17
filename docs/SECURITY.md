@@ -43,6 +43,12 @@ Apply this checklist at deploy time. The CRM holds customer and lead personal da
 - **Never relay the CRM response to visitors:** the website forwards submissions server-side, without blocking the visitor, and shows its own confirmation. CRM ids and errors stay in server logs.
 - **WAF rate limiting:** the endpoint has no per-caller limit in the app. Add a Vercel Firewall rule that rate-limits `POST /api/inbound/leads` (for example per IP, tight enough that only the website's servers fit), and enable Attack Challenge if the path is flooded.
 
+## 4b. Industry News cron (`GET /api/crm/industry-news/cron`)
+
+- Vercel Cron calls this route once a day (`0 0 * * *` UTC = 08:00 UTC+8). It requires `Authorization: Bearer <CRON_SECRET>`; a missing secret returns 503 and a bad/omitted header returns 401. The header is compared in constant time.
+- The route uses the service role only from `src/lib/crm/server/admin-only/industry-news-cron.ts`. The hardened RPCs accept the service role **only** for the global config row; ordinary users cannot reach them even by direct REST calls because RLS and `crm_is_admin()` still apply to user sessions.
+- `CRON_SECRET` is server-only: generate it with `openssl rand -hex 32`, set it in Vercel as a sensitive env var, never prefix it `NEXT_PUBLIC_`, and rotate it if it may have leaked.
+
 ## 5. Headers
 
 `next.config.ts` sets these on every path:
@@ -58,7 +64,7 @@ Apply this checklist at deploy time. The CRM holds customer and lead personal da
 
 - Server-only: `SUPABASE_SERVICE_ROLE_KEY`, `INBOUND_LEADS_SECRET`, the DB password, and `ADMIN_*` / `DEMO_PASSWORD`. None of them may ever get a `NEXT_PUBLIC_` prefix.
 - `.env.local` and `.env` are git-ignored. `.env.example` holds names only. Agents never read or print `.env*`.
-- Vercel: set `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SITE_URL`, `INBOUND_LEADS_SECRET`, and optionally `CRM_REQUIRE_MFA`. Mark the secret ones as sensitive. Do not set `SEED_*` or `ADMIN_*` there.
+- Vercel: set `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SITE_URL`, `INBOUND_LEADS_SECRET`, `CRON_SECRET`, and optionally `CRM_REQUIRE_MFA`. Mark the secret ones as sensitive. Do not set `SEED_*` or `ADMIN_*` there.
 
 > **Action items before production:**
 > 1. **Rotate the `service_role` key and the database password.** Both were shared during setup. Rotate the key under Project Settings → API (JWT keys), reset the DB password under Project Settings → Database, then update Vercel and any local `.env.local`.
@@ -71,6 +77,7 @@ Apply this checklist at deploy time. The CRM holds customer and lead personal da
 - `GET /dashboard` without a session redirects to `/login`.
 - Anon REST: `GET https://<project-ref>.supabase.co/rest/v1/crm_leads` (repeat for `crm_accounts`, `crm_contacts`, `crm_opportunities`, `crm_activities`, `crm_users` and `crm_audit_logs`) with only the anon key returns `401` (permission denied), never rows or an empty `[]`.
 - `POST /api/inbound/leads` with no or a bad signature returns `401`.
+- `GET /api/crm/industry-news/cron` with no or a bad `Authorization` header returns `401`.
 - The response headers on `/login` include everything in §5, including `Strict-Transport-Security` and `Cache-Control: no-store`.
 - The page source has `<meta name="robots" content="noindex, nofollow">`.
 - Log in as the admin and confirm MFA is required when `CRM_REQUIRE_MFA=true`.

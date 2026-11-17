@@ -46,6 +46,7 @@
   },
   "config": {
     "saved": "Configuração salva",
+    "readOnlyHint": "As fontes são gerenciadas globalmente por um superadministrador.",
     "industries": {
       "title": "Indústrias",
       "description": "Cada indústria adiciona um grupo pronto de palavras-chave para acompanhar."

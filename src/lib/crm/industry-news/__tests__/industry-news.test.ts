@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createDefaultConfig, normaliseConfig } from "../config";
 import { cacheKey, cachedFetch, invalidateIndustryNewsCache } from "../client-cache";
 import { decodeCursor, encodeCursor } from "../cursor";
-import { parseFeed } from "../feeds";
+import { fetchSources, parseFeed } from "../feeds";
 import {
   applyFreshness,
   calculateWeight,
@@ -12,7 +12,7 @@ import {
   mergeNewsItem,
   sortNewsItems,
 } from "../matching";
-import type { IndustryNewsConfig, KeywordGroup, NewsItem, RawNewsItem } from "../types";
+import type { IndustryNewsConfig, KeywordGroup, NewsItem, NewsSource, RawNewsItem } from "../types";
 
 const group = (overrides: Partial<KeywordGroup> = {}): KeywordGroup => ({
   id: "g1",
@@ -29,6 +29,43 @@ const config = (overrides: Partial<IndustryNewsConfig> = {}): IndustryNewsConfig
   keywords: [group()],
   globalExcludes: [],
   ...overrides,
+});
+
+describe("TrendRadar first-run preset", () => {
+  it("loads the server-configured sources and keyword groups without setup", () => {
+    const preset = createDefaultConfig();
+    const hotlists = preset.sources.filter((source) => source.type === "hotlist");
+    const feeds = preset.sources.filter((source) => source.type === "rss");
+
+    expect(hotlists).toHaveLength(11);
+    expect(feeds).toHaveLength(21);
+    expect(preset.keywords).toHaveLength(13);
+    expect(preset.globalExcludes).toEqual(["震惊"]);
+    expect(preset.freshnessDays).toBe(0);
+    expect(feeds.find((source) => source.id === "kekkila-bvb")?.maxAgeDays).toBe(14);
+    expect(feeds.every((source) => source.url?.startsWith("https://"))).toBe(true);
+    expect(feeds.some((source) => source.id === "ruanyifeng")).toBe(false);
+    expect(feeds.some((source) => source.id === "hortidaily-es")).toBe(false);
+  });
+
+  it("compiles every preset regex and matches representative headlines", () => {
+    const preset = createDefaultConfig();
+    for (const group of preset.keywords) {
+      const pattern = group.words[0]?.text.replace(/^\/|\/$/g, "") ?? "";
+      expect(() => new RegExp(pattern, "i")).not.toThrow();
+    }
+
+    const byName = (name: string) => {
+      const group = preset.keywords.find((entry) => entry.name === name);
+      if (!group) throw new Error("missing preset group " + name);
+      return group;
+    };
+
+    expect(matchesGroup("EU tariffs on flowers", byName("欧洲贸易"), preset.globalExcludes)).toBe(true);
+    expect(matchesGroup("美国加大对华农产品关税", byName("美国贸易"), preset.globalExcludes)).toBe(true);
+    expect(matchesGroup("震惊：园艺出口创新高", byName("园艺花卉"), preset.globalExcludes)).toBe(false);
+    expect(matchesGroup("Peat-free growing media demand rises", byName("栽培基质"), preset.globalExcludes)).toBe(true);
+  });
 });
 
 describe("keyword matching (TrendRadar port)", () => {
@@ -228,6 +265,61 @@ describe("display helpers", () => {
     expect(cacheKey("user-1", "bootstrap", { b: "2", a: "1", empty: "", skipped: undefined })).toBe(
       "oboya:industry-news:user-1:bootstrap:a=1&b=2"
     );
+  });
+});
+
+describe("per-source RSS freshness", () => {
+  const source = (maxAgeDays?: number): NewsSource => ({
+    id: "feed",
+    name: "Feed",
+    url: "https://example.com/feed",
+    type: "rss",
+    enabled: true,
+    maxAgeDays,
+  });
+
+  const rss = (entries: Array<[string, string]>) =>
+    `<?xml version="1.0"?><rss><channel>${entries
+      .map(
+        ([title, date]) =>
+          `<item><title>${title}</title><link>https://example.com/${title}</link><pubDate>${date}</pubDate></item>`
+      )
+      .join("")}</channel></rss>`;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-11-16T00:00:00Z"));
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.useRealTimers();
+  });
+
+  it("applies each feed's maxAgeDays ahead of the global default", async () => {
+    const xml = rss([
+      ["old", "2026-11-01T00:00:00Z"],
+      ["recent", "2026-11-15T00:00:00Z"],
+    ]);
+    const fetchMock = vi.fn(async () => ({ ok: true, text: async () => xml }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const limited = await fetchSources([source(14)], undefined, 1);
+    expect(limited.items.map((item) => item.title)).toEqual(["recent"]);
+
+    const unlimited = await fetchSources([source(0)], undefined, 1);
+    expect(unlimited.items.map((item) => item.title)).toEqual(["old", "recent"]);
+  });
+
+  it("uses the global default when a feed has no override", async () => {
+    const xml = rss([
+      ["old", "2026-11-01T00:00:00Z"],
+      ["recent", "2026-11-15T00:00:00Z"],
+    ]);
+    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, text: async () => xml })));
+
+    const result = await fetchSources([source()], undefined, 7);
+    expect(result.items.map((item) => item.title)).toEqual(["recent"]);
   });
 });
 

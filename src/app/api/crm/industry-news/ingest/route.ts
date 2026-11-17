@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createDefaultConfig } from "@/lib/crm/industry-news/config";
+import { canManageIndustryNews } from "@/lib/crm/industry-news/permissions";
 import { ingestNews, loadStoredConfig, saveStoredConfig } from "@/lib/crm/industry-news/server";
 import { dbErrorResponse } from "@/lib/crm/setup/api.server";
 import { crmGuard } from "@/lib/crm/server/require-crm-auth";
@@ -10,6 +11,9 @@ export const maxDuration = 60;
 export async function POST() {
   const guard = await crmGuard("industry_news", "edit");
   if (guard instanceof NextResponse) return guard;
+  if (!canManageIndustryNews(guard.user)) {
+    return NextResponse.json({ error: "Forbidden", code: "forbidden" }, { status: 403 });
+  }
   try {
     const existing = await loadStoredConfig(guard.supabase, guard.user.id);
     const defaults = createDefaultConfig();
