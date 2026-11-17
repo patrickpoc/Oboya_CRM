@@ -80,17 +80,19 @@
     },
     "email": {
       "title": "E-mail",
-      "summary": "Sincronização da caixa de e-mail, modelos e envio a partir do registro, com histórico na linha do tempo.",
-      "description": "Cada usuário conecta uma caixa de e-mail do Microsoft 365 ou do Gmail. Os e-mails trocados com leads e contatos conhecidos são registrados na linha do tempo de atividades dos registros correspondentes. Os vendedores enviam e-mails a partir da página do registro, com modelos no idioma do cliente, e as respostas aparecem na mesma linha do tempo.",
+      "summary": "Sincronização, modelos, envio pelo registro e histórico na linha do tempo, com cache local.",
+      "description": "Cada usuário conecta hoje uma caixa 263 ou simply; Microsoft 365 e Gmail estão previstos via Integrações. O navegador guarda primeiro os cabeçalhos e carrega corpo e anexos sob demanda. Contatos e clientes conhecidos são comparados ao remetente; ao escrever pela ficha de contato ou cliente o destinatário é preenchido e o envio entra na linha do tempo. Modelos localizados e a referência In-Reply-To já estão disponíveis; o registro de e-mails recebidos, campos de mesclagem e a data do último contato continuam previstos.",
       "capabilities": {
-        "mailboxSync": "Conexão da caixa de e-mail do Microsoft 365 e do Gmail por usuário",
-        "templates": "Modelos de e-mail por idioma, com campos de mesclagem do registro",
-        "sendFromRecord": "Escrever e enviar a partir da página do lead, do contato ou da oportunidade",
-        "autoLogging": "E-mails enviados e recebidos registrados automaticamente na linha do tempo de atividades",
-        "tracking": "Detecção de respostas e data do último contato no registro"
+        "mailboxSync": "IMAP e SMTP 263/simply por usuário, com provedores OAuth previstos",
+        "templates": "Modelos locais para escrever pela ficha, com campos de mesclagem previstos",
+        "sendFromRecord": "Disponível hoje em contatos e clientes; leads e oportunidades previstos",
+        "autoLogging": "Envios pela ficha registrados na linha do tempo; e-mails recebidos previstos",
+        "replyDetection": "Respostas preservam In-Reply-To; data do último contato prevista",
+        "localCache": "Cache IndexedDB de cabeçalhos, corpos, anexos e rascunhos",
+        "integrations": "Etiquetas de várias caixas e credenciais criptografadas atrás de uma ponte leve"
       },
       "dependencies": {
-        "integrations": "As conexões de caixa de e-mail usam as integrações OAuth com a Microsoft e o Google."
+        "integrations": "As conexões OAuth de Microsoft 365 e Gmail usarão o módulo de integrações previsto."
       }
     },
     "reports": {

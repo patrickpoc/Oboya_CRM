@@ -37,7 +37,7 @@ const can = (
 describe("BUILTIN_MATRIX (mirrors the SQL seed)", () => {
   it("equals the crm_access_control seed in the latest migration", () => {
     const sql = readFileSync(
-      path.resolve(__dirname, "../../../../../supabase/migrations/20261116000800_crm_industry_news.sql"),
+      path.resolve(__dirname, "../../../../../supabase/migrations/20261117010000_crm_email.sql"),
       "utf8"
     );
     const seed = sql.match(/\$json\$([\s\S]*?)\$json\$/);

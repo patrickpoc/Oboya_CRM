@@ -1,0 +1,117 @@
+{
+  "title": "Email",
+  "description": "Connect your mailbox and work from a local-first cache. Only headers are fetched first; bodies and attachments load on demand.",
+  "tabs": {
+    "mail": "Mail",
+    "drafts": "Drafts",
+    "accounts": "Mailboxes"
+  },
+  "actions": {
+    "compose": "Compose",
+    "refresh": "Sync now",
+    "addAccount": "Add mailbox",
+    "send": "Send",
+    "saveDraft": "Save draft",
+    "discard": "Discard",
+    "download": "Download",
+    "test": "Test connection",
+    "delete": "Delete",
+    "markRead": "Mark read",
+    "markUnread": "Mark unread",
+    "star": "Star",
+    "reply": "Reply",
+    "edit": "Edit"
+  },
+  "folders": {
+    "inbox": "Inbox",
+    "drafts": "Drafts",
+    "sent": "Sent",
+    "trash": "Trash"
+  },
+  "account": {
+    "title": "Your mailboxes",
+    "help": "Mailboxes are private to you. Passwords are encrypted on the server and never shown again.",
+    "label": "Tag label",
+    "email": "Email address",
+    "provider": "Provider preset",
+    "custom": "Custom server",
+    "username": "Username",
+    "password": "Password / app password",
+    "passwordHint": "Stored encrypted; leave blank to keep the current password.",
+    "smtpHost": "SMTP host",
+    "smtpPort": "SMTP port",
+    "imapHost": "IMAP host",
+    "imapPort": "IMAP port",
+    "useTls": "Use TLS",
+    "color": "Tag colour",
+    "save": "Save mailbox",
+    "saved": "Mailbox saved",
+    "tested": "Connection verified",
+    "testFailed": "Connection failed",
+    "remove": "Remove mailbox",
+    "removeConfirm": "Remove this mailbox from CRM? Cached mail on this device stays until you clear browser data."
+  },
+  "providers": {
+    "263": "263 · @oboya.cc",
+    "simply": "simply · @oboya-horticulture.com"
+  },
+  "list": {
+    "search": "Search cached mail",
+    "noAccounts": "No mailbox yet",
+    "noAccountsHint": "Add a 263 or simply mailbox to start reading email.",
+    "empty": "No messages in this folder",
+    "syncing": "Syncing headers…",
+    "cachedAt": "Cached {time}",
+    "unread": "{count} unread",
+    "loadMore": "Load more cached mail"
+  },
+  "reader": {
+    "select": "Select a message to read",
+    "from": "From",
+    "to": "To",
+    "cc": "Cc",
+    "subject": "Subject",
+    "noSubject": "(no subject)",
+    "noBody": "The body is not cached yet.",
+    "loadBody": "Load message",
+    "attachments": "Attachments",
+    "attachmentHint": "Downloaded on demand and cached in this browser.",
+    "crmMatch": "CRM contact",
+    "openContact": "Open contact",
+    "openAccount": "Open customer"
+  },
+  "compose": {
+    "title": "New message",
+    "template": "Template",
+    "to": "To",
+    "cc": "Cc",
+    "subject": "Subject",
+    "body": "Message",
+    "saved": "Draft saved locally",
+    "sent": "Message sent",
+    "required": "Add at least one recipient"
+  },
+  "record": {
+    "openHistory": "Emails",
+    "compose": "Write email"
+  },
+  "drafts": {
+    "empty": "No local drafts",
+    "emptyHint": "Drafts saved in this browser appear here. They are never uploaded to the server.",
+    "deleted": "Draft discarded"
+  },
+  "customer": {
+    "filter": "History for {name}",
+    "clear": "Clear filter",
+    "searching": "Searching enabled mailboxes…",
+    "hint": "Searches every enabled mailbox by this email address. Results are cached locally."
+  },
+  "errors": {
+    "failed": "Email action failed",
+    "unconfigured": "The server mail encryption key is missing",
+    "auth": "Mailbox authentication failed",
+    "offline": "Could not reach the mail bridge",
+    "invalid": "Check the mailbox settings",
+    "notFound": "Mailbox not found"
+  }
+}

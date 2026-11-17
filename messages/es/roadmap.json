@@ -80,17 +80,19 @@
     },
     "email": {
       "title": "Correo electrónico",
-      "summary": "Sincronización del buzón, plantillas y envío desde la ficha del registro, con registro en la cronología.",
-      "description": "Cada usuario conecta un buzón de Microsoft 365 o Gmail. Los correos intercambiados con leads y contactos conocidos se registran en la cronología de actividades de los registros correspondientes. Los comerciales envían correos desde la ficha del registro con plantillas en el idioma del cliente, y las respuestas aparecen en la misma cronología.",
+      "summary": "Sincronización, plantillas, envío desde la ficha y registro en la cronología, con caché local.",
+      "description": "Cada usuario conecta hoy un buzón 263 o simply; Microsoft 365 y Gmail están previstos mediante Integraciones. El navegador guarda primero las cabeceras y carga el cuerpo o los adjuntos cuando se abren. Los contactos y cuentas conocidos se comparan con el remitente; al redactar desde una ficha de contacto o cuenta se rellena el destinatario y el envío se registra en la cronología. Las plantillas localizadas y la referencia In-Reply-To están disponibles; el registro de correos recibidos, los campos combinados y la fecha del último contacto siguen previstos.",
       "capabilities": {
-        "mailboxSync": "Conexión del buzón de Microsoft 365 y Gmail por usuario",
-        "templates": "Plantillas de correo por idioma con campos combinados del registro",
-        "sendFromRecord": "Redactar y enviar desde la ficha del lead, del contacto o de la oportunidad",
-        "autoLogging": "Correos enviados y recibidos registrados automáticamente en la cronología de actividades",
-        "tracking": "Detección de respuestas y fecha del último contacto en el registro"
+        "mailboxSync": "IMAP y SMTP de 263/simply por usuario, con proveedores OAuth previstos",
+        "templates": "Plantillas locales para redactar desde la ficha, con campos combinados previstos",
+        "sendFromRecord": "Disponible hoy en contactos y cuentas; leads y oportunidades previstos",
+        "autoLogging": "Envíos desde la ficha registrados en la cronología; correos recibidos previstos",
+        "replyDetection": "Las respuestas conservan In-Reply-To; fecha del último contacto prevista",
+        "localCache": "Caché IndexedDB de cabeceras, cuerpos, adjuntos y borradores",
+        "integrations": "Etiquetas multibuzón y credenciales cifradas tras un puente ligero"
       },
       "dependencies": {
-        "integrations": "Las conexiones de buzón usan las integraciones OAuth con Microsoft y Google."
+        "integrations": "Las conexiones OAuth de Microsoft 365 y Gmail usarán el módulo de integraciones previsto."
       }
     },
     "reports": {

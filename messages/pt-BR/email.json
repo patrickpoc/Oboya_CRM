@@ -1,0 +1,117 @@
+{
+  "title": "E-mail",
+  "description": "Conecte sua caixa e trabalhe com cache local. Primeiro vêm os cabeçalhos; corpo e anexos são carregados sob demanda.",
+  "tabs": {
+    "mail": "E-mail",
+    "drafts": "Rascunhos",
+    "accounts": "Caixas"
+  },
+  "actions": {
+    "compose": "Escrever",
+    "refresh": "Sincronizar",
+    "addAccount": "Adicionar caixa",
+    "send": "Enviar",
+    "saveDraft": "Salvar rascunho",
+    "discard": "Descartar",
+    "download": "Baixar",
+    "test": "Testar conexão",
+    "delete": "Excluir",
+    "markRead": "Marcar como lido",
+    "markUnread": "Marcar como não lido",
+    "star": "Destacar",
+    "reply": "Responder",
+    "edit": "Editar"
+  },
+  "folders": {
+    "inbox": "Entrada",
+    "drafts": "Rascunhos",
+    "sent": "Enviados",
+    "trash": "Lixeira"
+  },
+  "account": {
+    "title": "Suas caixas",
+    "help": "As caixas são privadas. A senha é criptografada no servidor e nunca é exibida novamente.",
+    "label": "Etiqueta",
+    "email": "Endereço de e-mail",
+    "provider": "Provedor predefinido",
+    "custom": "Servidor personalizado",
+    "username": "Usuário",
+    "password": "Senha / senha de aplicativo",
+    "passwordHint": "Armazenada criptografada; deixe em branco para manter a atual.",
+    "smtpHost": "Host SMTP",
+    "smtpPort": "Porta SMTP",
+    "imapHost": "Host IMAP",
+    "imapPort": "Porta IMAP",
+    "useTls": "Usar TLS",
+    "color": "Cor da etiqueta",
+    "save": "Salvar caixa",
+    "saved": "Caixa salva",
+    "tested": "Conexão verificada",
+    "testFailed": "Falha na conexão",
+    "remove": "Remover caixa",
+    "removeConfirm": "Remover esta caixa do CRM? O e-mail em cache neste dispositivo permanece até você limpar os dados do navegador."
+  },
+  "providers": {
+    "263": "263 · @oboya.cc",
+    "simply": "simply · @oboya-horticulture.com"
+  },
+  "list": {
+    "search": "Buscar no cache local",
+    "noAccounts": "Nenhuma caixa ainda",
+    "noAccountsHint": "Adicione uma caixa 263 ou simply para começar.",
+    "empty": "Nenhuma mensagem nesta pasta",
+    "syncing": "Sincronizando cabeçalhos…",
+    "cachedAt": "Em cache {time}",
+    "unread": "{count} não lidos",
+    "loadMore": "Carregar mais e-mails locais"
+  },
+  "reader": {
+    "select": "Selecione uma mensagem para ler",
+    "from": "De",
+    "to": "Para",
+    "cc": "CC",
+    "subject": "Assunto",
+    "noSubject": "(sem assunto)",
+    "noBody": "O corpo ainda não está em cache.",
+    "loadBody": "Carregar mensagem",
+    "attachments": "Anexos",
+    "attachmentHint": "Baixados apenas quando abertos e salvos neste navegador.",
+    "crmMatch": "Contato do CRM",
+    "openContact": "Abrir contato",
+    "openAccount": "Abrir cliente"
+  },
+  "compose": {
+    "title": "Nova mensagem",
+    "template": "Modelo",
+    "to": "Para",
+    "cc": "CC",
+    "subject": "Assunto",
+    "body": "Mensagem",
+    "saved": "Rascunho salvo localmente",
+    "sent": "Mensagem enviada",
+    "required": "Informe pelo menos um destinatário"
+  },
+  "record": {
+    "openHistory": "E-mails",
+    "compose": "Escrever e-mail"
+  },
+  "drafts": {
+    "empty": "Nenhum rascunho local",
+    "emptyHint": "Os rascunhos salvos neste navegador aparecem aqui e nunca são enviados ao servidor.",
+    "deleted": "Rascunho descartado"
+  },
+  "customer": {
+    "filter": "Histórico de {name}",
+    "clear": "Limpar filtro",
+    "searching": "Pesquisando as caixas ativas…",
+    "hint": "Pesquisa este endereço em todas as caixas ativas e salva os resultados localmente."
+  },
+  "errors": {
+    "failed": "Falha na ação de e-mail",
+    "unconfigured": "Falta a chave de criptografia no servidor",
+    "auth": "Falha na autenticação da caixa",
+    "offline": "Não foi possível acessar a ponte de e-mail",
+    "invalid": "Verifique as configurações da caixa",
+    "notFound": "Caixa não encontrada"
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "title": "电子邮件",
+  "description": "连接邮箱后以浏览器本地缓存为主。首屏只拉取邮件头，正文和附件按需加载。",
+  "tabs": {
+    "mail": "邮件",
+    "drafts": "草稿",
+    "accounts": "邮箱管理"
+  },
+  "actions": {
+    "compose": "写邮件",
+    "refresh": "立即同步",
+    "addAccount": "添加邮箱",
+    "send": "发送",
+    "saveDraft": "保存草稿",
+    "discard": "丢弃",
+    "download": "下载",
+    "test": "测试连接",
+    "delete": "删除",
+    "markRead": "标为已读",
+    "markUnread": "标为未读",
+    "star": "星标",
+    "reply": "回复",
+    "edit": "编辑"
+  },
+  "folders": {
+    "inbox": "收件箱",
+    "drafts": "草稿箱",
+    "sent": "已发送",
+    "trash": "已删除"
+  },
+  "account": {
+    "title": "我的邮箱",
+    "help": "邮箱仅你自己可见。密码在服务端加密保存，保存后不再显示。",
+    "label": "标签名称",
+    "email": "邮箱地址",
+    "provider": "服务商预设",
+    "custom": "自定义服务器",
+    "username": "用户名",
+    "password": "密码 / 应用专用密码",
+    "passwordHint": "加密存储；留空表示保持原密码不变。",
+    "smtpHost": "SMTP 主机",
+    "smtpPort": "SMTP 端口",
+    "imapHost": "IMAP 主机",
+    "imapPort": "IMAP 端口",
+    "useTls": "使用 TLS",
+    "color": "标签颜色",
+    "save": "保存邮箱",
+    "saved": "邮箱已保存",
+    "tested": "连接正常",
+    "testFailed": "连接失败",
+    "remove": "移除邮箱",
+    "removeConfirm": "从 CRM 移除此邮箱？本机已缓存的邮件会保留，直到你清除浏览器数据。"
+  },
+  "providers": {
+    "263": "263 · @oboya.cc",
+    "simply": "simply · @oboya-horticulture.com"
+  },
+  "list": {
+    "search": "搜索本地缓存邮件",
+    "noAccounts": "还没有邮箱",
+    "noAccountsHint": "添加一个 263 或 simply 邮箱即可开始收发邮件。",
+    "empty": "此文件夹暂无邮件",
+    "syncing": "正在同步邮件头…",
+    "cachedAt": "缓存于 {time}",
+    "unread": "{count} 封未读",
+    "loadMore": "加载更多本地邮件"
+  },
+  "reader": {
+    "select": "选择一封邮件阅读",
+    "from": "发件人",
+    "to": "收件人",
+    "cc": "抄送",
+    "subject": "主题",
+    "noSubject": "（无主题）",
+    "noBody": "正文尚未缓存。",
+    "loadBody": "加载正文",
+    "attachments": "附件",
+    "attachmentHint": "按需下载并缓存在当前浏览器中。",
+    "crmMatch": "CRM 联系人",
+    "openContact": "打开联系人",
+    "openAccount": "打开客户"
+  },
+  "compose": {
+    "title": "新建邮件",
+    "template": "模板",
+    "to": "收件人",
+    "cc": "抄送",
+    "subject": "主题",
+    "body": "正文",
+    "saved": "草稿已保存到本地",
+    "sent": "邮件已发送",
+    "required": "请至少填写一位收件人"
+  },
+  "record": {
+    "openHistory": "往来邮件",
+    "compose": "写邮件"
+  },
+  "drafts": {
+    "empty": "暂无本地草稿",
+    "emptyHint": "保存在此浏览器中的草稿会显示在这里，不会上传到服务器。",
+    "deleted": "草稿已丢弃"
+  },
+  "customer": {
+    "filter": "{name} 的历史邮件",
+    "clear": "清除筛选",
+    "searching": "正在搜索已启用的邮箱…",
+    "hint": "按该邮箱地址搜索所有已启用的邮箱，结果会缓存在本地。"
+  },
+  "errors": {
+    "failed": "邮件操作失败",
+    "unconfigured": "服务端邮件加密密钥未配置",
+    "auth": "邮箱认证失败",
+    "offline": "无法连接邮件桥接服务",
+    "invalid": "请检查邮箱设置",
+    "notFound": "邮箱不存在"
+  }
+}

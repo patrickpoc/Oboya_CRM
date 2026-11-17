@@ -80,17 +80,19 @@
     },
     "email": {
       "title": "电子邮件",
-      "summary": "邮箱同步、邮件模板，以及从记录页面发送邮件，并记录在时间线上。",
-      "description": "每位用户可连接一个 Microsoft 365 或 Gmail 邮箱。与已知线索和联系人往来的邮件会记录在对应记录的活动时间线上。销售人员可在记录页面使用客户语言的模板发送邮件，回复也会显示在同一时间线上。",
+      "summary": "邮箱同步、模板、记录页发信与时间线记录，并以浏览器本地缓存为基础。",
+      "description": "每位用户当前可连接 263 或 simply 邮箱，Microsoft 365 和 Gmail 的 OAuth 连接计划通过集成模块扩展。浏览器只先缓存邮件头，正文与附件按需加载。已知联系人和客户会与发件人匹配；从联系人或客户记录写信时会自动预填收件人，并把已发送邮件记录到活动时间线。已提供本地化模板和回复引用，收信时间线记录、记录字段合并与最近联系日期仍属于后续计划。",
       "capabilities": {
-        "mailboxSync": "每位用户可连接 Microsoft 365 和 Gmail 邮箱",
-        "templates": "按语言区分的邮件模板，可插入记录中的合并字段",
-        "sendFromRecord": "在线索、联系人或商机页面撰写并发送邮件",
-        "autoLogging": "收发的邮件自动记录在活动时间线上",
-        "tracking": "识别回复，并在记录上显示最近联系日期"
+        "mailboxSync": "按用户配置 263/simply 的 IMAP 与 SMTP，并预留 OAuth 邮箱接入",
+        "templates": "记录页写信可用的本地模板，记录字段合并待后续支持",
+        "sendFromRecord": "当前支持联系人与客户记录写信，线索和商机页面待后续支持",
+        "autoLogging": "记录页发出的邮件写入活动时间线，收信记录待后续支持",
+        "replyDetection": "回复保留 In-Reply-To 引用，最近联系日期待后续支持",
+        "localCache": "用 IndexedDB 缓存邮件头、正文、附件和草稿",
+        "integrations": "多邮箱标签与加密凭据，通过轻量协议桥接访问"
       },
       "dependencies": {
-        "integrations": "邮箱连接使用与 Microsoft 和 Google 的 OAuth 集成。"
+        "integrations": "Microsoft 365 和 Gmail 的 OAuth 连接将使用计划中的集成模块。"
       }
     },
     "reports": {

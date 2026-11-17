@@ -80,17 +80,19 @@
     },
     "email": {
       "title": "Email",
-      "summary": "Mailbox sync, templates and sending from the record page, logged on the timeline.",
-      "description": "Each user connects a Microsoft 365 or Gmail mailbox. Emails with known leads and contacts are logged on the activity timeline of the matching records. Reps send emails from a record page with templates in the customer's language, and replies appear on the same timeline.",
+      "summary": "Mailbox sync, templates, record-page sending and timeline logging, with a local-first cache.",
+      "description": "Each user connects a 263 or simply mailbox today, with Microsoft 365 and Gmail OAuth planned through Integrations. Headers are cached in the browser and bodies or attachments load on demand. Known contacts and accounts are matched to senders, and composing from a contact or account page prefills the recipient and logs the sent email on the activity timeline. Localised templates and reply threading are available; received-email timeline logging, merge fields and last-contacted tracking remain planned.",
       "capabilities": {
-        "mailboxSync": "Microsoft 365 and Gmail mailbox connection per user",
-        "templates": "Email templates per locale with merge fields from the record",
-        "sendFromRecord": "Compose and send from the lead, contact or opportunity page",
-        "autoLogging": "Sent and received emails logged automatically on the activity timeline",
-        "tracking": "Reply detection and a last-contacted date on the record"
+        "mailboxSync": "Per-user 263/simply IMAP and SMTP, with OAuth mailbox providers planned",
+        "templates": "Local templates for record-page composing, with record merge fields planned",
+        "sendFromRecord": "Compose from contact or account records today; lead and opportunity pages planned",
+        "autoLogging": "Record-page sends logged on the activity timeline; received-email logging planned",
+        "replyDetection": "In-Reply-To threading on replies, with last-contacted tracking planned",
+        "localCache": "IndexedDB cache for headers, bodies, attachments and drafts",
+        "integrations": "Multi-account tags and encrypted credentials behind a thin protocol bridge"
       },
       "dependencies": {
-        "integrations": "Mailbox connections use the OAuth integrations with Microsoft and Google."
+        "integrations": "Microsoft 365 and Gmail OAuth connections will use the planned integrations module."
       }
     },
     "reports": {

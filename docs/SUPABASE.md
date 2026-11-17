@@ -31,6 +31,7 @@ The files in `supabase/migrations/` must run in filename order:
 | `20261116000800_crm_industry_news.sql` | Industry News config + article tables, RLS, indexes, audit trigger, access-matrix seed |
 | `20261116000900_crm_industry_news_hardening.sql` | AI columns, cursor/deferred-join RPCs, batched ingest/save, 30-day retention and optional `pg_cron` jobs |
 | `20261117000000_crm_industry_news_global.sql` | Single global Industry News config/articles, read-only for viewers, super-admin writes, service-role cron writers |
+| `20261117010000_crm_email.sql` | Per-user SMTP/IMAP accounts, encrypted credentials, RLS and email permission seed |
 
 Either:
 
@@ -42,6 +43,8 @@ Never edit an applied migration; add a new file (`YYYYMMDDhhmmss_name.sql`).
 `20261116000900_crm_industry_news_hardening.sql` also schedules a daily 30-day purge at 03:17 UTC when `pg_cron` is available, and cleans `cron.job_run_details` older than 7 days at 03:27 UTC. If `pg_cron` is unavailable, the same retention function runs inside every Industry News ingest, so the table still cannot grow without bound.
 
 After `20261117000000_crm_industry_news_global.sql`, the source list is a single global config: every user with `industry_news:view` sees the same articles, but only an active `super_admin` can save the config or press "Fetch now". `vercel.json` schedules the shared fetch at **00:00 UTC = 08:00 UTC+8** daily through `/api/crm/industry-news/cron`; change only the `schedule` value in `vercel.json` if another time is needed (Vercel always interprets cron expressions in UTC). Set `CRON_SECRET` in Vercel and mark it sensitive; without it the endpoint returns 503.
+
+The Email module stores **only** encrypted mailbox settings in Supabase. Browsers cannot open raw IMAP/SMTP TCP sockets, so a thin Node bridge translates IMAP/SMTP on demand; it never persists messages or attachments. The client requests headers first, keeps headers/bodies/attachments/drafts in IndexedDB, and streams attachments only when opened. Generate `EMAIL_CREDENTIALS_KEY` with `openssl rand -base64 32` and keep it server-only. Header sync uses per-folder UID cursors in batches of at most 200 with client concurrency capped at 3; customer record links use IMAP SEARCH across enabled mailboxes and cache the result locally without resetting the cursor. Deleted accounts are soft-deleted, then purged in 200-row batches after 30 days.
 
 ## 3. Environment variables
 
@@ -58,6 +61,7 @@ Copy `.env.example` to `.env.local` and fill:
 | `CRM_AI_BASE_URL` | server only | optional; defaults to `https://api.openai.com/v1` |
 | `CRM_AI_MODEL` | server only | optional; defaults to `gpt-4o-mini` |
 | `CRON_SECRET` | server only | required by `/api/crm/industry-news/cron`; Vercel Cron sends it as `Authorization: Bearer <secret>` |
+| `EMAIL_CREDENTIALS_KEY` | server only | 32 random bytes in base64 (`openssl rand -base64 32`); encrypts per-user SMTP/IMAP passwords. Changing it invalidates saved mailboxes. |
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_NAME` | `npm run create-admin` | do not commit |
 | `SEED_ALLOW`, `SEED_PROJECT_REF`, `SEED_CREATE_ADMIN`, `DEMO_PASSWORD`, `DEMO_EMAIL_DOMAIN` | `npm run seed:demo` | demo/test projects only (see 5) |
 

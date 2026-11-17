@@ -13,6 +13,7 @@ import common from "./common.json";
 import nav from "./nav.json";
 import roadmap from "./roadmap.json";
 import industryNews from "./industryNews.json";
+import email from "./email.json";
 import shell from "./shell.json";
 
 const messages = {
@@ -29,6 +30,7 @@ const messages = {
   nav,
   roadmap,
   industryNews,
+  email,
   shell,
   auth,
   common,

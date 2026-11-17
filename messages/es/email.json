@@ -1,0 +1,117 @@
+{
+  "title": "Correo electrónico",
+  "description": "Conecta tu buzón y trabaja desde una caché local. Primero se descargan las cabeceras; el cuerpo y los adjuntos se cargan cuando los abres.",
+  "tabs": {
+    "mail": "Correo",
+    "drafts": "Borradores",
+    "accounts": "Buzones"
+  },
+  "actions": {
+    "compose": "Redactar",
+    "refresh": "Sincronizar",
+    "addAccount": "Añadir buzón",
+    "send": "Enviar",
+    "saveDraft": "Guardar borrador",
+    "discard": "Descartar",
+    "download": "Descargar",
+    "test": "Probar conexión",
+    "delete": "Eliminar",
+    "markRead": "Marcar como leído",
+    "markUnread": "Marcar como no leído",
+    "star": "Destacar",
+    "reply": "Responder",
+    "edit": "Editar"
+  },
+  "folders": {
+    "inbox": "Entrada",
+    "drafts": "Borradores",
+    "sent": "Enviados",
+    "trash": "Papelera"
+  },
+  "account": {
+    "title": "Tus buzones",
+    "help": "Los buzones son privados. La contraseña se cifra en el servidor y no se vuelve a mostrar.",
+    "label": "Etiqueta",
+    "email": "Dirección de correo",
+    "provider": "Proveedor predefinido",
+    "custom": "Servidor personalizado",
+    "username": "Usuario",
+    "password": "Contraseña / contraseña de aplicación",
+    "passwordHint": "Se guarda cifrada; déjalo vacío para conservar la actual.",
+    "smtpHost": "Host SMTP",
+    "smtpPort": "Puerto SMTP",
+    "imapHost": "Host IMAP",
+    "imapPort": "Puerto IMAP",
+    "useTls": "Usar TLS",
+    "color": "Color de la etiqueta",
+    "save": "Guardar buzón",
+    "saved": "Buzón guardado",
+    "tested": "Conexión verificada",
+    "testFailed": "Error de conexión",
+    "remove": "Quitar buzón",
+    "removeConfirm": "¿Quitar este buzón del CRM? El correo cacheado en este dispositivo se conserva hasta que borres los datos del navegador."
+  },
+  "providers": {
+    "263": "263 · @oboya.cc",
+    "simply": "simply · @oboya-horticulture.com"
+  },
+  "list": {
+    "search": "Buscar en la caché local",
+    "noAccounts": "Aún no hay buzones",
+    "noAccountsHint": "Añade un buzón 263 o simply para empezar.",
+    "empty": "No hay mensajes en esta carpeta",
+    "syncing": "Sincronizando cabeceras…",
+    "cachedAt": "En caché {time}",
+    "unread": "{count} sin leer",
+    "loadMore": "Cargar más correo local"
+  },
+  "reader": {
+    "select": "Selecciona un mensaje para leerlo",
+    "from": "De",
+    "to": "Para",
+    "cc": "CC",
+    "subject": "Asunto",
+    "noSubject": "(sin asunto)",
+    "noBody": "El cuerpo aún no está en caché.",
+    "loadBody": "Cargar mensaje",
+    "attachments": "Adjuntos",
+    "attachmentHint": "Se descargan solo al abrirlos y se guardan en este navegador.",
+    "crmMatch": "Contacto del CRM",
+    "openContact": "Abrir contacto",
+    "openAccount": "Abrir cliente"
+  },
+  "compose": {
+    "title": "Nuevo mensaje",
+    "template": "Plantilla",
+    "to": "Para",
+    "cc": "CC",
+    "subject": "Asunto",
+    "body": "Mensaje",
+    "saved": "Borrador guardado localmente",
+    "sent": "Mensaje enviado",
+    "required": "Añade al menos un destinatario"
+  },
+  "record": {
+    "openHistory": "Correos",
+    "compose": "Redactar correo"
+  },
+  "drafts": {
+    "empty": "No hay borradores locales",
+    "emptyHint": "Los borradores guardados en este navegador aparecen aquí y nunca se suben al servidor.",
+    "deleted": "Borrador descartado"
+  },
+  "customer": {
+    "filter": "Historial de {name}",
+    "clear": "Quitar filtro",
+    "searching": "Buscando en los buzones activos…",
+    "hint": "Busca esta dirección en todos los buzones activos y guarda los resultados localmente."
+  },
+  "errors": {
+    "failed": "Error en la acción de correo",
+    "unconfigured": "Falta la clave de cifrado del servidor",
+    "auth": "Falló la autenticación del buzón",
+    "offline": "No se pudo conectar con el puente de correo",
+    "invalid": "Revisa la configuración del buzón",
+    "notFound": "Buzón no encontrado"
+  }
+}

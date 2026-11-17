@@ -26,7 +26,7 @@ describe("roadmap registry", () => {
       expect(copy?.title, entry.id).toBeTruthy();
       expect(copy.description.length).toBeGreaterThan(100);
       expect(entry.capabilityKeys.length).toBeGreaterThanOrEqual(4);
-      expect(entry.capabilityKeys.length).toBeLessThanOrEqual(6);
+      expect(entry.capabilityKeys.length).toBeLessThanOrEqual(7);
       expect(Object.keys(copy.capabilities).sort()).toEqual([...entry.capabilityKeys].sort());
       expect(Object.keys(copy.dependencies).sort()).toEqual([...entry.dependencyKeys].sort());
       for (const dep of entry.dependencyKeys) {
