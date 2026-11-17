@@ -39,7 +39,10 @@
     "seen": "{count} apariciones",
     "weight": "Puntuación {value}",
     "emptyTitle": "Todavía no hay noticias",
-    "emptyDescription": "Configure las fuentes y los temas, después pulse Obtener ahora para recoger las últimas noticias."
+    "emptyDescription": "Configure las fuentes y los temas, después pulse Obtener ahora para recoger las últimas noticias.",
+    "aiBadge": "IA: {language}",
+    "loadMore": "Cargar más",
+    "loadingMore": "Cargando…"
   },
   "config": {
     "saved": "Configuración guardada",
@@ -76,7 +79,11 @@
       "hint": "Active una fuente para incluirla en la próxima recogida.",
       "feedName": "Nombre de la fuente",
       "feedUrl": "URL de la fuente",
-      "addFeed": "Añadir fuente"
+      "addFeed": "Añadir fuente",
+      "remove": "Quitar fuente",
+      "editName": "Nombre de la fuente",
+      "maxItems": "Máximo de artículos",
+      "maxAge": "Antigüedad máxima (días)"
     },
     "report": {
       "title": "Ajustes del informe",
@@ -91,6 +98,20 @@
       "rankThreshold": "Umbral de posición",
       "maxNews": "Máximo por tema (0 = sin límite)",
       "freshness": "Antigüedad máxima en días (0 = todas)"
+    },
+    "ai": {
+      "title": "Análisis IA",
+      "description": "Opcional: traduce títulos y resúmenes al idioma de destino y añade una lectura empresarial breve.",
+      "enabled": "Activar análisis IA",
+      "language": "Idioma de destino",
+      "langZh": "Chino simplificado",
+      "langEn": "Inglés",
+      "langEs": "Español",
+      "langPt": "Portugués brasileño",
+      "maxItems": "Artículos por ejecución",
+      "instructions": "Instrucciones adicionales",
+      "instructionsPlaceholder": "p. ej. centrarse en riesgos de suministro y precios",
+      "hint": "Requiere CRM_AI_API_KEY en el servidor. Sin ella, los artículos se recopilan igualmente."
     }
   },
   "presets": {
@@ -112,6 +133,8 @@
     }
   },
   "ingest": {
-    "done": "Se añadieron {added} y se actualizaron {updated} noticias"
+    "done": "Añadidas {added}, actualizadas {updated}, purgadas {purged}",
+    "aiDone": "IA localizó {count} artículos al {language}",
+    "aiUnconfigured": "La IA está activada pero falta la clave del modelo en el servidor."
   }
 }

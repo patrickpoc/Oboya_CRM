@@ -50,6 +50,11 @@ export type ItemRow = {
   weight: number | string;
   fetched_at: string;
   news_date: string;
+  ai_title: string | null;
+  ai_summary: string | null;
+  ai_language: "en" | "zh-CN" | "es" | "pt-BR" | null;
+  ai_model: string | null;
+  ai_analyzed_at: string | null;
 };
 
 const arrayOf = <T>(value: unknown): T[] => (Array.isArray(value) ? (value as T[]) : []);
@@ -77,6 +82,54 @@ export function rowToNewsItem(row: ItemRow): NewsItem {
     isNew: row.is_new,
     weight: Number(row.weight),
     fetchedAt: row.fetched_at,
+    newsDate: row.news_date,
+    aiTitle: row.ai_title ?? undefined,
+    aiSummary: row.ai_summary ?? undefined,
+    aiLanguage: row.ai_language ?? undefined,
+    aiModel: row.ai_model ?? undefined,
+    aiAnalyzedAt: row.ai_analyzed_at ?? undefined,
+  };
+}
+
+/** Narrow projection used by ingest to merge rank history without reading wide rows. */
+export type RecentItemRow = Pick<
+  ItemRow,
+  | "id"
+  | "source_id"
+  | "url"
+  | "ranks"
+  | "rank_timeline"
+  | "seen_count"
+  | "first_seen_at"
+  | "published_at"
+  | "summary"
+  | "author"
+  | "news_date"
+>;
+
+export function recentRowToNewsItem(row: RecentItemRow): NewsItem {
+  return {
+    id: row.id,
+    title: "",
+    url: row.url,
+    sourceId: row.source_id,
+    sourceName: "",
+    sourceType: "rss",
+    rank: 0,
+    ranks: arrayOf<number>(row.ranks),
+    rankTimeline: arrayOf<RankPoint>(row.rank_timeline),
+    firstSeenAt: row.first_seen_at ?? "",
+    lastSeenAt: row.first_seen_at ?? "",
+    seenCount: row.seen_count,
+    publishedAt: row.published_at ?? undefined,
+    summary: row.summary ?? undefined,
+    author: row.author ?? undefined,
+    matchedKeywords: [],
+    industries: [],
+    regions: [],
+    isNew: false,
+    weight: 0,
+    fetchedAt: row.first_seen_at ?? "",
     newsDate: row.news_date,
   };
 }

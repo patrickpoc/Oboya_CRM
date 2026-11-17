@@ -29,6 +29,9 @@ export function IndustryNewsFeed({
   loading,
   error,
   onRetry,
+  nextCursor,
+  loadingMore,
+  onLoadMore,
 }: {
   items: NewsItem[];
   config: IndustryNewsConfig;
@@ -37,6 +40,9 @@ export function IndustryNewsFeed({
   loading: boolean;
   error: unknown;
   onRetry: () => void;
+  nextCursor?: string | null;
+  loadingMore?: boolean;
+  onLoadMore?: () => void;
 }) {
   const t = useTranslations("industryNews");
   const set = (patch: Partial<NewsFilters>) => onFiltersChange({ ...filters, ...patch });
@@ -172,6 +178,20 @@ export function IndustryNewsFeed({
               ))}
             </ul>
           )}
+          {nextCursor ? (
+            <div className="mt-4 flex justify-center">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="rounded-full border-oboya-blue text-oboya-blue"
+                disabled={loadingMore}
+                onClick={() => onLoadMore?.()}
+              >
+                {loadingMore ? t("news.loadingMore") : t("news.loadMore")}
+              </Button>
+            </div>
+          ) : null}
         </CardContent>
       </Card>
     </div>
@@ -190,6 +210,8 @@ function StatValue({ label, value }: { label: string; value: number }) {
 function NewsRow({ item, threshold }: { item: NewsItem; threshold: number }) {
   const t = useTranslations("industryNews");
   const hot = item.rank > 0 && item.rank <= threshold;
+  const title = item.aiTitle ?? item.title;
+  const summary = item.aiSummary ?? item.summary;
   return (
     <li className="rounded-lg border border-border/60 bg-white p-3 transition-colors hover:border-oboya-blue/30 sm:p-4">
       <div className="flex flex-wrap items-center gap-2 text-xs">
@@ -211,6 +233,11 @@ function NewsRow({ item, threshold }: { item: NewsItem; threshold: number }) {
             {t("news.new")}
           </span>
         ) : null}
+        {item.aiLanguage ? (
+          <span className="rounded-full bg-oboya-yellow-light/30 px-2 py-0.5 font-semibold text-oboya-yellow-dark">
+            {t("news.aiBadge", { language: item.aiLanguage })}
+          </span>
+        ) : null}
         <span className="text-muted-foreground">
           {item.firstSeenAt}–{item.lastSeenAt} · {t("news.seen", { count: item.seenCount })}
         </span>
@@ -223,12 +250,15 @@ function NewsRow({ item, threshold }: { item: NewsItem; threshold: number }) {
           rel="noopener noreferrer"
           className="min-w-0 flex-1 text-sm font-medium text-oboya-blue-dark hover:text-oboya-blue hover:underline"
         >
-          {item.title}
+          {title}
           <ArrowUpRight className="ml-1 inline size-3.5" aria-hidden />
         </a>
       </div>
-      {item.summary ? (
-        <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{item.summary}</p>
+      {item.aiTitle && item.aiTitle !== item.title ? (
+        <p className="mt-1 truncate text-[11px] text-muted-foreground">{item.title}</p>
+      ) : null}
+      {summary ? (
+        <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{summary}</p>
       ) : null}
       {item.matchedKeywords.length > 0 ? (
         <div className="mt-2 flex flex-wrap gap-1.5">

@@ -32,6 +32,10 @@ export function createDefaultConfig(): IndustryNewsConfig {
     rankThreshold: 5,
     maxNewsPerKeyword: 0,
     freshnessDays: 7,
+    aiEnabled: false,
+    aiLanguage: "zh-CN",
+    aiMaxItemsPerRun: 5,
+    aiInstructions: "",
   };
 }
 
@@ -55,5 +59,14 @@ export function normaliseConfig(value: unknown): IndustryNewsConfig {
     maxNewsPerKeyword:
       typeof raw.maxNewsPerKeyword === "number" ? raw.maxNewsPerKeyword : fallback.maxNewsPerKeyword,
     freshnessDays: typeof raw.freshnessDays === "number" ? raw.freshnessDays : fallback.freshnessDays,
+    aiEnabled: typeof raw.aiEnabled === "boolean" ? raw.aiEnabled : fallback.aiEnabled,
+    aiLanguage: ["en", "zh-CN", "es", "pt-BR"].includes(raw.aiLanguage ?? "")
+      ? (raw.aiLanguage as IndustryNewsConfig["aiLanguage"])
+      : fallback.aiLanguage,
+    aiMaxItemsPerRun:
+      typeof raw.aiMaxItemsPerRun === "number"
+        ? Math.min(20, Math.max(1, Math.round(raw.aiMaxItemsPerRun)))
+        : fallback.aiMaxItemsPerRun,
+    aiInstructions: typeof raw.aiInstructions === "string" ? raw.aiInstructions.slice(0, 400) : "",
   };
 }

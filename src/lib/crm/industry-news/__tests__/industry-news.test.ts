@@ -1,5 +1,7 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createDefaultConfig, normaliseConfig } from "../config";
+import { cacheKey, cachedFetch, invalidateIndustryNewsCache } from "../client-cache";
+import { decodeCursor, encodeCursor } from "../cursor";
 import { parseFeed } from "../feeds";
 import {
   applyFreshness,
@@ -195,5 +197,88 @@ describe("display helpers", () => {
   it("fills missing keys from the default config", () => {
     expect(normaliseConfig(null).keywords.length).toBeGreaterThan(0);
     expect(normaliseConfig({ reportMode: "daily" }).reportMode).toBe("daily");
+    expect(normaliseConfig({ aiEnabled: true, aiLanguage: "es", aiMaxItemsPerRun: 99 })).toMatchObject({
+      aiEnabled: true,
+      aiLanguage: "es",
+      aiMaxItemsPerRun: 20,
+    });
+  });
+
+  it("round-trips a keyset cursor and rejects malformed values", () => {
+    const current = item({ weight: 42.5, fetchedAt: "2026-11-16T10:00:00.000Z" });
+    const cursor = encodeCursor(current);
+    expect(decodeCursor(cursor)).toEqual({
+      weight: 42.5,
+      fetchedAt: "2026-11-16T10:00:00.000Z",
+      id: current.id,
+    });
+
+    const encoded = (payload: unknown) => Buffer.from(JSON.stringify(payload), "utf8").toString("base64url");
+    const valid = "2026-11-16T10:00:00.000Z";
+    expect(decodeCursor(encoded({ weight: "high", fetchedAt: valid, id: "x" }))).toBeNull();
+    expect(decodeCursor(encoded({ weight: 1, fetchedAt: "not-a-date", id: "x" }))).toBeNull();
+    expect(decodeCursor(encoded({ weight: 1, fetchedAt: valid, id: "" }))).toBeNull();
+    expect(decodeCursor(encoded({ weight: 1, fetchedAt: valid }))).toBeNull();
+    expect(decodeCursor("not-a-cursor")).toBeNull();
+    expect(decodeCursor(null)).toBeNull();
+    expect(decodeCursor(undefined)).toBeNull();
+  });
+
+  it("builds stable cache keys from filters", () => {
+    expect(cacheKey("user-1", "bootstrap", { b: "2", a: "1", empty: "", skipped: undefined })).toBe(
+      "oboya:industry-news:user-1:bootstrap:a=1&b=2"
+    );
+  });
+});
+
+describe("read-only response cache", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-11-16T10:00:00Z"));
+    invalidateIndustryNewsCache();
+  });
+
+  afterEach(() => {
+    invalidateIndustryNewsCache();
+    vi.useRealTimers();
+  });
+
+  it("serves fresh values and reloads after the TTL expires", async () => {
+    const key = cacheKey("cache-user", "bootstrap", { topic: "all" });
+    const loader = vi.fn(async () => ({ count: 1 }));
+
+    await expect(cachedFetch(key, 1_000, loader)).resolves.toEqual({ count: 1 });
+    await expect(cachedFetch(key, 1_000, loader)).resolves.toEqual({ count: 1 });
+    expect(loader).toHaveBeenCalledTimes(1);
+
+    vi.advanceTimersByTime(1_001);
+    await expect(cachedFetch(key, 1_000, loader)).resolves.toEqual({ count: 1 });
+    expect(loader).toHaveBeenCalledTimes(2);
+  });
+
+  it("de-duplicates concurrent requests with the same key", async () => {
+    const key = cacheKey("cache-user", "items", { cursor: "next" });
+    let resolveLoader!: (value: { count: number }) => void;
+    const loader = vi.fn(
+      () => new Promise<{ count: number }>((resolve) => { resolveLoader = resolve; })
+    );
+
+    const first = cachedFetch(key, 10_000, loader);
+    const second = cachedFetch(key, 10_000, loader);
+    expect(loader).toHaveBeenCalledTimes(1);
+
+    resolveLoader({ count: 2 });
+    await expect(Promise.all([first, second])).resolves.toEqual([{ count: 2 }, { count: 2 }]);
+  });
+
+  it("drops cached entries when invalidated", async () => {
+    const key = cacheKey("cache-user", "config", {});
+    const loader = vi.fn(async () => ({ ok: true }));
+
+    await cachedFetch(key, 60_000, loader);
+    invalidateIndustryNewsCache();
+    await cachedFetch(key, 60_000, loader);
+
+    expect(loader).toHaveBeenCalledTimes(2);
   });
 });

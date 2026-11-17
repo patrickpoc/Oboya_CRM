@@ -39,7 +39,10 @@
     "seen": "出现 {count} 次",
     "weight": "热度 {value}",
     "emptyTitle": "暂无资讯",
-    "emptyDescription": "请先配置信息源和关键词，然后点击「立即采集」获取最新新闻。"
+    "emptyDescription": "请先配置信息源和关键词，然后点击「立即采集」获取最新新闻。",
+    "aiBadge": "AI：{language}",
+    "loadMore": "加载更多",
+    "loadingMore": "加载中…"
   },
   "config": {
     "saved": "配置已保存",
@@ -76,7 +79,11 @@
       "hint": "勾选信息源即可在下一次采集中启用。",
       "feedName": "订阅源名称",
       "feedUrl": "订阅源地址",
-      "addFeed": "添加订阅源"
+      "addFeed": "添加订阅源",
+      "remove": "移除信源",
+      "editName": "信源名称",
+      "maxItems": "每次最多条数",
+      "maxAge": "最大天数"
     },
     "report": {
       "title": "报告设置",
@@ -91,6 +98,20 @@
       "rankThreshold": "热榜排名阈值",
       "maxNews": "每个主题最大条数（0 为不限）",
       "freshness": "最大天数（0 为不限）"
+    },
+    "ai": {
+      "title": "AI 分析",
+      "description": "可选：将标题和摘要翻译为目标语言，并生成简短的业务解读。",
+      "enabled": "启用 AI 分析",
+      "language": "目标语言",
+      "langZh": "简体中文",
+      "langEn": "英语",
+      "langEs": "西班牙语",
+      "langPt": "巴西葡萄牙语",
+      "maxItems": "每次最多分析条数",
+      "instructions": "补充指令",
+      "instructionsPlaceholder": "例如：突出供应链和价格风险",
+      "hint": "需要服务端配置 CRM_AI_API_KEY；未配置时只采集，不会失败。"
     }
   },
   "presets": {
@@ -112,6 +133,8 @@
     }
   },
   "ingest": {
-    "done": "新增 {added} 条，更新 {updated} 条资讯"
+    "done": "新增 {added} 条，更新 {updated} 条，清理 {purged} 条",
+    "aiDone": "AI 已将 {count} 条内容本地化为 {language}",
+    "aiUnconfigured": "已启用 AI，但服务端尚未配置模型密钥。"
   }
 }

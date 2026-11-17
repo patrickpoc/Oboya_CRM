@@ -39,7 +39,10 @@
     "seen": "{count} appearances",
     "weight": "Score {value}",
     "emptyTitle": "No headlines yet",
-    "emptyDescription": "Configure your sources and topics, then choose Fetch now to collect the latest news."
+    "emptyDescription": "Configure your sources and topics, then choose Fetch now to collect the latest news.",
+    "aiBadge": "AI: {language}",
+    "loadMore": "Load more",
+    "loadingMore": "Loading…"
   },
   "config": {
     "saved": "Configuration saved",
@@ -76,7 +79,11 @@
       "hint": "Toggle a source to include it in the next fetch.",
       "feedName": "Feed name",
       "feedUrl": "Feed URL",
-      "addFeed": "Add feed"
+      "addFeed": "Add feed",
+      "remove": "Remove source",
+      "editName": "Source name",
+      "maxItems": "Max items",
+      "maxAge": "Max age (days)"
     },
     "report": {
       "title": "Report settings",
@@ -91,6 +98,20 @@
       "rankThreshold": "Hot-list rank threshold",
       "maxNews": "Max stories per topic (0 = unlimited)",
       "freshness": "Maximum age in days (0 = all)"
+    },
+    "ai": {
+      "title": "AI analysis",
+      "description": "Optional: translate titles and summaries into a target language and add a short business reading.",
+      "enabled": "Enable AI analysis",
+      "language": "Target language",
+      "langZh": "Simplified Chinese",
+      "langEn": "English",
+      "langEs": "Spanish",
+      "langPt": "Brazilian Portuguese",
+      "maxItems": "Articles per run",
+      "instructions": "Extra instructions",
+      "instructionsPlaceholder": "e.g. focus on supply-chain and price risk",
+      "hint": "Requires a server-side CRM_AI_API_KEY. Without it, articles are collected normally."
     }
   },
   "presets": {
@@ -112,6 +133,8 @@
     }
   },
   "ingest": {
-    "done": "Added {added} and updated {updated} stories"
+    "done": "Added {added}, updated {updated}, purged {purged}",
+    "aiDone": "AI localised {count} articles into {language}",
+    "aiUnconfigured": "AI is enabled but no server-side model key is configured."
   }
 }

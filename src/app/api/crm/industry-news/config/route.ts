@@ -13,6 +13,7 @@ export async function GET() {
   try {
     const stored = await loadStoredConfig(guard.supabase, guard.user.id);
     return NextResponse.json({
+      configId: stored?.id ?? "",
       config: stored?.config ?? createDefaultConfig(),
       name: stored?.name ?? "Industry news",
       saved: Boolean(stored),
@@ -30,7 +31,13 @@ export async function PUT(request: Request) {
   if (body instanceof NextResponse) return body;
   try {
     const stored = await saveStoredConfig(guard.supabase, guard.user.id, body.data.name, body.data);
-    return NextResponse.json({ config: stored.config, name: stored.name, saved: true, updatedAt: stored.updatedAt });
+    return NextResponse.json({
+      configId: stored.id,
+      config: stored.config,
+      name: stored.name,
+      saved: true,
+      updatedAt: stored.updatedAt,
+    });
   } catch (error) {
     return dbErrorResponse(error as { code?: string; message?: string }, "Industry news config save");
   }

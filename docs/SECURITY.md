@@ -79,7 +79,7 @@ Apply this checklist at deploy time. The CRM holds customer and lead personal da
 ## 8. LGPD notes
 
 - **Lead PII:** leads, contacts and activities hold names, emails, phones, companies, countries and free-text messages. Access follows the role scope (RLS). CSV export follows the same scope and needs the `export` permission. Grant it sparingly.
-- **Retention: open question (TBD).** No retention period or purge job is defined yet for unconverted leads, inbound notes or audit logs. Decide the period (the website purges unconverted inquiries after 12 months) and add a purge or anonymize job before go-live.
+- **Retention: partially decided.** Industry News articles are hard-purged after 30 days (optional `pg_cron` job plus a purge inside each ingest). No retention period or purge job is defined yet for unconverted leads, inbound notes or audit logs. Decide the period (the website purges unconverted inquiries after 12 months) and add a purge or anonymize job before go-live.
 - **Inbound `raw_payload`:** `crm_leads.raw_payload` keeps the validated website submission, including the message, consent flags (`privacyAccepted`, `marketingOptIn`) and `submittedAt`, as evidence of consent. It is excluded from audit diffs. The website must not send IP hashes or other context (they are stripped anyway). Include `raw_payload` in any deletion or anonymization request.
 - **Data subject requests:** a super admin soft-deletes the records, then hard-deletes them with the service role when erasure is required. Audit rows for those records must be handled under the same retention decision.
 - The privacy contact and controlling policy are the same as the website's (`pt-BR` and English privacy policy).

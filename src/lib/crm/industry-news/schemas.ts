@@ -47,6 +47,10 @@ export const industryNewsConfigSchema = z
     rankThreshold: z.number().int().min(1).max(50),
     maxNewsPerKeyword: z.number().int().min(0).max(200),
     freshnessDays: z.number().int().min(0).max(365),
+    aiEnabled: z.boolean().default(false),
+    aiLanguage: z.enum(["en", "zh-CN", "es", "pt-BR"]).default("zh-CN"),
+    aiMaxItemsPerRun: z.number().int().min(1).max(20).default(5),
+    aiInstructions: z.string().trim().max(400).default(""),
   })
   .superRefine((config, ctx) => {
     config.sources.forEach((source, index) => {
@@ -88,5 +92,12 @@ export const newsQuerySchema = z.object({
   search: z.string().trim().max(200).optional(),
   from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  cursor: z.string().trim().max(500).optional(),
   limit: z.coerce.number().int().min(1).max(200).default(50),
+});
+
+/** Load-more pages carry the config id already held by the client, so the
+ * server does not read the config row again. RLS remains the real guard. */
+export const newsPageQuerySchema = newsQuerySchema.extend({
+  configId: z.string().uuid(),
 });

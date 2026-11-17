@@ -39,7 +39,10 @@
     "seen": "{count} aparições",
     "weight": "Pontuação {value}",
     "emptyTitle": "Ainda não há notícias",
-    "emptyDescription": "Configure as fontes e os temas e clique em Buscar agora para coletar as últimas notícias."
+    "emptyDescription": "Configure as fontes e os temas e clique em Buscar agora para coletar as últimas notícias.",
+    "aiBadge": "IA: {language}",
+    "loadMore": "Carregar mais",
+    "loadingMore": "Carregando…"
   },
   "config": {
     "saved": "Configuração salva",
@@ -76,7 +79,11 @@
       "hint": "Ative uma fonte para incluí-la na próxima coleta.",
       "feedName": "Nome do feed",
       "feedUrl": "URL do feed",
-      "addFeed": "Adicionar feed"
+      "addFeed": "Adicionar feed",
+      "remove": "Remover fonte",
+      "editName": "Nome da fonte",
+      "maxItems": "Máximo de itens",
+      "maxAge": "Idade máxima (dias)"
     },
     "report": {
       "title": "Configurações do relatório",
@@ -91,6 +98,20 @@
       "rankThreshold": "Limite de posição",
       "maxNews": "Máximo por tema (0 = sem limite)",
       "freshness": "Idade máxima em dias (0 = todas)"
+    },
+    "ai": {
+      "title": "Análise IA",
+      "description": "Opcional: traduz títulos e resumos para o idioma de destino e adiciona uma leitura curta de negócio.",
+      "enabled": "Ativar análise IA",
+      "language": "Idioma de destino",
+      "langZh": "Chinês simplificado",
+      "langEn": "Inglês",
+      "langEs": "Espanhol",
+      "langPt": "Português brasileiro",
+      "maxItems": "Artigos por execução",
+      "instructions": "Instruções extras",
+      "instructionsPlaceholder": "ex.: destacar riscos de suprimento e preço",
+      "hint": "Requer CRM_AI_API_KEY no servidor. Sem ela, os artigos são coletados normalmente."
     }
   },
   "presets": {
@@ -112,6 +133,8 @@
     }
   },
   "ingest": {
-    "done": "{added} notícias adicionadas e {updated} atualizadas"
+    "done": "Adicionadas {added}, atualizadas {updated}, limpas {purged}",
+    "aiDone": "IA localizou {count} artigos para {language}",
+    "aiUnconfigured": "A IA está ativada, mas a chave do modelo não foi configurada no servidor."
   }
 }

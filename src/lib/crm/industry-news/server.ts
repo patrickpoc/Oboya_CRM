@@ -1,23 +1,34 @@
 import "server-only";
 
 import type { CrmSupabaseClient } from "@/lib/supabase/server";
+import { analysePending, type AiRunResult } from "./ai";
+import { createDefaultConfig } from "./config";
+import { decodeCursor, encodeCursor } from "./cursor";
 import { fetchSources } from "./feeds";
+import { capPerKeyword, collectMatches, mergeNewsItem, sortNewsItems } from "./matching";
 import {
-  applyFreshness,
-  capPerKeyword,
-  collectMatches,
-  mergeNewsItem,
-  sortNewsItems,
-} from "./matching";
-import { newsItemToInsert, newsItemToUpdate, rawItemKey, rowToConfig, rowToNewsItem } from "./rows";
-import type { ConfigRow, ItemRow, StoredConfig } from "./rows";
+  newsItemToInsert,
+  newsItemToUpdate,
+  rawItemKey,
+  recentRowToNewsItem,
+  rowToConfig,
+  rowToNewsItem,
+  type ConfigRow,
+  type ItemRow,
+  type RecentItemRow,
+  type StoredConfig,
+} from "./rows";
 import type { IndustryNewsConfig, NewsItem } from "./types";
 
-/** All queries use the user-scoped client, so RLS decides visibility. */
+/**
+ * All queries use the user-scoped client, so RLS decides visibility.
+ * Reads/writes are consolidated in SQL RPCs: one bootstrap call for the
+ * initial screen, one call for ingest + retention, one call for config save.
+ */
 
 const CONFIG_COLUMNS = "id, owner_id, name, config, updated_at";
-const ITEM_COLUMNS =
-  "id, title, url, source_id, source_name, source_type, rank, ranks, rank_timeline, first_seen_at, last_seen_at, seen_count, published_at, summary, author, matched_keywords, industries, regions, is_new, weight, fetched_at, news_date";
+const INGEST_COLUMNS =
+  "id, source_id, url, ranks, rank_timeline, seen_count, first_seen_at, published_at, summary, author, news_date";
 
 export async function loadStoredConfig(
   supabase: CrmSupabaseClient,
@@ -33,28 +44,17 @@ export async function loadStoredConfig(
   return data ? rowToConfig(data as ConfigRow) : null;
 }
 
+/** One upsert call replaces the old read-then-insert/update pair. */
 export async function saveStoredConfig(
   supabase: CrmSupabaseClient,
-  userId: string,
+  _userId: string,
   name: string,
   config: IndustryNewsConfig
 ): Promise<StoredConfig> {
-  const existing = await loadStoredConfig(supabase, userId);
-  if (existing) {
-    const { data, error } = await supabase
-      .from("crm_industry_news_configs")
-      .update({ name, config })
-      .eq("id", existing.id)
-      .select(CONFIG_COLUMNS)
-      .single();
-    if (error) throw error;
-    return rowToConfig(data as ConfigRow);
-  }
-  const { data, error } = await supabase
-    .from("crm_industry_news_configs")
-    .insert({ owner_id: userId, name, config, created_by: userId })
-    .select(CONFIG_COLUMNS)
-    .single();
+  const { data, error } = await supabase.rpc("crm_industry_news_save_config", {
+    p_name: name,
+    p_config: config,
+  });
   if (error) throw error;
   return rowToConfig(data as ConfigRow);
 }
@@ -67,44 +67,112 @@ export type NewsQuery = {
   search?: string;
   from?: string;
   to?: string;
+  cursor?: string;
   limit: number;
 };
 
+export type NewsPage = { items: NewsItem[]; nextCursor: string | null };
+
+type RpcCursor = {
+  p_cursor_weight: number | null;
+  p_cursor_fetched_at: string | null;
+  p_cursor_id: string | null;
+};
+
+function cursorArgs(value: string | undefined | null): RpcCursor {
+  const cursor = decodeCursor(value);
+  return {
+    p_cursor_weight: cursor?.weight ?? null,
+    p_cursor_fetched_at: cursor?.fetchedAt ?? null,
+    p_cursor_id: cursor?.id ?? null,
+  };
+}
+
+function filters(query: NewsQuery) {
+  return {
+    p_keyword: query.keyword || null,
+    p_source: query.source || null,
+    p_industry: query.industry || null,
+    p_region: query.region || null,
+    p_search: query.search || null,
+    p_from: query.from || null,
+    p_to: query.to || null,
+    p_today: new Date().toISOString().slice(0, 10),
+  };
+}
+
+function shapePage(rows: ItemRow[], limit: number, config: IndustryNewsConfig): NewsPage {
+  const decoded = rows.map(rowToNewsItem);
+  const nextCursor = decoded.length === limit ? encodeCursor(decoded[decoded.length - 1]) : null;
+  const sorted = sortNewsItems(decoded, config.displayMode);
+  return { items: capPerKeyword(sorted, config.maxNewsPerKeyword), nextCursor };
+}
+
+/** Keyset page through a deferred-join RPC; no OFFSET and no wide row scan. */
 export async function listNewsItems(
   supabase: CrmSupabaseClient,
-  stored: StoredConfig,
+  configId: string,
   query: NewsQuery
-): Promise<NewsItem[]> {
-  let builder = supabase
-    .from("crm_industry_news_items")
-    .select(ITEM_COLUMNS)
-    .eq("config_id", stored.id)
-    .is("deleted_at", null)
-    .order("weight", { ascending: false })
-    .order("fetched_at", { ascending: false })
-    .limit(query.limit);
-  if (query.keyword) builder = builder.contains("matched_keywords", [query.keyword]);
-  if (query.source) builder = builder.eq("source_id", query.source);
-  if (query.industry) builder = builder.contains("industries", [query.industry]);
-  if (query.region) builder = builder.contains("regions", [query.region]);
-  if (query.search) builder = builder.ilike("title", `%${query.search}%`);
-  if (query.from) builder = builder.gte("news_date", query.from);
-  if (query.to) builder = builder.lte("news_date", query.to);
-  const { data, error } = await builder;
+): Promise<NewsPage> {
+  const { data, error } = await supabase.rpc("crm_industry_news_page", {
+    p_config_id: configId,
+    p_limit: query.limit,
+    ...cursorArgs(query.cursor),
+    ...filters(query),
+  });
+  if (error) throw error;
+  const items = ((data ?? []) as ItemRow[]).map(rowToNewsItem);
+  return {
+    items,
+    nextCursor: items.length === query.limit ? encodeCursor(items[items.length - 1]) : null,
+  };
+}
+
+export type BootstrapResult = {
+  configId: string;
+  config: IndustryNewsConfig;
+  name: string;
+  saved: boolean;
+  updatedAt: string | null;
+  items: NewsItem[];
+  nextCursor: string | null;
+};
+
+/** Config + first page in one database call, used on page load. */
+export async function bootstrapIndustryNews(
+  supabase: CrmSupabaseClient,
+  query: NewsQuery
+): Promise<BootstrapResult> {
+  const { data, error } = await supabase.rpc("crm_industry_news_bootstrap", {
+    p_limit: query.limit,
+    ...cursorArgs(query.cursor),
+    ...filters(query),
+  });
   if (error) throw error;
 
-  const config = stored.config;
-  let items = (data ?? []).map((row) => rowToNewsItem(row as ItemRow));
-  if (config.reportMode === "daily") {
-    const today = new Date().toISOString().slice(0, 10);
-    items = items.filter((item) => item.newsDate === today);
-  } else if (config.reportMode === "incremental") {
-    items = items.filter((item) => item.isNew);
+  const payload = data as {
+    configId?: string | null;
+    config: unknown;
+    name: string;
+    saved: boolean;
+    updatedAt: string | null;
+    items: ItemRow[];
+  } | null;
+  if (!payload?.saved) {
+    const config = createDefaultConfig();
+    return { configId: "", config, name: config.name, saved: false, updatedAt: null, items: [], nextCursor: null };
   }
-  return capPerKeyword(
-    sortNewsItems(applyFreshness(items, config.freshnessDays), config.displayMode),
-    config.maxNewsPerKeyword
-  );
+  const config = rowToConfig({ id: "", owner_id: "", name: payload.name, config: payload.config, updated_at: payload.updatedAt ?? "" }).config;
+  const page = shapePage((payload.items ?? []) as ItemRow[], query.limit, config);
+  return {
+    configId: payload.configId ?? "",
+    config,
+    name: payload.name,
+    saved: true,
+    updatedAt: payload.updatedAt,
+    items: page.items,
+    nextCursor: page.nextCursor,
+  };
 }
 
 export type IngestResult = {
@@ -112,22 +180,32 @@ export type IngestResult = {
   added: number;
   updated: number;
   matched: number;
+  purged: number;
   errors: Array<{ sourceId: string; message: string }>;
+  ai: AiRunResult;
 };
 
-/** Fetch, match, merge and persist. Only the user's own config and rows are touched. */
+/** Fetch, match, merge, batch-persist, clean up and optionally run AI. */
 export async function ingestNews(
   supabase: CrmSupabaseClient,
-  userId: string,
+  _userId: string,
   stored: StoredConfig
 ): Promise<IngestResult> {
   const config = stored.config;
-  const { items: rawItems, errors } = await fetchSources(config.sources);
-  const result: IngestResult = { fetched: rawItems.length, added: 0, updated: 0, matched: 0, errors };
+  const { items: rawItems, errors } = await fetchSources(config.sources, AbortSignal.timeout(30_000));
+  const result: IngestResult = {
+    fetched: rawItems.length,
+    added: 0,
+    updated: 0,
+    matched: 0,
+    purged: 0,
+    errors,
+    ai: { status: "off", analyzed: 0, failed: 0 },
+  };
 
   const { data: existingRows, error: existingError } = await supabase
     .from("crm_industry_news_items")
-    .select(ITEM_COLUMNS)
+    .select(INGEST_COLUMNS)
     .eq("config_id", stored.id)
     .is("deleted_at", null)
     .order("fetched_at", { ascending: false })
@@ -135,15 +213,14 @@ export async function ingestNews(
   if (existingError) throw existingError;
 
   const existing = new Map<string, NewsItem>();
-  for (const row of (existingRows ?? []) as ItemRow[]) {
-    const item = rowToNewsItem(row);
-    const key = `${item.sourceId}::${item.url}`;
-    if (!existing.has(key)) existing.set(key, item);
+  for (const row of (existingRows ?? []) as RecentItemRow[]) {
+    const item = recentRowToNewsItem(row);
+    if (!existing.has(`${item.sourceId}::${item.url}`)) existing.set(`${item.sourceId}::${item.url}`, item);
   }
 
   const now = new Date();
   const inserts: Record<string, unknown>[] = [];
-  const updates: Array<{ id: string; values: Record<string, unknown> }> = [];
+  const updates: Array<Record<string, unknown>> = [];
   const seen = new Set<string>();
 
   for (const raw of rawItems) {
@@ -159,27 +236,22 @@ export async function ingestNews(
 
     const previous = existing.get(key);
     const item = mergeNewsItem(previous, raw, match, config, now, crypto.randomUUID());
-    if (previous) updates.push({ id: previous.id, values: newsItemToUpdate(item) });
-    else inserts.push(newsItemToInsert(item, stored.id, userId));
+    if (previous) updates.push({ id: previous.id, ...newsItemToUpdate(item) });
+    else inserts.push(newsItemToInsert(item, stored.id, _userId));
   }
 
-  result.added = inserts.length;
-  result.updated = updates.length;
+  // One DB round trip for all inserts, all updates and the 30-day purge.
+  const { data: written, error: writeError } = await supabase.rpc("crm_industry_news_ingest", {
+    p_config_id: stored.id,
+    p_inserts: inserts,
+    p_updates: updates,
+  });
+  if (writeError) throw writeError;
+  const counts = (written ?? {}) as { added?: number; updated?: number; purged?: number };
+  result.added = Number(counts.added ?? inserts.length);
+  result.updated = Number(counts.updated ?? updates.length);
+  result.purged = Number(counts.purged ?? 0);
 
-  for (let index = 0; index < inserts.length; index += 100) {
-    const chunk = inserts.slice(index, index + 100);
-    const { error } = await supabase.from("crm_industry_news_items").insert(chunk);
-    if (error) throw error;
-  }
-  await Promise.all(
-    updates.map(async (update) => {
-      const { error } = await supabase
-        .from("crm_industry_news_items")
-        .update(update.values)
-        .eq("id", update.id);
-      if (error) throw error;
-    })
-  );
-
+  result.ai = await analysePending(supabase, stored);
   return result;
 }

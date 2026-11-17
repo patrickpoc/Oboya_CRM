@@ -28,6 +28,8 @@ The files in `supabase/migrations/` must run in filename order:
 | `20261116000500_crm_audit.sql` | audit trigger on all object tables |
 | `20261116000600_crm_functions.sql` | RPCs: delete/reorder stages, soft delete/restore, convert lead, inbound owner |
 | `20261116000700_crm_v1_fixes.sql` | RPCs: opportunity stage change, account create + company links, picklist reorder, role permissions; converted leads read-only; audit on config tables (`record_key`) |
+| `20261116000800_crm_industry_news.sql` | Industry News config + article tables, RLS, indexes, audit trigger, access-matrix seed |
+| `20261116000900_crm_industry_news_hardening.sql` | AI columns, cursor/deferred-join RPCs, batched ingest/save, 30-day retention and optional `pg_cron` jobs |
 
 Either:
 
@@ -35,6 +37,8 @@ Either:
 - **CLI:** `supabase link --project-ref <ref>` then `supabase db push`. The 14-digit versions keep the CLI order identical.
 
 Never edit an applied migration; add a new file (`YYYYMMDDhhmmss_name.sql`).
+
+`20261116000900_crm_industry_news_hardening.sql` also schedules a daily 30-day purge at 03:17 UTC when `pg_cron` is available, and cleans `cron.job_run_details` older than 7 days at 03:27 UTC. If `pg_cron` is unavailable, the same retention function runs inside every Industry News ingest, so the table still cannot grow without bound.
 
 ## 3. Environment variables
 
@@ -47,6 +51,9 @@ Copy `.env.example` to `.env.local` and fill:
 | `SUPABASE_SERVICE_ROLE_KEY` | server + scripts | **server only**, never `NEXT_PUBLIC_` |
 | `NEXT_PUBLIC_SITE_URL` | app | base URL for password reset |
 | `INBOUND_LEADS_SECRET` | server | HMAC secret shared with the website |
+| `CRM_AI_API_KEY` | server only | optional; enables Industry News AI translation/summary via an OpenAI-compatible endpoint |
+| `CRM_AI_BASE_URL` | server only | optional; defaults to `https://api.openai.com/v1` |
+| `CRM_AI_MODEL` | server only | optional; defaults to `gpt-4o-mini` |
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_NAME` | `npm run create-admin` | do not commit |
 | `SEED_ALLOW`, `SEED_PROJECT_REF`, `SEED_CREATE_ADMIN`, `DEMO_PASSWORD`, `DEMO_EMAIL_DOMAIN` | `npm run seed:demo` | demo/test projects only (see 5) |
 

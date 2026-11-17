@@ -47,6 +47,15 @@ export type NewsSource = {
 
 export type ReportMode = "daily" | "current" | "incremental";
 export type DisplayMode = "keyword" | "platform";
+export type AiLanguage = "en" | "zh-CN" | "es" | "pt-BR";
+
+/** Models are called with OpenAI-compatible chat/completions, no browser key. */
+export type AiSettings = {
+  aiEnabled: boolean;
+  aiLanguage: AiLanguage;
+  aiMaxItemsPerRun: number;
+  aiInstructions: string;
+};
 
 /** Whole graphical configuration, stored as JSONB in crm_industry_news_configs. */
 export type IndustryNewsConfig = {
@@ -61,6 +70,10 @@ export type IndustryNewsConfig = {
   rankThreshold: number;
   maxNewsPerKeyword: number;
   freshnessDays: number;
+  aiEnabled: boolean;
+  aiLanguage: AiLanguage;
+  aiMaxItemsPerRun: number;
+  aiInstructions: string;
 };
 
 export type RankPoint = { time: string; rank: number | null };
@@ -88,6 +101,11 @@ export type NewsItem = {
   weight: number;
   fetchedAt: string;
   newsDate: string;
+  aiTitle?: string;
+  aiSummary?: string;
+  aiLanguage?: AiLanguage;
+  aiModel?: string;
+  aiAnalyzedAt?: string;
 };
 
 /** Normalised result of a single source fetch, before keyword matching. */

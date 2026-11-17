@@ -85,9 +85,15 @@ export function IndustryNewsConfigEditor({
     set({
       sources: exists
         ? value.sources.map((entry) => (entry.id === source.id ? { ...entry, enabled: !entry.enabled } : entry))
-        : [...value.sources, source],
+        : [...value.sources, { ...source, enabled: true }],
     });
   };
+
+  const patchSource = (id: string, patch: Partial<NewsSource>) =>
+    set({ sources: value.sources.map((entry) => (entry.id === id ? { ...entry, ...patch } : entry)) });
+
+  const removeSource = (id: string) =>
+    set({ sources: value.sources.filter((entry) => entry.id !== id) });
 
   const sourceById = new Map(value.sources.map((entry) => [entry.id, entry]));
   const allSources: NewsSource[] = [
@@ -96,6 +102,7 @@ export function IndustryNewsConfigEditor({
       name: entry.name,
       expectedDomain: entry.expectedDomain,
       type: "hotlist" as const,
+      ...sourceById.get(entry.id),
       enabled: Boolean(sourceById.get(entry.id)?.enabled),
     })),
     ...RSS_PRESETS.map((entry) => ({
@@ -103,9 +110,10 @@ export function IndustryNewsConfigEditor({
       name: entry.name,
       url: entry.url,
       type: "rss" as const,
-      enabled: Boolean(sourceById.get(entry.id)?.enabled),
       maxAgeDays: 7,
       maxItems: 30,
+      ...sourceById.get(entry.id),
+      enabled: Boolean(sourceById.get(entry.id)?.enabled),
     })),
   ];
   // Keep custom feeds the user added in the editor.
@@ -218,14 +226,20 @@ export function IndustryNewsConfigEditor({
             sources={allSources.filter((source) => source.type === "hotlist")}
             enabledIds={new Set(value.sources.filter((entry) => entry.enabled).map((entry) => entry.id))}
             disabled={disabled}
+            editableIds={new Set(value.sources.map((entry) => entry.id))}
             onToggle={toggleSource}
+            onPatch={patchSource}
+            onRemove={removeSource}
           />
           <SourceGroup
             title={t("config.sources.rss")}
             sources={allSources.filter((source) => source.type === "rss")}
             enabledIds={new Set(value.sources.filter((entry) => entry.enabled).map((entry) => entry.id))}
             disabled={disabled}
+            editableIds={new Set(value.sources.map((entry) => entry.id))}
             onToggle={toggleSource}
+            onPatch={patchSource}
+            onRemove={removeSource}
           />
           <div className="flex flex-wrap items-end gap-2 border-t border-border/60 pt-4">
             <div className="min-w-40 flex-1 space-y-1.5">
@@ -300,6 +314,59 @@ export function IndustryNewsConfigEditor({
             disabled={disabled}
             onChange={(freshnessDays) => set({ freshnessDays })}
           />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base text-oboya-blue-dark">{t("config.ai.title")}</CardTitle>
+          <CardDescription>{t("config.ai.description")}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <label className="flex min-h-9 items-center gap-2 text-sm text-oboya-blue-dark">
+            <input
+              type="checkbox"
+              className="size-4 accent-[#4DAF4E]"
+              disabled={disabled}
+              checked={value.aiEnabled}
+              onChange={(event) => set({ aiEnabled: event.target.checked })}
+            />
+            {t("config.ai.enabled")}
+          </label>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <SelectField
+              label={t("config.ai.language")}
+              value={value.aiLanguage}
+              disabled={disabled || !value.aiEnabled}
+              onChange={(next) => set({ aiLanguage: next as IndustryNewsConfig["aiLanguage"] })}
+              options={[
+                { value: "zh-CN", label: t("config.ai.langZh") },
+                { value: "en", label: t("config.ai.langEn") },
+                { value: "es", label: t("config.ai.langEs") },
+                { value: "pt-BR", label: t("config.ai.langPt") },
+              ]}
+            />
+            <NumberField
+              label={t("config.ai.maxItems")}
+              value={value.aiMaxItemsPerRun}
+              min={1}
+              max={20}
+              disabled={disabled || !value.aiEnabled}
+              onChange={(aiMaxItemsPerRun) => set({ aiMaxItemsPerRun })}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs text-oboya-blue-dark">{t("config.ai.instructions")}</Label>
+            <textarea
+              className="min-h-20 w-full rounded-lg border border-border/70 bg-white p-2 text-sm text-oboya-blue-dark placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-oboya-blue"
+              disabled={disabled || !value.aiEnabled}
+              maxLength={400}
+              placeholder={t("config.ai.instructionsPlaceholder")}
+              value={value.aiInstructions}
+              onChange={(event) => set({ aiInstructions: event.target.value })}
+            />
+          </div>
+          <p className="text-xs text-muted-foreground">{t("config.ai.hint")}</p>
         </CardContent>
       </Card>
     </div>
@@ -454,40 +521,104 @@ function SourceGroup({
   title,
   sources,
   enabledIds,
+  editableIds,
   disabled,
   onToggle,
+  onPatch,
+  onRemove,
 }: {
   title: string;
   sources: NewsSource[];
   enabledIds: Set<string>;
+  editableIds: Set<string>;
   disabled: boolean;
   onToggle: (source: NewsSource) => void;
+  onPatch: (id: string, patch: Partial<NewsSource>) => void;
+  onRemove: (id: string) => void;
 }) {
   const t = useTranslations("industryNews");
   return (
     <div className="space-y-2">
       <p className="text-xs font-semibold uppercase tracking-wide text-oboya-blue">{title}</p>
-      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-        {sources.map((source) => (
-          <label
-            key={source.id}
-            className={cn(
-              "flex min-h-11 items-center gap-2 rounded-lg border px-3 text-sm",
-              enabledIds.has(source.id)
-                ? "border-oboya-green/50 bg-oboya-green/5 text-oboya-blue-dark"
-                : "border-border/60 bg-white text-muted-foreground"
-            )}
-          >
-            <input
-              type="checkbox"
-              className="size-4 accent-[#4DAF4E]"
-              disabled={disabled}
-              checked={enabledIds.has(source.id)}
-              onChange={() => onToggle(source)}
-            />
-            <span className="min-w-0 truncate">{source.name}</span>
-          </label>
-        ))}
+      <div className="grid gap-2 lg:grid-cols-2">
+        {sources.map((source) => {
+          const editable = editableIds.has(source.id);
+          return (
+            <div
+              key={source.id}
+              className={cn(
+                "rounded-lg border p-3",
+                enabledIds.has(source.id)
+                  ? "border-oboya-green/50 bg-oboya-green/5"
+                  : "border-border/60 bg-white"
+              )}
+            >
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  aria-label={source.name}
+                  className="size-4 accent-[#4DAF4E]"
+                  disabled={disabled}
+                  checked={enabledIds.has(source.id)}
+                  onChange={() => onToggle(source)}
+                />
+                <span className="min-w-0 flex-1 truncate text-sm text-oboya-blue-dark">{source.name}</span>
+                {editable ? (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    disabled={disabled}
+                    aria-label={t("config.sources.remove")}
+                    className="text-oboya-orange"
+                    onClick={() => onRemove(source.id)}
+                  >
+                    <Trash2 className="size-4" />
+                  </Button>
+                ) : null}
+              </div>
+              {editable && enabledIds.has(source.id) ? (
+                <div className="mt-2 grid gap-2 sm:grid-cols-3">
+                  <Input
+                    aria-label={t("config.sources.editName")}
+                    disabled={disabled}
+                    className="h-9 text-xs"
+                    value={source.name}
+                    onChange={(event) => onPatch(source.id, { name: event.target.value })}
+                  />
+                  {source.type === "rss" ? (
+                    <Input
+                      aria-label={t("config.sources.feedUrl")}
+                      type="url"
+                      disabled={disabled}
+                      className="h-9 text-xs sm:col-span-2"
+                      value={source.url ?? ""}
+                      onChange={(event) => onPatch(source.id, { url: event.target.value })}
+                    />
+                  ) : null}
+                  <NumberField
+                    label={t("config.sources.maxItems")}
+                    value={source.maxItems ?? (source.type === "rss" ? 30 : 50)}
+                    min={1}
+                    max={200}
+                    disabled={disabled}
+                    onChange={(maxItems) => onPatch(source.id, { maxItems })}
+                  />
+                  {source.type === "rss" ? (
+                    <NumberField
+                      label={t("config.sources.maxAge")}
+                      value={source.maxAgeDays ?? 7}
+                      min={0}
+                      max={365}
+                      disabled={disabled}
+                      onChange={(maxAgeDays) => onPatch(source.id, { maxAgeDays })}
+                    />
+                  ) : null}
+                </div>
+              ) : null}
+            </div>
+          );
+        })}
       </div>
       <p className="text-xs text-muted-foreground">{t("config.sources.hint")}</p>
     </div>
