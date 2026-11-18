@@ -30,6 +30,7 @@ import {
   cachedHeaders,
   cacheAccounts,
   deleteDraft,
+  headerKey,
   listDrafts,
   listSent,
   sentStorageBytes,
@@ -37,6 +38,7 @@ import {
   type SentMessage,
 } from "@/lib/crm/email/local-db";
 import type { CrmEmailMatch, EmailAccount, EmailPreset, MailBody, MailHeader } from "@/lib/crm/email/types";
+import { createCaseFromEmail } from "@/lib/crm/cases/from-email-client";
 
 export type EmailViewInitial = {
   email: string | null;
@@ -67,8 +69,10 @@ function matchesSearch(header: MailHeader, term: string): boolean {
 
 export function EmailView({ initial }: { initial: EmailViewInitial }) {
   const t = useTranslations("email");
+  const tCases = useTranslations("cases");
   const { can } = useCrm();
   const canEdit = can("email", "edit");
+  const canCreateCase = can("cases", "create");
 
   const [tab, setTab] = useState("mail");
   const [presets, setPresets] = useState<readonly EmailPreset[]>([]);
@@ -326,6 +330,25 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
     });
   };
 
+  const createCase = useCallback(async () => {
+    if (!selected) return;
+    const messageId = selected.messageId?.trim() || headerKey(selected.accountId, selected.folder, selected.uid);
+    try {
+      const result = await createCaseFromEmail(
+        {
+          messageId,
+          subject: selected.subject || t("reader.noSubject"),
+          from: selected.from[0]?.address ?? "",
+          body: body?.text ?? "",
+        },
+        match
+      );
+      toast.success(result.updated ? tCases("email.updated") : tCases("email.created"));
+    } catch {
+      toast.error(tCases("email.failed"));
+    }
+  }, [selected, body, match, t, tCases]);
+
   const openDraft = (draft: OutboxDraft) => {
     setCompose({
       id: draft.id,
@@ -473,6 +496,8 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
                 onLoadBody={() => selected && void selectHeader(selected)}
                 onAction={(action) => void actOnSelected(action)}
                 onReply={reply}
+                onCreateCase={() => void createCase()}
+                canCreateCase={canCreateCase}
               />
             </div>
           )}

@@ -1,0 +1,81 @@
+{
+  "title": "Casos",
+  "singular": "Caso",
+  "fields": {
+    "subject": "Asunto",
+    "number": "N.º de caso",
+    "status": "Estado",
+    "priority": "Prioridad",
+    "type": "Tipo",
+    "queue": "Cola responsable",
+    "sla": "SLA",
+    "account": "Cliente",
+    "contact": "Contacto",
+    "orderRef": "Referencia de pedido",
+    "owner": "Asignado a",
+    "description": "Descripción",
+    "sourceEmail": "Correo de origen",
+    "sourceMessage": "ID del mensaje de origen",
+    "firstResponseAt": "Primera respuesta",
+    "slaDueAt": "Vencimiento SLA",
+    "resolvedAt": "Resuelto",
+    "resolutionMinutes": "Tiempo de resolución (min)",
+    "resolutionNotes": "Notas de resolución",
+    "createdAt": "Creado",
+    "updatedAt": "Última modificación"
+  },
+  "types": {
+    "question": "Consulta de producto",
+    "delivery": "Problema de entrega",
+    "complaint": "Reclamación",
+    "other": "Otro"
+  },
+  "statuses": {
+    "new": "Nuevo",
+    "working": "En curso",
+    "resolved": "Resuelto",
+    "closed": "Cerrado"
+  },
+  "priorities": {
+    "low": "Baja",
+    "normal": "Normal",
+    "high": "Alta",
+    "urgent": "Urgente"
+  },
+  "queues": {
+    "support": "Soporte",
+    "logistics": "Logística",
+    "quality": "Calidad",
+    "billing": "Facturación",
+    "escalation": "Escalado"
+  },
+  "sla": {
+    "on_track": "A tiempo",
+    "warning": "En riesgo",
+    "overdue": "Vencido",
+    "met": "Cumplido",
+    "missed": "Incumplido"
+  },
+  "objects": {
+    "case": "Caso"
+  },
+  "related": {
+    "activities": "Actividad"
+  },
+  "report": {
+    "total": "Total {count}",
+    "open": "Abiertos {count}",
+    "resolved": "Resueltos {count}",
+    "breached": "SLA incumplido {count}",
+    "avg": "Resolución media"
+  },
+  "email": {
+    "create": "Crear caso",
+    "created": "Caso creado desde el correo",
+    "updated": "Caso actualizado con la respuesta",
+    "failed": "No se pudo crear el caso"
+  },
+  "record": {
+    "create": "Nuevo caso"
+  }
+}

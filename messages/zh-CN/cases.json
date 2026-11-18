@@ -1,0 +1,81 @@
+{
+  "title": "服务工单",
+  "singular": "工单",
+  "fields": {
+    "subject": "主题",
+    "number": "工单号",
+    "status": "状态",
+    "priority": "优先级",
+    "type": "类型",
+    "queue": "负责队列",
+    "sla": "SLA",
+    "account": "客户",
+    "contact": "联系人",
+    "orderRef": "订单编号",
+    "owner": "负责人",
+    "description": "问题描述",
+    "sourceEmail": "来源邮箱",
+    "sourceMessage": "来源邮件 ID",
+    "firstResponseAt": "首次响应",
+    "slaDueAt": "SLA 到期",
+    "resolvedAt": "解决时间",
+    "resolutionMinutes": "解决时长（分钟）",
+    "resolutionNotes": "解决说明",
+    "createdAt": "创建时间",
+    "updatedAt": "最后修改"
+  },
+  "types": {
+    "question": "产品咨询",
+    "delivery": "交付问题",
+    "complaint": "投诉",
+    "other": "其他"
+  },
+  "statuses": {
+    "new": "新建",
+    "working": "处理中",
+    "resolved": "已解决",
+    "closed": "已关闭"
+  },
+  "priorities": {
+    "low": "低",
+    "normal": "普通",
+    "high": "高",
+    "urgent": "紧急"
+  },
+  "queues": {
+    "support": "客服",
+    "logistics": "物流",
+    "quality": "质检",
+    "billing": "财务",
+    "escalation": "升级处理"
+  },
+  "sla": {
+    "on_track": "正常",
+    "warning": "即将超时",
+    "overdue": "已超时",
+    "met": "达标",
+    "missed": "未达标"
+  },
+  "objects": {
+    "case": "工单"
+  },
+  "related": {
+    "activities": "活动"
+  },
+  "report": {
+    "total": "共 {count}",
+    "open": "未解决 {count}",
+    "resolved": "已解决 {count}",
+    "breached": "SLA 超时 {count}",
+    "avg": "平均解决时长"
+  },
+  "email": {
+    "create": "生成工单",
+    "created": "已根据邮件创建工单",
+    "updated": "回复已更新工单",
+    "failed": "无法创建工单"
+  },
+  "record": {
+    "create": "新建工单"
+  }
+}

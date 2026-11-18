@@ -141,13 +141,14 @@
     "cases": {
       "title": "Casos",
       "summary": "Chamados de suporte pós-venda para contas e contatos, com acompanhamento de SLA.",
-      "description": "Os casos registram as solicitações de suporte que os clientes abrem depois da venda: dúvidas sobre produtos, problemas de entrega e reclamações. Cada caso está vinculado a uma conta e a um contato, tem uma prioridade e um prazo de SLA, e avança de novo a resolvido com uma nota de resolução. E-mails enviados ao endereço de suporte viram casos automaticamente.",
+      "description": "Os casos registram as solicitações de suporte que os clientes abrem depois da venda: dúvidas sobre produtos, problemas de entrega e reclamações. Cada caso está vinculado a uma conta e a um contato, tem uma prioridade e um prazo de SLA, e avança de novo a resolvido com uma nota de resolução. Qualquer e-mail da caixa vira caso com um clique; respostas no mesmo tópico atualizam o caso em vez de duplicá-lo.",
       "capabilities": {
-        "tickets": "Casos vinculados a uma conta, a um contato e, opcionalmente, a um pedido",
+        "tickets": "Casos vinculados a uma conta, a um contato e, opcionalmente, a uma referência de pedido",
         "priority": "Prioridade, tipo e fila responsável por caso",
         "sla": "Prazo de SLA por prioridade, com alertas de descumprimento",
-        "emailToCase": "E-mails ao endereço de suporte criam ou atualizam casos",
-        "resolution": "Notas de resolução e relatórios de tempo de resolução"
+        "emailToCase": "Cria ou atualiza um caso a partir de um e-mail, pelo id da mensagem",
+        "resolution": "Notas de resolução com tempo registrado",
+        "reporting": "Resumo de tempo de resolução e descumprimentos na lista"
       },
       "dependencies": {
         "email": "O e-mail para caso e as respostas usam a integração de caixa de e-mail."

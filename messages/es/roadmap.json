@@ -141,13 +141,14 @@
     "cases": {
       "title": "Casos",
       "summary": "Tickets de soporte posventa para cuentas y contactos, con seguimiento del SLA.",
-      "description": "Los casos registran las solicitudes de soporte que los clientes plantean después de la venta: dudas sobre productos, problemas de entrega y reclamaciones. Cada caso está vinculado a una cuenta y a un contacto, tiene una prioridad y un plazo de SLA, y avanza de nuevo a resuelto con una nota de resolución. Los correos enviados a la dirección de soporte se convierten en casos automáticamente.",
+      "description": "Los casos registran las solicitudes de soporte que los clientes plantean después de la venta: dudas sobre productos, problemas de entrega y reclamaciones. Cada caso está vinculado a una cuenta y a un contacto, tiene una prioridad y un plazo de SLA, y avanza de nuevo a resuelto con una nota de resolución. Cualquier correo del buzón se convierte en caso con un clic; las respuestas del mismo hilo actualizan el caso en lugar de duplicarlo.",
       "capabilities": {
-        "tickets": "Casos vinculados a una cuenta, un contacto y, opcionalmente, un pedido",
+        "tickets": "Casos vinculados a una cuenta, un contacto y, opcionalmente, una referencia de pedido",
         "priority": "Prioridad, tipo y cola responsable por caso",
         "sla": "Plazo de SLA por prioridad, con avisos de incumplimiento",
-        "emailToCase": "Los correos a la dirección de soporte crean o actualizan casos",
-        "resolution": "Notas de resolución e informes del tiempo de resolución"
+        "emailToCase": "Crea o actualiza un caso desde un correo, por id de mensaje",
+        "resolution": "Notas de resolución con tiempo registrado",
+        "reporting": "Resumen de tiempos e incumplimientos de SLA en la lista"
       },
       "dependencies": {
         "email": "El correo a caso y las respuestas usan la integración de buzón."

@@ -141,13 +141,14 @@
     "cases": {
       "title": "Cases",
       "summary": "Post-sale support tickets for accounts and contacts, with SLA tracking.",
-      "description": "Cases record the support requests that customers raise after a sale: product questions, delivery problems and complaints. Each case is linked to an account and a contact, has a priority and an SLA clock, and moves from new to resolved with a resolution note. Emails to the support address become cases automatically.",
+      "description": "Cases record the support requests that customers raise after a sale: product questions, delivery problems and complaints. Each case is linked to an account and a contact, has a priority and an SLA clock, and moves from new to resolved with a resolution note. Any email in the mailbox can be turned into a case in one click; replies on the same message thread update that case instead of creating a duplicate.",
       "capabilities": {
-        "tickets": "Cases linked to an account, a contact and optionally an order",
+        "tickets": "Cases linked to an account, a contact and optionally an order reference",
         "priority": "Priority, type and owner queue per case",
         "sla": "SLA clock per priority, with breach warnings",
-        "emailToCase": "Emails to the support address create or update cases",
-        "resolution": "Resolution notes and time-to-resolve reporting"
+        "emailToCase": "Create or update a case from an email, matched by message id",
+        "resolution": "Resolution notes with recorded resolution time",
+        "reporting": "Resolution-time and SLA-breach summary on the case list"
       },
       "dependencies": {
         "email": "Email-to-case and replies use the mailbox integration."

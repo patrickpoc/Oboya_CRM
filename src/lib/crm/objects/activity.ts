@@ -2,7 +2,7 @@ import { CalendarCheck, Trash2, UserRoundCog } from "lucide-react";
 import type { RecordConfig, StaticOption } from "./types";
 
 /** Objects an activity can be related to (crm_activities.what_object check). */
-export const ACTIVITY_PARENTS = ["lead", "account", "contact", "opportunity"] as const;
+export const ACTIVITY_PARENTS = ["lead", "account", "contact", "opportunity", "case"] as const;
 export type ActivityParent = (typeof ACTIVITY_PARENTS)[number];
 
 export const ACTIVITY_TYPES: StaticOption[] = [

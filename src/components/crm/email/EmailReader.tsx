@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Download, Mail, Reply } from "lucide-react";
+import { Download, LifeBuoy, Mail, Reply } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { loadAttachmentBlob, type MailAction } from "@/lib/crm/email/sync-client";
@@ -23,6 +23,8 @@ export function EmailReader({
   onLoadBody,
   onAction,
   onReply,
+  onCreateCase,
+  canCreateCase,
 }: {
   header: MailHeader | null;
   body: MailBody | null;
@@ -31,8 +33,11 @@ export function EmailReader({
   onLoadBody: () => void;
   onAction: (action: MailAction) => void;
   onReply: () => void;
+  onCreateCase: () => void;
+  canCreateCase: boolean;
 }) {
   const t = useTranslations("email");
+  const tCases = useTranslations("cases");
   const [downloading, setDownloading] = useState<string | null>(null);
 
   if (!header) {
@@ -74,6 +79,11 @@ export function EmailReader({
           <Button size="sm" variant="outline" className="rounded-full" onClick={onReply}>
             <Reply className="size-4" /> {t("actions.reply")}
           </Button>
+          {canCreateCase ? (
+            <Button size="sm" variant="outline" className="rounded-full border-oboya-blue text-oboya-blue" onClick={onCreateCase}>
+              <LifeBuoy className="size-4" /> {tCases("email.create")}
+            </Button>
+          ) : null}
           <Button
             size="sm"
             variant="outline"

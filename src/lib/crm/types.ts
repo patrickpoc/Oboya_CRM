@@ -7,6 +7,7 @@ export const CRM_MODULES = [
   "contacts",
   "opportunities",
   "activities",
+  "cases",
   "email",
   "industry_news",
   "setup_users",

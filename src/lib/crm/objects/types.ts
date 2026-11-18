@@ -4,7 +4,7 @@ import type { CrmAction, CrmModule } from "@/lib/crm/types";
 import type { PillTone } from "@/components/crm/common/StatusPill";
 
 /** Object names, as used by crm_recent_views, crm_soft_delete and the API path. */
-export const CRM_OBJECTS = ["lead", "account", "contact", "opportunity", "activity"] as const;
+export const CRM_OBJECTS = ["lead", "account", "contact", "opportunity", "activity", "case"] as const;
 export type CrmObject = (typeof CRM_OBJECTS)[number];
 
 export function isCrmObject(value: unknown): value is CrmObject {
@@ -218,6 +218,7 @@ export const OBJECT_META: Record<
     module: "opportunities",
   },
   activity: { table: "crm_activities", nameColumn: "subject", basePath: "/activities", module: "activities" },
+  case: { table: "crm_cases", nameColumn: "subject", basePath: "/cases", module: "cases" },
 };
 
 /** Query-string keys reserved by list views; field keys must not use them. */

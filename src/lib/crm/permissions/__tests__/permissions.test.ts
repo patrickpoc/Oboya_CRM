@@ -12,7 +12,7 @@ import {
 import { canAccess, canAccessUser, resolvePermissions } from "../access-resolve";
 import { canAccessUserClient, getPermissions } from "../matrix";
 
-const OBJECTS: CrmModule[] = ["leads", "accounts", "contacts", "opportunities", "activities"];
+const OBJECTS: CrmModule[] = ["leads", "accounts", "contacts", "opportunities", "activities", "cases"];
 const SETUP = CRM_MODULES.filter((m) => m.startsWith("setup_"));
 const ALL = ["view", "create", "edit", "delete", "convert", "export"];
 
@@ -37,7 +37,7 @@ const can = (
 describe("BUILTIN_MATRIX (mirrors the SQL seed)", () => {
   it("equals the crm_access_control seed in the latest migration", () => {
     const sql = readFileSync(
-      path.resolve(__dirname, "../../../../../supabase/migrations/20261117010000_crm_email.sql"),
+      path.resolve(__dirname, "../../../../../supabase/migrations/20261118000000_crm_cases.sql"),
       "utf8"
     );
     const seed = sql.match(/\$json\$([\s\S]*?)\$json\$/);

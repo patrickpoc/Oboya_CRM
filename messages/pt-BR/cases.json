@@ -1,0 +1,81 @@
+{
+  "title": "Casos",
+  "singular": "Caso",
+  "fields": {
+    "subject": "Assunto",
+    "number": "N.º do caso",
+    "status": "Status",
+    "priority": "Prioridade",
+    "type": "Tipo",
+    "queue": "Fila responsável",
+    "sla": "SLA",
+    "account": "Cliente",
+    "contact": "Contato",
+    "orderRef": "Referência do pedido",
+    "owner": "Atribuído a",
+    "description": "Descrição",
+    "sourceEmail": "E-mail de origem",
+    "sourceMessage": "ID da mensagem de origem",
+    "firstResponseAt": "Primeira resposta",
+    "slaDueAt": "Vencimento do SLA",
+    "resolvedAt": "Resolvido",
+    "resolutionMinutes": "Tempo de resolução (min)",
+    "resolutionNotes": "Notas de resolução",
+    "createdAt": "Criado",
+    "updatedAt": "Última modificação"
+  },
+  "types": {
+    "question": "Dúvida sobre produto",
+    "delivery": "Problema de entrega",
+    "complaint": "Reclamação",
+    "other": "Outro"
+  },
+  "statuses": {
+    "new": "Novo",
+    "working": "Em andamento",
+    "resolved": "Resolvido",
+    "closed": "Fechado"
+  },
+  "priorities": {
+    "low": "Baixa",
+    "normal": "Normal",
+    "high": "Alta",
+    "urgent": "Urgente"
+  },
+  "queues": {
+    "support": "Suporte",
+    "logistics": "Logística",
+    "quality": "Qualidade",
+    "billing": "Financeiro",
+    "escalation": "Escalação"
+  },
+  "sla": {
+    "on_track": "No prazo",
+    "warning": "Em risco",
+    "overdue": "Vencido",
+    "met": "Cumprido",
+    "missed": "Não cumprido"
+  },
+  "objects": {
+    "case": "Caso"
+  },
+  "related": {
+    "activities": "Atividade"
+  },
+  "report": {
+    "total": "Total {count}",
+    "open": "Abertos {count}",
+    "resolved": "Resolvidos {count}",
+    "breached": "SLA descumprido {count}",
+    "avg": "Resolução média"
+  },
+  "email": {
+    "create": "Criar caso",
+    "created": "Caso criado a partir do e-mail",
+    "updated": "Caso atualizado com a resposta",
+    "failed": "Não foi possível criar o caso"
+  },
+  "record": {
+    "create": "Novo caso"
+  }
+}

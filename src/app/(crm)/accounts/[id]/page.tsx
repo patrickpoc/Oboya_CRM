@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { CaseRecordButton } from "@/components/crm/cases/CaseRecordButton";
 import { EmailRecordButton } from "@/components/crm/email/EmailRecordButton";
 import { RecordPage } from "@/components/crm/record/RecordPage";
 import { requireCrmAuth } from "@/lib/crm/server/require-crm-auth";
@@ -18,10 +19,14 @@ export default async function AccountPage({ params }: { params: Promise<{ id: st
       object="account"
       id={id}
       slots={({ record }) => ({
-        actionSlot:
-          can("email", "view") && typeof record.email === "string" && record.email
-            ? <EmailRecordButton email={record.email} recordId={id} recordType="account" />
-            : undefined,
+        actionSlot: (
+          <>
+            {can("email", "view") && typeof record.email === "string" && record.email ? (
+              <EmailRecordButton email={record.email} recordId={id} recordType="account" />
+            ) : null}
+            <CaseRecordButton recordId={id} recordType="account" />
+          </>
+        ),
       })}
     />
   );

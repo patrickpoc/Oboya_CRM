@@ -37,6 +37,7 @@ export function ObjectListView({
   initial,
   headerActions,
   toolbar,
+  createDefaults,
 }: {
   object: CrmObject;
   lookups: RecordLookups;
@@ -45,6 +46,8 @@ export function ObjectListView({
   headerActions?: React.ReactNode;
   /** Extra controls inside the filter bar (e.g. the leads created-date range). */
   toolbar?: React.ReactNode;
+  /** Prefill and open the create drawer once (e.g. a new case from a record page). */
+  createDefaults?: Record<string, unknown>;
 }) {
   const config = getRecordConfig(object)!;
   const t = useTranslations();
@@ -63,7 +66,7 @@ export function ObjectListView({
   const [data, setData] = useState<ListData | null>(initial ?? null);
   const [error, setError] = useState<{ key: string } | null>(null);
   const [retry, setRetry] = useState(0);
-  const [creating, setCreating] = useState(false);
+  const [creating, setCreating] = useState(Boolean(createDefaults));
   const [search, setSearch] = useState(filters.q);
   const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -253,7 +256,13 @@ export function ObjectListView({
         />
       </div>
 
-      <RecordFormDrawer object={object} open={creating} onClose={() => setCreating(false)} lookups={lookups} />
+      <RecordFormDrawer
+        object={object}
+        open={creating}
+        onClose={() => setCreating(false)}
+        lookups={lookups}
+        defaults={createDefaults}
+      />
     </>
   );
 }

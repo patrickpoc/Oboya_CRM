@@ -1,5 +1,6 @@
 import { accountConfig } from "./account";
 import { activityConfig } from "./activity";
+import { caseConfig } from "./case";
 import { contactConfig } from "./contact";
 import { opportunityConfig } from "./opportunity";
 import { leadConfig } from "./lead";
@@ -14,6 +15,7 @@ import { isCrmObject, type CrmObject, type RecordConfig } from "./types";
 const registry: Partial<Record<CrmObject, RecordConfig>> = {
   account: accountConfig,
   activity: activityConfig,
+  case: caseConfig,
   opportunity: opportunityConfig,
   contact: contactConfig,
   lead: leadConfig,

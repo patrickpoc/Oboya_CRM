@@ -2,6 +2,7 @@ import setup from "./setup.json";
 import dashboard from "./dashboard.json";
 import search from "./search.json";
 import activities from "./activities.json";
+import cases from "./cases.json";
 import opportunities from "./opportunities.json";
 import contacts from "./contacts.json";
 import leads from "./leads.json";
@@ -21,6 +22,7 @@ const messages = {
   dashboard,
   search,
   activities,
+  cases,
   opportunities,
   contacts,
   leads,

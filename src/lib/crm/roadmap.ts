@@ -133,8 +133,9 @@ export const roadmap: RoadmapModule[] = [
     group: "service",
     icon: LifeBuoy,
     href: "/cases",
-    status: "planned",
-    capabilityKeys: ["tickets", "priority", "sla", "emailToCase", "resolution"],
+    status: "live",
+    module: "cases",
+    capabilityKeys: ["tickets", "priority", "sla", "emailToCase", "resolution", "reporting"],
     dependencyKeys: ["email"],
   },
   {

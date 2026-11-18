@@ -4,6 +4,7 @@ import type { CrmSupabaseClient } from "@/lib/supabase/server";
 import { RepositoryError } from "@/lib/crm/objects/errors";
 import type { CrmObject, EntityLink, RecordRow } from "@/lib/crm/objects/types";
 import { leadSlaHandler } from "@/lib/crm/leads/sla-virtual";
+import { caseSlaHandler } from "@/lib/crm/cases/sla-virtual";
 import { dueRangeBounds } from "@/lib/crm/activities/due";
 import { stageKindsFromRows } from "@/lib/crm/opportunities/stages";
 import { fetchInChunks } from "./chunk";
@@ -183,6 +184,7 @@ const opportunityStageKind: VirtualFieldHandler = {
 
 const handlers: Record<string, VirtualFieldHandler> = {
   "lead.sla": leadSlaHandler,
+  "case.sla": caseSlaHandler,
   "opportunity.stage_kind": opportunityStageKind,
   "account.entities": accountEntities,
   "activity.due_range": activityDueRange,

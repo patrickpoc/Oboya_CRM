@@ -1,0 +1,81 @@
+{
+  "title": "Cases",
+  "singular": "Case",
+  "fields": {
+    "subject": "Subject",
+    "number": "Case no.",
+    "status": "Status",
+    "priority": "Priority",
+    "type": "Type",
+    "queue": "Owner queue",
+    "sla": "SLA",
+    "account": "Customer",
+    "contact": "Contact",
+    "orderRef": "Order reference",
+    "owner": "Assigned to",
+    "description": "Description",
+    "sourceEmail": "Source email",
+    "sourceMessage": "Source message id",
+    "firstResponseAt": "First response",
+    "slaDueAt": "SLA due",
+    "resolvedAt": "Resolved",
+    "resolutionMinutes": "Resolution time (min)",
+    "resolutionNotes": "Resolution notes",
+    "createdAt": "Created",
+    "updatedAt": "Last modified"
+  },
+  "types": {
+    "question": "Product question",
+    "delivery": "Delivery issue",
+    "complaint": "Complaint",
+    "other": "Other"
+  },
+  "statuses": {
+    "new": "New",
+    "working": "Working",
+    "resolved": "Resolved",
+    "closed": "Closed"
+  },
+  "priorities": {
+    "low": "Low",
+    "normal": "Normal",
+    "high": "High",
+    "urgent": "Urgent"
+  },
+  "queues": {
+    "support": "Support",
+    "logistics": "Logistics",
+    "quality": "Quality",
+    "billing": "Billing",
+    "escalation": "Escalation"
+  },
+  "sla": {
+    "on_track": "On time",
+    "warning": "At risk",
+    "overdue": "Overdue",
+    "met": "Met",
+    "missed": "Missed"
+  },
+  "objects": {
+    "case": "Case"
+  },
+  "related": {
+    "activities": "Activity"
+  },
+  "report": {
+    "total": "Total {count}",
+    "open": "Open {count}",
+    "resolved": "Resolved {count}",
+    "breached": "SLA breached {count}",
+    "avg": "Avg. resolution"
+  },
+  "email": {
+    "create": "Create case",
+    "created": "Case created from email",
+    "updated": "Case updated from reply",
+    "failed": "Could not create the case"
+  },
+  "record": {
+    "create": "New case"
+  }
+}
