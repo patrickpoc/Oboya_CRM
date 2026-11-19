@@ -13,8 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import type { EmailAccount, EmailPreset, EmailProviderId } from "@/lib/crm/email/types";
-
-const COLORS = ["#2563eb", "#16a34a", "#d97706", "#dc2626", "#7c3aed", "#0891b2"];
+import { EMAIL_ACCOUNT_COLORS as COLORS, emailAccountColor } from "@/lib/crm/email/colors";
 
 type FormState = {
   id?: string;
@@ -66,7 +65,7 @@ function formFromAccount(account: EmailAccount): FormState {
     imapPort: account.imapPort,
     smtpSecure: account.smtpSecure,
     imapSecure: account.imapSecure,
-    color: account.color,
+    color: emailAccountColor(account.color),
     enabled: account.enabled,
   };
 }

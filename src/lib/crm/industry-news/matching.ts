@@ -18,7 +18,7 @@ function regexSource(value: string): string {
     : trimmed;
 }
 
-function compile(pattern: string): RegExp | null {
+export function compileKeywordRegex(pattern: string): RegExp | null {
   try {
     return new RegExp(regexSource(pattern), "i");
   } catch {
@@ -31,7 +31,7 @@ function containsWord(text: string, word: string): boolean {
   const trimmed = word.trim();
   if (!trimmed) return false;
   if (trimmed.startsWith("/") && trimmed.endsWith("/") && trimmed.length > 2) {
-    const regex = compile(trimmed);
+    const regex = compileKeywordRegex(trimmed);
     return regex ? regex.test(text) : false;
   }
   return text.includes(lower(trimmed));
@@ -47,7 +47,7 @@ export function matchesGroup(title: string, group: KeywordGroup, globalExcludes:
   }
   if (group.words.length === 0) return true;
   return group.words.some((word) =>
-    word.type === "regex" ? Boolean(compile(word.text)?.test(text)) : containsWord(text, word.text)
+    word.type === "regex" ? Boolean(compileKeywordRegex(word.text)?.test(text)) : containsWord(text, word.text)
   );
 }
 

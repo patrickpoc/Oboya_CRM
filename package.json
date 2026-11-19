@@ -10,6 +10,7 @@
     "test": "vitest run",
     "test:rls": "vitest run --config vitest.rls.config.ts",
     "test:e2e": "playwright test",
+    "test:email:offline": "node tests/offline/email-browser.mjs",
     "i18n:check": "node scripts/check-i18n.mjs",
     "seed:demo": "node scripts/seed-demo.mjs",
     "create-admin": "node scripts/create-admin-user.mjs"
@@ -41,6 +42,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.17",
     "@playwright/test": "^1.64.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",

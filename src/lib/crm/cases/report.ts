@@ -66,10 +66,13 @@ export function caseReport(
   };
 }
 
-export function formatResolution(minutes: number | null): string {
-  if (minutes === null) return "—";
-  if (minutes < 60) return `${minutes}m`;
+export function formatResolution(minutes: number | null, locale = "en"): string {
+  if (minutes === null || !Number.isFinite(minutes) || minutes < 0) return "—";
   const hours = minutes / 60;
-  if (hours < 24) return `${hours < 10 ? hours.toFixed(1) : Math.round(hours)}h`;
-  return `${Math.round(hours / 24)}d`;
+  const unit = minutes < 60 ? "minute" : hours < 24 ? "hour" : "day";
+  const value = unit === "minute" ? minutes : unit === "hour" ? hours : hours / 24;
+  const decimals = unit === "hour" && hours < 10 ? 1 : 0;
+  return new Intl.NumberFormat(locale, {
+    style: "unit", unit, unitDisplay: "short", minimumFractionDigits: decimals, maximumFractionDigits: decimals,
+  }).format(value);
 }

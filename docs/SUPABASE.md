@@ -28,17 +28,37 @@ The files in `supabase/migrations/` must run in filename order:
 | `20261116000500_crm_audit.sql` | audit trigger on all object tables |
 | `20261116000600_crm_functions.sql` | RPCs: delete/reorder stages, soft delete/restore, convert lead, inbound owner |
 | `20261116000700_crm_v1_fixes.sql` | RPCs: opportunity stage change, account create + company links, picklist reorder, role permissions; converted leads read-only; audit on config tables (`record_key`) |
+| `20261116000750_crm_preserve_module_permissions.sql` | Upgrade adapter: preserves customised permissions while unapplied historical module seeds add their own module |
 | `20261116000800_crm_industry_news.sql` | Industry News config + article tables, RLS, indexes, audit trigger, access-matrix seed |
 | `20261116000900_crm_industry_news_hardening.sql` | AI columns, cursor/deferred-join RPCs, batched ingest/save, 30-day retention and optional `pg_cron` jobs |
 | `20261117000000_crm_industry_news_global.sql` | Single global Industry News config/articles, read-only for viewers, super-admin writes, service-role cron writers |
 | `20261117010000_crm_email.sql` | Per-user SMTP/IMAP accounts, encrypted credentials, RLS and email permission seed |
 | `20261118000000_crm_cases.sql` | Support cases table + RLS, per-priority SLA rules, resolution reporting RPC, activity-on-case parent, cases permission seed |
 | `20261119000000_crm_industry_news_last_fetched.sql` | Dedicated last-successful-ingest timestamp, read policy for viewers, bootstrap/ingest RPC updates |
+| `20261119010000_crm_audit_repairs.sql` | Restore converted-lead guard; case delete/restore, activities and recent views; owner-scoped email deletion; credential audit redaction |
+| `20261119020000_crm_case_email_threads.sql` | Atomic RLS-scoped thread conversion, message aliases, idempotent replies and owner-scoped uniqueness |
+| `20261119030000_crm_visibility_and_credential_audit.sql` | Parent-visible activity audit reads without broader deletion; redact historical mailbox credential differences |
 
 Either:
 
-- **SQL editor:** paste each file, in order, and run it. Each file is one transaction and can be re-run safely.
-- **CLI:** `supabase link --project-ref <ref>` then `supabase db push`. The 14-digit versions keep the CLI order identical.
+- **SQL editor:** run only unapplied files, in filename order. Do not replay historical permission seeds: they replace the access matrix when run without the upgrade adapter.
+- **CLI:** `supabase link --project-ref <ref>`, review `supabase db push --include-all --dry-run`, then `supabase db push --include-all`. The 14-digit versions keep the CLI order identical.
+
+Existing projects must use `supabase db push --include-all` for the backfilled `000750` migration. Review the dry run first: `000750` must run before any still-unapplied Industry News, Email or Cases migration, and `20261119010000` removes its temporary adapter afterwards. If those module migrations are already applied, do not replay them; apply the remaining new migrations in order. Future module migrations should call `crm_add_module_permissions(matrix, module, defaults_by_role)` to add a single module while preserving existing cells and custom roles.
+
+Permissions already overwritten by an earlier deployment cannot be inferred from the current matrix. Review `crm_audit_logs` rows with `object = 'access_control'` and `diff -> 'matrix'` (the `[old, new]` snapshots) against the intended policy before restoring through Setup. The repair does not automatically restore historical snapshots or undo later administrator edits.
+
+Email browser storage is now named by the authenticated CRM user ID. Every asynchronous operation retains that user's database handle; logout/identity changes close old handles, and the old user interface is discarded. The legacy shared `oboya-email` database is quarantined: the application never opens or automatically imports it because its records have no reliable user ownership. This means old local-only drafts/sent copies do not automatically appear in the new user database; server mail is fetched again. The unified Sent folder combines server messages with this user's local copies using account + Message-ID and retains local attachment Blobs.
+
+After `20261119020000`, email-to-case conversion follows `In-Reply-To` and `References` using an atomic `crm_case_from_email` invoker RPC. Only RLS-visible, writable cases can be updated. Original messages and replies share one case even when a reply is converted first. New replies append history and set status to `working`, including previously resolved/closed cases; retries of the same message do not append or reopen it. History is limited to 1,000,000 characters, with up to 10,000 characters retained per email; the edit form uses the same total limit.
+
+Case recent views accept `case` after `20261119010000`. Case and activity reads follow either visible parent (account or contact), even when another user owns both the case and activity. After `20261119030000`, activity audit reads use the activity's own SELECT RLS and still require `audit_logs.view`; parent visibility does not grant deletion of another owner's activity.
+
+Mailbox audit credentials are masked on new events after `20261119010000`. `20261119030000` also removes existing `password_encrypted` copies from `email_account` audit differences, preserving event IDs, actors, timestamps, unrelated differences, null endpoints and rotation markers. Repeating the migration does not rewrite already-masked rows. Live mailbox ciphertext, backups and exported audit copies are unchanged.
+
+Built-in email templates use the current CRM language (`en`, `pt-BR`, `es`, `zh-CN`) at render time. Exact unedited legacy English seeds are replaced in memory; customized saved templates and existing drafts are preserved. Email dates and the last news fetch use the CRM locale and its existing UTC timezone, rather than browser defaults. Case resolution durations use localized minute/hour/day units. Mailbox colors are restricted to the Oboya palette in both input validation and the database.
+
+Offline verification: `npm test` includes PGlite (a development-only WASM PostgreSQL dependency) executing the complete application migration chain with local Supabase auth/default-grant fixtures. Tests cover both cross-owner parent paths, activity audits, audit permission denial, unchanged delete rights, historical redaction and repeat-migration idempotency. `npm run build && npm run test:email:offline` runs the real email components against local fake HTTP endpoints in Chromium/installed Edge with real IndexedDB, covering user isolation, delayed responses, sent deduplication, attachment bytes, header refresh, four-language templates/date/duration formatting and 375px layout. These checks do not connect to Supabase or an actual mailbox and do not replace a deployed migration rehearsal or multi-session concurrency tests.
 
 Never edit an applied migration; add a new file (`YYYYMMDDhhmmss_name.sql`).
 

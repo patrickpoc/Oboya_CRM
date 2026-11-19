@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Inbox, MailPlus, Pencil, Plus, RefreshCw, Trash2 } from "lucide-react";
@@ -16,7 +16,7 @@ import { EmailAccountEditor } from "./EmailAccountEditor";
 import { EmailComposer, type ComposeInitial } from "./EmailComposer";
 import { EmailList } from "./EmailList";
 import { EmailReader } from "./EmailReader";
-import { EmailSentBox } from "./EmailSentBox";
+import { EmailSentCacheControls } from "./EmailSentCacheControls";
 import {
   applyMailAction,
   findCrmMatches,
@@ -30,15 +30,16 @@ import {
   cachedHeaders,
   cacheAccounts,
   deleteDraft,
+  emailDb,
   headerKey,
   listDrafts,
   listSent,
-  sentStorageBytes,
   type OutboxDraft,
   type SentMessage,
 } from "@/lib/crm/email/local-db";
 import type { CrmEmailMatch, EmailAccount, EmailPreset, MailBody, MailHeader } from "@/lib/crm/email/types";
 import { createCaseFromEmail } from "@/lib/crm/cases/from-email-client";
+import { mergeSentHeaders } from "@/lib/crm/email/sent";
 
 export type EmailViewInitial = {
   email: string | null;
@@ -54,7 +55,7 @@ type PresetResponse = { presets: readonly EmailPreset[] };
 type FolderKey = "INBOX" | "Drafts" | "Sent" | "Trash";
 const FOLDERS: FolderKey[] = ["INBOX", "Drafts", "Sent", "Trash"];
 const AUTO_SYNC_MS = 60_000;
-let lastAutoSync = 0;
+const lastAutoSync = new Map<string, number>();
 
 function isFolder(value: string | null): value is FolderKey {
   return Boolean(value && FOLDERS.includes(value as FolderKey));
@@ -68,15 +69,22 @@ function matchesSearch(header: MailHeader, term: string): boolean {
 }
 
 export function EmailView({ initial }: { initial: EmailViewInitial }) {
+  const { user } = useCrm();
+  return <UserEmailView key={user.id} initial={initial} />;
+}
+
+function UserEmailView({ initial }: { initial: EmailViewInitial }) {
   const t = useTranslations("email");
   const tCases = useTranslations("cases");
-  const { can } = useCrm();
+  const { can, user } = useCrm();
+  const db = useMemo(() => emailDb(user.id), [user.id]);
   const canEdit = can("email", "edit");
   const canCreateCase = can("cases", "create");
 
   const [tab, setTab] = useState("mail");
   const [presets, setPresets] = useState<readonly EmailPreset[]>([]);
   const [accounts, setAccounts] = useState<EmailAccount[]>([]);
+  const accountsRef = useRef<EmailAccount[]>([]);
   const [activeAccount, setActiveAccount] = useState("");
   const activeAccountRef = useRef("");
   const [folder, setFolder] = useState<FolderKey>(isFolder(initial.folder) ? initial.folder : "INBOX");
@@ -84,9 +92,10 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
   const [customerHeaders, setCustomerHeaders] = useState<MailHeader[]>([]);
   const [drafts, setDrafts] = useState<OutboxDraft[]>([]);
   const [sent, setSent] = useState<SentMessage[]>([]);
-  const [sentBytes, setSentBytes] = useState(0);
   const [selected, setSelected] = useState<MailHeader | null>(null);
   const [body, setBody] = useState<MailBody | null>(null);
+  const [bodyLoading, setBodyLoading] = useState(false);
+  const selectionRequest = useRef(0);
   const [match, setMatch] = useState<CrmEmailMatch | null>(null);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -94,6 +103,14 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
   const [error, setError] = useState<unknown>(null);
   const [compose, setCompose] = useState<ComposeInitial | null>(null);
   const composerOpened = useRef(false);
+
+  const clearSelection = useCallback(() => {
+    selectionRequest.current += 1;
+    setSelected(null);
+    setBody(null);
+    setBodyLoading(false);
+    setMatch(null);
+  }, []);
 
   const chooseAccount = useCallback((list: EmailAccount[]): EmailAccount | null => {
     const chosen =
@@ -110,13 +127,12 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
     async (accountId: string, nextFolder: FolderKey) => {
       setLoading(true);
       try {
-        const term = search.trim().toLowerCase();
         const rows = initial.email
           ? customerHeaders.filter((header) => header.accountId === accountId && header.folder === nextFolder)
           : accountId
-            ? await cachedHeaders(accountId, nextFolder, 200)
+            ? await cachedHeaders(db, accountId, nextFolder, 200)
             : [];
-        setHeaders(rows.filter((header) => matchesSearch(header, term)));
+        setHeaders(rows);
         setError(null);
       } catch (caught) {
         setError(caught);
@@ -124,7 +140,7 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
         setLoading(false);
       }
     },
-    [customerHeaders, initial.email, search]
+    [customerHeaders, initial.email, db]
   );
 
   const loadCustomerHistory = useCallback(
@@ -135,8 +151,8 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
         const results = await mapLimit(list.filter((account) => account.enabled), 2, async (account) => {
           try {
             const [sent, inbox] = await Promise.all([
-              searchAccountHistory(account, "Sent", initial.email!),
-              searchAccountHistory(account, "INBOX", initial.email!),
+              searchAccountHistory(db, account, "Sent", initial.email!),
+              searchAccountHistory(db, account, "INBOX", initial.email!),
             ]);
             return [...sent, ...inbox];
           } catch {
@@ -155,29 +171,28 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
         );
       } finally {
         setSyncing(false);
+        setLoading(false);
       }
     },
-    [initial.email, initial.folder]
+    [initial.email, initial.folder, db]
   );
 
   const refreshDrafts = useCallback(async () => {
     try {
-      setDrafts(await listDrafts());
+      setDrafts((await Promise.all(accountsRef.current.map((account) => listDrafts(db, account.id)))).flat());
     } catch {
       setDrafts([]);
     }
-  }, []);
+  }, [db]);
 
   const refreshSent = useCallback(async () => {
     try {
-      const [messages, bytes] = await Promise.all([listSent(), sentStorageBytes()]);
-      setSent(messages);
-      setSentBytes(bytes);
+      const messages = await Promise.all(accountsRef.current.map((account) => listSent(db, account.id)));
+      setSent(messages.flat());
     } catch {
       setSent([]);
-      setSentBytes(0);
     }
-  }, []);
+  }, [db]);
 
   const refreshAccounts = useCallback(async () => {
     const [presetResponse, accountResponse] = await Promise.all([
@@ -185,12 +200,13 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
       apiFetch<AccountResponse>("/api/crm/email/accounts?limit=100"),
     ]);
     setPresets(presetResponse.presets);
+    accountsRef.current = accountResponse.accounts;
     setAccounts(accountResponse.accounts);
-    await cacheAccounts(accountResponse.accounts).catch(() => undefined);
+    await cacheAccounts(db, accountResponse.accounts).catch(() => undefined);
     const preferred = chooseAccount(accountResponse.accounts);
     await loadCustomerHistory(accountResponse.accounts, preferred?.id ?? "");
     return accountResponse.accounts;
-  }, [chooseAccount, loadCustomerHistory]);
+  }, [chooseAccount, loadCustomerHistory, db]);
 
   const reloadHeadersRef = useRef(reloadHeaders);
   useEffect(() => {
@@ -208,10 +224,10 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
         if (!initial.email) {
           const targetFolder = isFolder(initial.folder) ? initial.folder : "INBOX";
           await reloadHeadersRef.current(selectedAccount?.id ?? "", targetFolder);
-          if (Date.now() - lastAutoSync > AUTO_SYNC_MS) {
-            lastAutoSync = Date.now();
+          if (canEdit && Date.now() - (lastAutoSync.get(user.id) ?? 0) > AUTO_SYNC_MS) {
+            lastAutoSync.set(user.id, Date.now());
             setSyncing(true);
-            const result = await syncMailboxes(list.filter((account) => account.enabled), ["INBOX"], 100, 3);
+            const result = await syncMailboxes(db, list.filter((account) => account.enabled), [...new Set(["INBOX", "Sent", targetFolder])], 100, 3);
             if (result.failed.length) toast.error(`${t("errors.failed")}: ${result.failed.join(", ")}`);
             await reloadHeadersRef.current(selectedAccount?.id ?? "", targetFolder);
             setSyncing(false);
@@ -244,43 +260,59 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
     initial.compose,
     initial.recordId,
     initial.recordType,
+    canEdit,
+    user.id,
+    db,
     t,
   ]);
 
   const selectHeader = useCallback(
     async (header: MailHeader) => {
+      const request = ++selectionRequest.current;
       setSelected(header);
       setBody(null);
+      setBodyLoading(true);
       setMatch(null);
-      const cached = await cachedBody(header.id).catch(() => undefined);
+      const cached = await cachedBody(db, header.id).catch(() => undefined);
+      if (request !== selectionRequest.current) return;
       setBody(cached ?? null);
       try {
-        const loaded = await loadMailBody(header);
+        const loaded = await loadMailBody(db, header);
+        if (request !== selectionRequest.current) return;
         setBody(loaded);
-        await applyMailAction([header], "read");
-        const addresses = [...header.from, ...header.to].map((address) => address.address).filter(Boolean);
+        if (loaded.subject !== undefined) {
+          const patch = { subject: loaded.subject, inReplyTo: loaded.inReplyTo, references: loaded.references };
+          setSelected((current) => current?.id === header.id ? { ...current, ...patch } : current);
+          setHeaders((current) => current.map((item) => item.id === header.id ? { ...item, ...patch } : item));
+          setCustomerHeaders((current) => current.map((item) => item.id === header.id ? { ...item, ...patch } : item));
+        }
+        if (canEdit && header.uid > 0) await applyMailAction(db, [header], "read");
+        const addresses = (header.folder === "Sent" ? [...header.to, ...header.cc] : [...header.from, ...header.to])
+          .map((address) => address.address).filter(Boolean);
         if (addresses.length) {
-          const matches = await findCrmMatches(addresses);
+          const matches = await findCrmMatches(db, addresses);
+          if (request !== selectionRequest.current) return;
           setMatch(matches[0] ?? null);
         }
         setHeaders((current) => current.map((item) => (item.id === header.id ? { ...item, seen: true } : item)));
       } catch {
-        toast.error(t("errors.failed"));
+        if (request === selectionRequest.current) toast.error(t("errors.failed"));
+      } finally {
+        if (request === selectionRequest.current) setBodyLoading(false);
       }
     },
-    [t]
+    [canEdit, t, db]
   );
 
-  const actOnSelected = useCallback(
-    async (action: MailAction) => {
-      if (!selected) return;
+  const actOnHeader = useCallback(
+    async (header: MailHeader, action: MailAction) => {
       try {
-        await applyMailAction([selected], action);
+        await applyMailAction(db, [header], action);
         if (action === "delete") {
-          setSelected(null);
-          setBody(null);
-          setCustomerHeaders((current) => current.filter((header) => header.id !== selected.id));
-          await reloadHeaders(activeAccount, folder);
+          if (selected?.id === header.id) clearSelection();
+          setHeaders((current) => current.filter((item) => item.id !== header.id));
+          setCustomerHeaders((current) => current.filter((item) => item.id !== header.id));
+          await refreshSent();
         } else {
           const patch =
             action === "read"
@@ -292,25 +324,27 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
                   : action === "unflag"
                     ? { flagged: false }
                     : {};
-          setSelected({ ...selected, ...patch });
-          setHeaders((current) => current.map((item) => (item.id === selected.id ? { ...item, ...patch } : item)));
-          setCustomerHeaders((current) => current.map((item) => (item.id === selected.id ? { ...item, ...patch } : item)));
+          setSelected((current) => current?.id === header.id ? { ...current, ...patch } : current);
+          setHeaders((current) => current.map((item) => (item.id === header.id ? { ...item, ...patch } : item)));
+          setCustomerHeaders((current) => current.map((item) => (item.id === header.id ? { ...item, ...patch } : item)));
         }
       } catch {
         toast.error(t("errors.failed"));
       }
     },
-    [activeAccount, folder, reloadHeaders, selected, t]
+    [clearSelection, refreshSent, selected, t, db]
   );
 
   const syncNow = async () => {
     setSyncing(true);
     try {
-      const result = await syncMailboxes(accounts.filter((account) => account.enabled), [folder], 100, 3);
+      const result = await syncMailboxes(db, accounts.filter((account) => account.enabled), [folder], 100, 3);
       if (result.failed.length) toast.error(`${t("errors.failed")}: ${result.failed.join(", ")}`);
       else toast.success(`${t("actions.refresh")}: ${result.synced}`);
-      lastAutoSync = Date.now();
-      await reloadHeaders(activeAccount, folder);
+      lastAutoSync.set(user.id, Date.now());
+      if (initial.email) await loadCustomerHistory(accounts, activeAccount);
+      else await reloadHeaders(activeAccount, folder);
+      await refreshSent();
     } catch {
       toast.error(t("errors.failed"));
     } finally {
@@ -321,7 +355,7 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
   const reply = () => {
     if (!selected) return;
     setCompose({
-      to: selected.from.map((address) => address.address).join(", "),
+      to: (selected.folder === "Sent" ? selected.to : selected.from).map((address) => address.address).join(", "),
       subject: selected.subject.startsWith("Re:") ? selected.subject : `Re: ${selected.subject}`,
       body: `\n\n--- ${selected.from[0]?.address ?? ""} ---\n${body?.text.slice(0, 2000) ?? ""}`,
       inReplyTo: selected.messageId,
@@ -337,6 +371,8 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
       const result = await createCaseFromEmail(
         {
           messageId,
+          inReplyTo: body?.inReplyTo ?? selected.inReplyTo,
+          references: body?.references ?? selected.references ?? [],
           subject: selected.subject || t("reader.noSubject"),
           from: selected.from[0]?.address ?? "",
           body: body?.text ?? "",
@@ -364,7 +400,7 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
 
   const removeDraft = async (draft: OutboxDraft) => {
     try {
-      await deleteDraft(draft.id);
+      await deleteDraft(db, draft.id);
       await refreshDrafts();
       toast.success(t("drafts.deleted"));
     } catch {
@@ -372,7 +408,10 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
     }
   };
 
-  const filteredHeaders = headers.filter((header) => matchesSearch(header, search.trim().toLowerCase()));
+  const visibleHeaders = folder === "Sent" ? mergeSentHeaders(headers, sent, activeAccount, initial.email) : headers;
+  const filteredHeaders = visibleHeaders.filter((header) => matchesSearch(header, search.trim().toLowerCase()));
+  const localSent = sent.filter((message) => message.accountId === activeAccount &&
+    (!initial.email || [...message.to, ...message.cc].some((address) => address.toLowerCase() === initial.email!.toLowerCase())));
 
   return (
     <>
@@ -394,7 +433,7 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
               size="sm"
               variant="outline"
               className="rounded-full"
-              disabled={syncing || loading || accounts.length === 0}
+              disabled={!canEdit || syncing || loading || accounts.length === 0}
               onClick={() => void syncNow()}
             >
               <RefreshCw className={cn("size-4", syncing && "animate-spin")} /> {t("actions.refresh")}
@@ -402,7 +441,7 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
             <Button
               size="sm"
               className="rounded-full bg-oboya-green text-white hover:bg-oboya-green/90"
-              disabled={accounts.length === 0}
+              disabled={!canEdit || accounts.length === 0}
               onClick={() => setCompose({})}
             >
               <MailPlus className="size-4" /> {t("actions.compose")}
@@ -415,15 +454,20 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
         <TabsList>
           <TabsTrigger value="mail">{t("tabs.mail")}</TabsTrigger>
           <TabsTrigger value="drafts">{t("tabs.drafts")}</TabsTrigger>
-          <TabsTrigger value="sent">{t("tabs.sent")}</TabsTrigger>
           <TabsTrigger value="accounts">{t("tabs.accounts")}</TabsTrigger>
         </TabsList>
         <TabsContent value="mail" className="mt-4">
+          {folder === "Sent" && localSent.length > 0 ? (
+            <EmailSentCacheControls db={db} messages={localSent} onDeleted={async () => {
+              clearSelection();
+              await refreshSent();
+            }} />
+          ) : null}
           {error && accounts.length === 0 ? <ErrorState onRetry={() => void refreshAccounts()} /> : null}
           {!error && accounts.length === 0 ? (
             <EmptyState icon={Inbox} title={t("list.noAccounts")} description={t("list.noAccountsHint")} />
           ) : (
-            <div className="grid min-h-[600px] gap-3 lg:grid-cols-[200px_minmax(0,340px)_minmax(0,1fr)]">
+            <div className="grid min-h-[600px] min-w-0 gap-3 lg:grid-cols-[200px_minmax(0,340px)_minmax(0,1fr)]">
               <div className="space-y-3 rounded-xl border border-border/60 bg-white p-3">
                 <p className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">{t("account.title")}</p>
                 <div className="flex flex-wrap gap-1.5">
@@ -437,6 +481,7 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
                       )}
                       onClick={() => {
                         activeAccountRef.current = account.id;
+                        clearSelection();
                         setActiveAccount(account.id);
                         void reloadHeaders(account.id, folder);
                       }}
@@ -456,6 +501,7 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
                         folder === entry ? "bg-oboya-soft-white font-medium text-oboya-blue" : "hover:bg-muted/40"
                       )}
                       onClick={() => {
+                        clearSelection();
                         setFolder(entry);
                         void reloadHeaders(activeAccount, entry);
                       }}
@@ -471,30 +517,28 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
                 ) : null}
               </div>
 
-              {loading && headers.length === 0 ? <ListSkeleton rows={8} /> : (
+              {loading && filteredHeaders.length === 0 ? <ListSkeleton rows={8} /> : (
                 <EmailList
                   headers={filteredHeaders}
                   selectedId={selected?.id ?? null}
                   search={search}
                   loading={syncing}
+                  canEdit={canEdit}
                   onSearch={setSearch}
                   onSelect={(header) => void selectHeader(header)}
-                  onAction={(header, action) =>
-                    void applyMailAction([header], action).then(async () => {
-                      setCustomerHeaders((current) => current.filter((item) => item.id !== header.id));
-                      await reloadHeaders(activeAccount, folder);
-                    })
-                  }
+                  onAction={(header, action) => void actOnHeader(header, action)}
                 />
               )}
 
               <EmailReader
+                db={db}
                 header={selected}
                 body={body}
                 match={match}
-                loading={Boolean(selected) && !body}
+                loading={bodyLoading}
+                canEdit={canEdit}
                 onLoadBody={() => selected && void selectHeader(selected)}
-                onAction={(action) => void actOnSelected(action)}
+                onAction={(action) => selected && void actOnHeader(selected, action)}
                 onReply={reply}
                 onCreateCase={() => void createCase()}
                 canCreateCase={canCreateCase}
@@ -531,9 +575,6 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
             </div>
           )}
         </TabsContent>
-        <TabsContent value="sent" className="mt-4">
-          <EmailSentBox messages={sent} storageBytes={sentBytes} onDeleted={() => refreshSent()} />
-        </TabsContent>
         <TabsContent value="accounts" className="mt-4">
           <EmailAccountEditor
             presets={presets}
@@ -547,13 +588,19 @@ export function EmailView({ initial }: { initial: EmailViewInitial }) {
       </Tabs>
 
       <EmailComposer
+        db={db}
         open={Boolean(compose)}
         onOpenChange={(open) => !open && setCompose(null)}
         accounts={accounts}
         initial={compose}
-        onSent={() => {
-          void refreshAccounts();
-          void refreshSent();
+        onSent={async (accountId) => {
+          await refreshSent();
+          clearSelection();
+          activeAccountRef.current = accountId;
+          setActiveAccount(accountId);
+          setTab("mail");
+          setFolder("Sent");
+          await reloadHeaders(accountId, "Sent");
         }}
         onDraftsChanged={() => refreshDrafts()}
       />

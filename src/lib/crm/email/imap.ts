@@ -1,9 +1,13 @@
 import "server-only";
 
-import { ImapFlow } from "imapflow";
+import { ImapFlow, type FetchMessageObject, type FetchQueryObject, type MessageAddressObject, type MessageStructureObject } from "imapflow";
 import { simpleParser } from "mailparser";
+import type { Readable } from "node:stream";
 import type { EmailAccount, EmailAttachmentMeta, EmailAddress, MailBody, MailHeader, MailSyncPage } from "./types";
 import { nextUidAfterBatch, uidWindow } from "./uid-range";
+import { MAIL_HEADER_VERSION } from "./types";
+import { decodeMailSubject } from "./subject";
+import { mailThread } from "./thread";
 
 type ImapConfig = {
   host: string;
@@ -12,50 +16,26 @@ type ImapConfig = {
   auth: { user: string; pass: string };
 };
 
-type LooseAddress = { name?: string; mailbox?: string; host?: string };
-
-type BodyNode = {
-  type?: string;
-  part?: string;
-  filename?: string;
-  disposition?: string;
-  size?: number;
-  childNodes?: BodyNode[];
-};
-
-type FetchMessage = {
-  uid?: number;
-  envelope?: {
-    subject?: string;
-    messageId?: string;
-    from?: LooseAddress[] | false;
-    to?: LooseAddress[] | false;
-    cc?: LooseAddress[] | false;
-    date?: Date | string;
-  };
-  flags?: Set<string> | string[];
-  bodyStructure?: BodyNode;
-};
-
-function addresses(value?: LooseAddress[] | false): EmailAddress[] {
+function addresses(value?: MessageAddressObject[]): EmailAddress[] {
   if (!Array.isArray(value)) return [];
   return value
     .map((entry) => ({
       name: entry.name ?? "",
-      address: entry.mailbox && entry.host ? `${entry.mailbox}@${entry.host}` : entry.mailbox ?? "",
+      address: entry.address ?? "",
     }))
     .filter((entry) => entry.address.length > 0);
 }
 
-function attachmentMeta(node: BodyNode | undefined): EmailAttachmentMeta[] {
+function attachmentMeta(node: MessageStructureObject | undefined): EmailAttachmentMeta[] {
   if (!node) return [];
   const out: EmailAttachmentMeta[] = [];
-  const visit = (current: BodyNode) => {
-    if (current.part && current.filename) {
+  const visit = (current: MessageStructureObject) => {
+    const filename = current.dispositionParameters?.filename ?? current.parameters?.name;
+    if (current.part && filename) {
       const disposition = (current.disposition ?? "attachment").toLowerCase();
       out.push({
         part: current.part,
-        filename: current.filename,
+        filename,
         contentType: current.type ?? "application/octet-stream",
         size: Number(current.size ?? 0),
         disposition: disposition === "inline" ? "inline" : "attachment",
@@ -67,9 +47,9 @@ function attachmentMeta(node: BodyNode | undefined): EmailAttachmentMeta[] {
   return out;
 }
 
-function textParts(node: BodyNode | undefined): { plain?: string; html?: string } {
+function textParts(node: MessageStructureObject | undefined): { plain?: string; html?: string } {
   const found: { plain?: string; html?: string } = {};
-  const visit = (current: BodyNode) => {
+  const visit = (current: MessageStructureObject) => {
     if (current.part && current.type === "text/plain" && !found.plain) found.plain = current.part;
     if (current.part && current.type === "text/html" && !found.html) found.html = current.part;
     for (const child of current.childNodes ?? []) visit(child);
@@ -78,7 +58,7 @@ function textParts(node: BodyNode | undefined): { plain?: string; html?: string 
   return found;
 }
 
-function toHeader(account: EmailAccount, folder: string, message: FetchMessage): MailHeader | null {
+async function toHeader(account: EmailAccount, folder: string, message: FetchMessageObject): Promise<MailHeader | null> {
   if (!message.uid) return null;
   const flags = message.flags instanceof Set ? [...message.flags] : message.flags ?? [];
   const seen = flags.some((flag) => flag.toLowerCase().includes("seen"));
@@ -91,8 +71,10 @@ function toHeader(account: EmailAccount, folder: string, message: FetchMessage):
     accountId: account.id,
     folder,
     uid: message.uid,
-    subject: message.envelope?.subject ?? "(no subject)",
+    subject: await decodeMailSubject(message.headers, message.envelope?.subject ?? ""),
+    headerVersion: MAIL_HEADER_VERSION,
     messageId: message.envelope?.messageId,
+    ...mailThread(message.headers),
     from: addresses(message.envelope?.from),
     to: addresses(message.envelope?.to),
     cc: addresses(message.envelope?.cc),
@@ -105,7 +87,7 @@ function toHeader(account: EmailAccount, folder: string, message: FetchMessage):
   };
 }
 
-async function withImap<T>(config: ImapConfig, folder: string, worker: (client: ImapFlow) => Promise<T>): Promise<T> {
+async function openImap(config: ImapConfig, folder: string) {
   const client = new ImapFlow({
     host: config.host,
     port: config.port,
@@ -116,7 +98,19 @@ async function withImap<T>(config: ImapConfig, folder: string, worker: (client: 
     socketTimeout: 30_000,
   });
   await client.connect();
-  const lock = await client.getMailboxLock(folder);
+  try {
+    const specialUse = ({ Sent: "\\Sent", Drafts: "\\Drafts", Trash: "\\Trash" } as Record<string, string>)[folder];
+    const path = specialUse ? (await client.list()).find((entry) => entry.specialUse === specialUse)?.path ?? folder : folder;
+    const lock = await client.getMailboxLock(path);
+    return { client, lock };
+  } catch (error) {
+    await client.logout().catch(() => undefined);
+    throw error;
+  }
+}
+
+async function withImap<T>(config: ImapConfig, folder: string, worker: (client: ImapFlow) => Promise<T>): Promise<T> {
+  const { client, lock } = await openImap(config, folder);
   try {
     return await worker(client);
   } finally {
@@ -134,7 +128,8 @@ const HEADER_QUERY = {
   flags: true,
   internalDate: true,
   bodyStructure: true,
-} as const;
+  headers: ["subject", "in-reply-to", "references"],
+} satisfies FetchQueryObject;
 
 /** UID-cursor header sync. No OFFSET, no 1:* scan, bounded by `limit`. */
 export async function syncHeaders(
@@ -151,8 +146,8 @@ export async function syncHeaders(
     const { range } = uidWindow(sinceUid, high, max);
     const items: MailHeader[] = [];
 
-    for await (const message of client.fetch(range, HEADER_QUERY, { uid: true }) as AsyncGenerator<FetchMessage>) {
-      const header = toHeader(account, folder, message);
+    for await (const message of client.fetch(range, HEADER_QUERY, { uid: true })) {
+      const header = await toHeader(account, folder, message);
       if (header) items.push(header);
       if (items.length >= max) break;
     }
@@ -181,8 +176,9 @@ export async function searchHeaders(
     );
     const uids = (Array.isArray(found) ? found : []).sort((a, b) => b - a).slice(0, Math.min(limit, 200));
     if (uids.length === 0) return [];
-    const messages = (await client.fetchAll(uids.join(","), HEADER_QUERY, { uid: true })) as unknown as FetchMessage[];
-    return messages.map((message) => toHeader(account, folder, message)).filter((item): item is MailHeader => Boolean(item));
+    const messages = await client.fetchAll(uids.join(","), HEADER_QUERY, { uid: true });
+    return (await Promise.all(messages.map((message) => toHeader(account, folder, message))))
+      .filter((item): item is MailHeader => Boolean(item));
   });
 }
 
@@ -201,7 +197,7 @@ export async function fetchBody(
   uid: number
 ): Promise<MailBody | null> {
   return withImap(config, folder, async (client) => {
-    const one = (await client.fetchOne(String(uid), { bodyStructure: true }, { uid: true })) as FetchMessage | false;
+    const one = await client.fetchOne(String(uid), { bodyStructure: true, envelope: true, headers: ["subject", "in-reply-to", "references"] }, { uid: true });
     if (!one) return null;
     const parts = textParts(one.bodyStructure);
     let text = "";
@@ -235,6 +231,8 @@ export async function fetchBody(
     return {
       headerId,
       accountId,
+      subject: await decodeMailSubject(one.headers, one.envelope?.subject ?? ""),
+      ...mailThread(one.headers),
       text: text.slice(0, 200_000),
       html: html.slice(0, 600_000),
       attachments: attachmentMeta(one.bodyStructure),
@@ -243,7 +241,7 @@ export async function fetchBody(
 }
 
 export type AttachmentStream = {
-  content: NodeJS.ReadableStream;
+  content: Readable;
   filename: string;
   contentType: string;
   size: number;
@@ -256,16 +254,33 @@ export async function fetchAttachment(
   uid: number,
   part: string
 ): Promise<AttachmentStream | null> {
-  return withImap(config, folder, async (client) => {
+  const { client, lock } = await openImap(config, folder);
+  let closed = false;
+  const cleanup = async () => {
+    if (closed) return;
+    closed = true;
+    lock.release();
+    await client.logout().catch(() => undefined);
+  };
+  try {
     const result = await client.download(String(uid), part, { uid: true });
-    if (!result.content) return null;
+    if (!result.content) {
+      await cleanup();
+      return null;
+    }
+    result.content.once("end", () => void cleanup());
+    result.content.once("close", () => void cleanup());
+    result.content.once("error", () => void cleanup());
     return {
       content: result.content,
       filename: result.meta.filename ?? part,
       contentType: result.meta.contentType ?? "application/octet-stream",
       size: Number(result.meta.expectedSize ?? 0),
     };
-  });
+  } catch (error) {
+    await cleanup();
+    throw error;
+  }
 }
 
 export async function setMailFlags(

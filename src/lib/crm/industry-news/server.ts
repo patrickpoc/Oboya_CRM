@@ -189,6 +189,7 @@ export async function bootstrapIndustryNews(
 }
 
 export type IngestResult = {
+  status: "success" | "partial" | "failed";
   fetched: number;
   added: number;
   updated: number;
@@ -212,6 +213,7 @@ export async function ingestNews(
     config.freshnessDays
   );
   const result: IngestResult = {
+    status: config.sources.filter((source) => source.enabled).length === errors.length ? "failed" : errors.length ? "partial" : "success",
     fetched: rawItems.length,
     added: 0,
     updated: 0,
@@ -221,6 +223,10 @@ export async function ingestNews(
     errors,
     ai: { status: "off", analyzed: 0, failed: 0 },
   };
+
+  // A fulfilled source with no matches still counts as a successful fetch.
+  // All failures (or no enabled sources) must leave the success timestamp alone.
+  if (result.status === "failed") return result;
 
   const { data: existingRows, error: existingError } = await supabase
     .from("crm_industry_news_items")

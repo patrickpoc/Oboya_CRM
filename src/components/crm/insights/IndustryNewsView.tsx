@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { RefreshCw, Save } from "lucide-react";
 import { CrmPageHeader } from "@/components/crm/layout/CrmPageHeader";
@@ -32,6 +32,7 @@ type ConfigResponse = {
 type BootstrapResponse = ConfigResponse & { items: NewsItem[]; nextCursor: string | null };
 type PageResponse = { items: NewsItem[]; nextCursor: string | null };
 type IngestResponse = {
+  status: "success" | "partial" | "failed";
   fetched: number;
   added: number;
   updated: number;
@@ -63,6 +64,7 @@ function cacheParams(filters: NewsFilters, cursor?: string | null) {
 /** Main screen: a cached news feed and a graphical configuration editor. */
 export function IndustryNewsView() {
   const t = useTranslations("industryNews");
+  const format = useFormatter();
   const errorMessage = useApiErrorMessage("setup");
   const { user } = useCrm();
   const canEdit = canManageIndustryNews(user);
@@ -167,9 +169,11 @@ export function IndustryNewsView() {
       const response = await apiFetch<IngestResponse>("/api/crm/industry-news/ingest", { method: "POST" });
       invalidateIndustryNewsCache();
       if (response.lastFetchedAt) setLastFetchedAt(response.lastFetchedAt);
-      toast.success(
-        t("ingest.done", { added: response.added, updated: response.updated, purged: response.purged })
-      );
+      if (response.status === "failed") toast.error(t("ingest.failed"));
+      else {
+        toast.success(t("ingest.done", { added: response.added, updated: response.updated, purged: response.purged }));
+        if (response.status === "partial") toast.warning(t("ingest.partial", { count: response.errors.length }));
+      }
       if (response.ai.status === "unconfigured") toast.error(t("ingest.aiUnconfigured"));
       else if (response.ai.analyzed > 0) {
         toast.success(t("ingest.aiDone", { count: response.ai.analyzed, language: config?.aiLanguage ?? "" }));
@@ -191,7 +195,7 @@ export function IndustryNewsView() {
             <span>{t("description")}</span>
             {lastFetchedAt ? (
               <span className="text-xs text-muted-foreground">
-                {t("stats.updated", { time: new Date(lastFetchedAt).toLocaleString() })}
+                {t("stats.updated", { time: format.dateTime(new Date(lastFetchedAt), { dateStyle: "medium", timeStyle: "short" }) })}
               </span>
             ) : null}
             {!canEdit ? (

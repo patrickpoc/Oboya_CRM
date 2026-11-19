@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { EMAIL_ACCOUNT_COLORS } from "./colors";
 
 const email = z.string().trim().email().max(320);
 
@@ -15,7 +16,7 @@ export const emailAccountInputSchema = z.object({
   imapHost: z.string().trim().min(1).max(253),
   imapPort: z.coerce.number().int().min(1).max(65535),
   imapSecure: z.boolean().default(true),
-  color: z.string().regex(/^#[0-9a-fA-F]{6}$/).default("#2563eb"),
+  color: z.string().transform((value) => value.toUpperCase()).pipe(z.enum(EMAIL_ACCOUNT_COLORS)).default(EMAIL_ACCOUNT_COLORS[0]),
   enabled: z.boolean().default(true),
 });
 

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { compileKeywordRegex } from "./matching";
 
 /** Zod validation for the full config written by the graphical editor. */
 
@@ -6,9 +7,16 @@ const clean = (max: number) => z.string().trim().min(1).max(max);
 const wordList = () => z.array(clean(120)).max(50);
 
 export const keywordWordSchema = z.object({
-  text: clean(120),
+  text: clean(2000),
   type: z.enum(["contains", "regex"]).default("contains"),
   alias: z.string().trim().max(80).optional(),
+}).superRefine((word, ctx) => {
+  if (word.type === "contains" && word.text.length > 120) {
+    ctx.addIssue({ code: "too_big", origin: "string", maximum: 120, inclusive: true, path: ["text"] });
+  }
+  if (word.type === "regex" && !compileKeywordRegex(word.text)) {
+    ctx.addIssue({ code: "custom", path: ["text"], message: "Invalid regular expression" });
+  }
 });
 
 export const keywordGroupSchema = z.object({

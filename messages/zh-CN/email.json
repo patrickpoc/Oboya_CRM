@@ -4,7 +4,7 @@
   "tabs": {
     "mail": "邮件",
     "drafts": "草稿",
-    "sent": "本地已发送",
+    "sent": "已发送",
     "accounts": "邮箱管理"
   },
   "actions": {
@@ -99,6 +99,18 @@
     "attachmentTooMany": "最多只能添加 {count} 个附件",
     "attachmentTotalTooLarge": "附件总大小超过 {max} 限制"
   },
+  "templates": {
+    "followUp": {
+      "name": "跟进",
+      "subject": "沟通事项跟进",
+      "body": "您好，\n\n想就我们此前的沟通进一步跟进。\n\n顺祝商祺"
+    },
+    "quotation": {
+      "name": "报价",
+      "subject": "报价",
+      "body": "您好，\n\n以下是我们的报价，敬请查阅。\n\n顺祝商祺"
+    }
+  },
   "record": {
     "openHistory": "往来邮件",
     "compose": "写邮件"
@@ -107,9 +119,9 @@
     "empty": "暂无本地已发送邮件",
     "emptyHint": "你发送的邮件及附件会保存在这里，不会存储到服务器。",
     "deleted": "邮件已从此设备删除",
-    "cleared": "本地已发送箱已清空",
-    "clearAll": "清空全部",
-    "summary": "共 {count} 封 · 占用 {size} 本地空间"
+    "cleared": "本地已发送副本已清除",
+    "clearAll": "清除本地副本",
+    "summary": "已缓存 {count} 封已发送邮件 · 占用 {size} 本地空间"
   },
   "drafts": {
     "empty": "暂无本地草稿",

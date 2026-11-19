@@ -13,6 +13,7 @@ import { getBreadcrumbs, type Breadcrumb } from "@/lib/crm/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { cn } from "@/lib/utils";
+import { closeEmailDatabases } from "@/lib/crm/email/local-db";
 
 interface CrmTopbarProps {
   onMenuClick?: () => void;
@@ -112,6 +113,7 @@ function CrmUserMenu() {
 
   const handleLogout = async () => {
     setSigningOut(true);
+    closeEmailDatabases();
     try {
       if (isSupabaseConfigured()) {
         await createClient().auth.signOut();

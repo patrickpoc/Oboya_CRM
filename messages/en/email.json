@@ -4,7 +4,7 @@
   "tabs": {
     "mail": "Mail",
     "drafts": "Drafts",
-    "sent": "Local sent",
+    "sent": "Sent",
     "accounts": "Mailboxes"
   },
   "actions": {
@@ -99,6 +99,18 @@
     "attachmentTooMany": "At most {count} attachments are allowed",
     "attachmentTotalTooLarge": "Attachments exceed the {max} limit"
   },
+  "templates": {
+    "followUp": {
+      "name": "Follow up",
+      "subject": "Following up",
+      "body": "Hello,\n\nFollowing up on our conversation.\n\nBest regards"
+    },
+    "quotation": {
+      "name": "Quotation",
+      "subject": "Quotation",
+      "body": "Hello,\n\nPlease find our quotation below.\n\nBest regards"
+    }
+  },
   "record": {
     "openHistory": "Emails",
     "compose": "Write email"
@@ -107,9 +119,9 @@
     "empty": "No locally sent mail",
     "emptyHint": "Messages you send appear here with their attachments. Nothing is stored on the server.",
     "deleted": "Message deleted from this device",
-    "cleared": "Local sent box cleared",
-    "clearAll": "Clear all",
-    "summary": "{count} messages · {size} used on this device"
+    "cleared": "Local sent copies cleared",
+    "clearAll": "Clear local copies",
+    "summary": "{count} sent messages cached · {size} on this device"
   },
   "drafts": {
     "empty": "No local drafts",

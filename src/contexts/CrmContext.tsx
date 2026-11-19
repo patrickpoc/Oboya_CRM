@@ -1,7 +1,10 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { CrmAction, CrmModule, CrmUser, ResolvedPermissions } from "@/lib/crm/types";
+import { closeEmailDatabases } from "@/lib/crm/email/local-db";
+import { createClient } from "@/lib/supabase/client";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
 
 interface CrmContextValue {
   user: CrmUser;
@@ -28,8 +31,30 @@ export function CrmProvider({
   initialUser: CrmUser;
   initialPermissions: ResolvedPermissions;
 }) {
+  return <UserCrmProvider key={initialUser.id} initialUser={initialUser} initialPermissions={initialPermissions}>{children}</UserCrmProvider>;
+}
+
+function UserCrmProvider({ children, initialUser, initialPermissions }: {
+  children: React.ReactNode;
+  initialUser: CrmUser;
+  initialPermissions: ResolvedPermissions;
+}) {
   const [user, setUser] = useState<CrmUser>(initialUser);
   const [permissions, setPermissions] = useState<ResolvedPermissions>(initialPermissions);
+  const [sessionValid, setSessionValid] = useState(true);
+
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return;
+    const { data: { subscription } } = createClient().auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT" || (session && session.user.id !== initialUser.id)) {
+        closeEmailDatabases();
+        setSessionValid(false);
+        // A full navigation also drops every component and the old router cache.
+        window.location.replace(session ? "/dashboard" : "/login");
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [initialUser.id]);
 
   const can = useCallback(
     (module: CrmModule, action: CrmAction = "view") =>
@@ -42,7 +67,7 @@ export function CrmProvider({
     [user, permissions, can]
   );
 
-  return <CrmContext.Provider value={value}>{children}</CrmContext.Provider>;
+  return <CrmContext.Provider value={value}>{sessionValid ? children : null}</CrmContext.Provider>;
 }
 
 export function useCrm() {

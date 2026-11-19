@@ -134,6 +134,8 @@
     }
   },
   "ingest": {
+    "failed": "No news source could be fetched. The last successful fetch time is unchanged.",
+    "partial": "{count} news sources could not be fetched.",
     "done": "Added {added}, updated {updated}, purged {purged}",
     "aiDone": "AI localised {count} articles into {language}",
     "aiUnconfigured": "AI is enabled but no server-side model key is configured."

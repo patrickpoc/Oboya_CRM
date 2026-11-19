@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Paperclip, Send, X } from "lucide-react";
@@ -16,7 +16,8 @@ import {
   MAX_TOTAL_ATTACHMENT_BYTES,
   formatBytes,
 } from "@/lib/crm/email/attachment-limits";
-import { emailDb, deleteDraft, ensureTemplates, saveDraft, type EmailTemplate } from "@/lib/crm/email/local-db";
+import { deleteDraft, saveDraft, type EmailDatabase, type EmailTemplate } from "@/lib/crm/email/local-db";
+import { mergeEmailTemplates } from "@/lib/crm/email/templates";
 import { sendEmailMessage } from "@/lib/crm/email/sync-client";
 import type { EmailAccount } from "@/lib/crm/email/types";
 
@@ -34,6 +35,7 @@ export type ComposeInitial = {
 type PickedFile = { id: string; file: File };
 
 export function EmailComposer({
+  db,
   open,
   onOpenChange,
   accounts,
@@ -41,11 +43,12 @@ export function EmailComposer({
   onSent,
   onDraftsChanged,
 }: {
+  db: EmailDatabase;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   accounts: EmailAccount[];
   initial?: ComposeInitial | null;
-  onSent?: () => void | Promise<void>;
+  onSent?: (accountId: string) => void | Promise<void>;
   onDraftsChanged?: () => void | Promise<void>;
 }) {
   const t = useTranslations("email");
@@ -57,8 +60,12 @@ export function EmailComposer({
   const [body, setBody] = useState("");
   const [draftId, setDraftId] = useState("");
   const [files, setFiles] = useState<PickedFile[]>([]);
-  const [templates, setTemplates] = useState<EmailTemplate[]>([]);
+  const [storedTemplates, setStoredTemplates] = useState<EmailTemplate[]>([]);
   const [busy, setBusy] = useState(false);
+  const templates = useMemo(() => mergeEmailTemplates(storedTemplates, [
+    { id: "follow-up", name: t("templates.followUp.name"), subject: t("templates.followUp.subject"), body: t("templates.followUp.body"), updatedAt: new Date(0).toISOString() },
+    { id: "quotation", name: t("templates.quotation.name"), subject: t("templates.quotation.subject"), body: t("templates.quotation.body"), updatedAt: new Date(0).toISOString() },
+  ]), [storedTemplates, t]);
 
   useEffect(() => {
     if (!open) return;
@@ -66,18 +73,17 @@ export function EmailComposer({
     setDraftId(initial?.id ?? "");
     setFiles([]);
     void (async () => {
-      const stored = initial?.id ? await emailDb().drafts.get(initial.id).catch(() => undefined) : undefined;
+      const stored = initial?.id ? await db.drafts.get(initial.id).catch(() => undefined) : undefined;
       setAccountId(stored?.accountId ?? accounts[0]?.id ?? "");
       setTo(stored?.to.join(", ") ?? initial?.to ?? "");
       setCc(stored?.cc.join(", ") ?? initial?.cc ?? "");
       setSubject(stored?.subject ?? initial?.subject ?? "");
       setBody(stored?.text ?? initial?.body ?? "");
     })();
-    void ensureTemplates()
-      .then(() => emailDb().templates.orderBy("name").toArray())
-      .then(setTemplates)
+    void db.templates.orderBy("name").toArray()
+      .then(setStoredTemplates)
       .catch(() => undefined);
-  }, [open, accounts, initial]);
+  }, [open, accounts, initial, db]);
 
   const recipients = (value: string) =>
     value
@@ -129,7 +135,7 @@ export function EmailComposer({
   const save = async () => {
     if (!accountId) return;
     const saved = draft();
-    await saveDraft(saved);
+    await saveDraft(db, saved);
     setDraftId(saved.id);
     toast.success(t("compose.saved"));
     await onDraftsChanged?.();
@@ -148,7 +154,7 @@ export function EmailComposer({
     setBusy(true);
     try {
       const account = accounts.find((entry) => entry.id === accountId);
-      await sendEmailMessage(
+      await sendEmailMessage(db,
         {
           accountId,
           to: list,
@@ -163,11 +169,11 @@ export function EmailComposer({
         files.map((entry) => entry.file),
         account
       );
-      if (draftId) await deleteDraft(draftId).catch(() => undefined);
+      if (draftId) await deleteDraft(db, draftId).catch(() => undefined);
       toast.success(t("compose.sent"));
       onOpenChange(false);
       await onDraftsChanged?.();
-      await onSent?.();
+      await onSent?.(accountId);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("errors.failed"));
     } finally {

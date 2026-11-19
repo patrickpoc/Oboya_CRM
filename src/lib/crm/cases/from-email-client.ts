@@ -5,6 +5,8 @@ import type { CrmEmailMatch } from "@/lib/crm/email/types";
 
 export type CaseFromEmailInput = {
   messageId: string;
+  inReplyTo?: string;
+  references?: string[];
   subject: string;
   from: string;
   body: string;

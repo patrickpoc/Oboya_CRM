@@ -2,6 +2,7 @@
 
 import Dexie, { type Table } from "dexie";
 import type { CrmEmailMatch, EmailAccount, MailBody, MailHeader } from "./types";
+import { MAIL_HEADER_VERSION } from "./types";
 
 export type AttachmentBlob = {
   key: string;
@@ -43,6 +44,7 @@ export type MailSyncState = {
   lastUid: number | null;
   lastSyncAt: string;
   searchKey?: string;
+  headerVersion?: number;
 };
 
 /** A message sent from this browser. Everything, including attachments, lives only in IndexedDB. */
@@ -75,7 +77,7 @@ export type SentMessage = {
 
 type CachedContact = CrmEmailMatch & { cachedAt: string };
 
-class EmailDatabase extends Dexie {
+export class EmailDatabase extends Dexie {
   accounts!: Table<EmailAccount, string>;
   headers!: Table<MailHeader, string>;
   bodies!: Table<MailBody, string>;
@@ -86,8 +88,8 @@ class EmailDatabase extends Dexie {
   contacts!: Table<CachedContact, string>;
   sent!: Table<SentMessage, string>;
 
-  constructor() {
-    super("oboya-email");
+  constructor(userId: string) {
+    super(`oboya-email:user:${userId}`);
     this.version(1).stores({
       accounts: "id, email, updatedAt",
       headers: "id, accountId, folder, uid, date, [accountId+folder+date], [accountId+folder+uid]",
@@ -104,13 +106,29 @@ class EmailDatabase extends Dexie {
   }
 }
 
-let database: EmailDatabase | undefined;
+const databases = new Map<string, EmailDatabase>();
 
 /** Lazy so importing this module during SSR never touches IndexedDB. */
-export function emailDb(): EmailDatabase {
-  if (!database) database = new EmailDatabase();
+export function emailDb(userId: string): EmailDatabase {
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)) {
+    throw new Error("A CRM user ID is required for local email storage");
+  }
+  let database = databases.get(userId);
+  if (!database) {
+    database = new EmailDatabase(userId);
+    databases.set(userId, database);
+  }
   return database;
 }
+
+/** Pending work retains a closed handle and cannot write into a later session. */
+export function closeEmailDatabases(): void {
+  for (const database of databases.values()) database.close({ disableAutoOpen: true });
+  databases.clear();
+}
+
+// The legacy shared `oboya-email` database has no provable user ownership.
+// Never open or import it into whichever account happens to sign in first.
 
 export function headerKey(accountId: string, folder: string, uid: number): string {
   return `${accountId}:${folder}:${uid}`;
@@ -124,22 +142,21 @@ export function syncKey(accountId: string, folder: string): string {
   return `${accountId}:${folder}`;
 }
 
-export async function cacheAccounts(accounts: EmailAccount[]): Promise<void> {
-  const db = emailDb();
+export async function cacheAccounts(db: EmailDatabase, accounts: EmailAccount[]): Promise<void> {
   await db.accounts.bulkPut(accounts);
 }
 
-export async function cachedAccounts(): Promise<EmailAccount[]> {
-  return emailDb().accounts.orderBy("updatedAt").reverse().toArray();
+export async function cachedAccounts(db: EmailDatabase): Promise<EmailAccount[]> {
+  return db.accounts.orderBy("updatedAt").reverse().toArray();
 }
 
 export async function cacheHeaders(
+  db: EmailDatabase,
   accountId: string,
   folder: string,
   items: MailHeader[],
   nextUid: number | null
 ): Promise<number> {
-  const db = emailDb();
   await db.headers.bulkPut(items);
   await db.syncState.put({
     key: syncKey(accountId, folder),
@@ -147,18 +164,19 @@ export async function cacheHeaders(
     folder,
     lastUid: nextUid,
     lastSyncAt: new Date().toISOString(),
+    headerVersion: MAIL_HEADER_VERSION,
   });
   return items.length;
 }
 
 /** Search results are cached as headers but must not reset the UID cursor. */
-export async function cacheSearchHeaders(accountId: string, folder: string, items: MailHeader[]): Promise<number> {
-  await emailDb().headers.bulkPut(items);
+export async function cacheSearchHeaders(db: EmailDatabase, accountId: string, folder: string, items: MailHeader[]): Promise<number> {
+  await db.headers.bulkPut(items);
   return items.length;
 }
 
-export async function cachedHeaders(accountId: string, folder: string, limit = 100): Promise<MailHeader[]> {
-  const rows = await emailDb()
+export async function cachedHeaders(db: EmailDatabase, accountId: string, folder: string, limit = 100): Promise<MailHeader[]> {
+  const rows = await db
     .headers.where("[accountId+folder+date]")
     .between([accountId, folder, Dexie.minKey], [accountId, folder, Dexie.maxKey])
     .reverse()
@@ -167,10 +185,10 @@ export async function cachedHeaders(accountId: string, folder: string, limit = 1
   return rows;
 }
 
-export async function cachedSearch(accountId: string, folder: string, query: string, limit = 200): Promise<MailHeader[]> {
+export async function cachedSearch(db: EmailDatabase, accountId: string, folder: string, query: string, limit = 200): Promise<MailHeader[]> {
   const term = query.trim().toLowerCase();
-  if (!term) return cachedHeaders(accountId, folder, limit);
-  const rows = await emailDb()
+  if (!term) return cachedHeaders(db, accountId, folder, limit);
+  const rows = await db
     .headers.where("[accountId+folder+date]")
     .between([accountId, folder, Dexie.minKey], [accountId, folder, Dexie.maxKey])
     .reverse()
@@ -186,31 +204,34 @@ export async function cachedSearch(accountId: string, folder: string, query: str
     .slice(0, Math.min(limit, 200));
 }
 
-export function cachedBody(headerId: string): Promise<MailBody | undefined> {
-  return emailDb().bodies.get(headerId);
+export function cachedBody(db: EmailDatabase, headerId: string): Promise<MailBody | undefined> {
+  return db.bodies.get(headerId);
 }
 
-export async function cacheBody(body: MailBody): Promise<void> {
-  await emailDb().bodies.put(body);
+export async function cacheBody(db: EmailDatabase, body: MailBody): Promise<void> {
+  await db.bodies.put(body);
+  if (body.subject !== undefined) {
+    await db.headers.update(body.headerId, { subject: body.subject, inReplyTo: body.inReplyTo, references: body.references, headerVersion: MAIL_HEADER_VERSION });
+  }
 }
 
-export function cachedAttachment(key: string): Promise<AttachmentBlob | undefined> {
-  return emailDb().attachments.get(key);
+export function cachedAttachment(db: EmailDatabase, key: string): Promise<AttachmentBlob | undefined> {
+  return db.attachments.get(key);
 }
 
-export async function cacheAttachment(entry: AttachmentBlob): Promise<void> {
-  await emailDb().attachments.put(entry);
+export async function cacheAttachment(db: EmailDatabase, entry: AttachmentBlob): Promise<void> {
+  await db.attachments.put(entry);
 }
 
-export function cachedSyncState(accountId: string, folder: string): Promise<MailSyncState | undefined> {
-  return emailDb().syncState.get(syncKey(accountId, folder));
+export function cachedSyncState(db: EmailDatabase, accountId: string, folder: string): Promise<MailSyncState | undefined> {
+  return db.syncState.get(syncKey(accountId, folder));
 }
 
 export async function markHeaderFlags(
+  db: EmailDatabase,
   headerIds: string[],
   patch: Partial<Pick<MailHeader, "seen" | "flagged" | "answered">>
 ): Promise<void> {
-  const db = emailDb();
   await db.transaction("rw", db.headers, async () => {
     const rows = await db.headers.bulkGet(headerIds);
     const updates = rows.filter((row): row is MailHeader => Boolean(row)).map((row) => ({ ...row, ...patch }));
@@ -218,8 +239,7 @@ export async function markHeaderFlags(
   });
 }
 
-export async function removeCachedHeaders(headerIds: string[]): Promise<void> {
-  const db = emailDb();
+export async function removeCachedHeaders(db: EmailDatabase, headerIds: string[]): Promise<void> {
   await db.transaction("rw", db.headers, db.bodies, db.attachments, async () => {
     await db.headers.bulkDelete(headerIds);
     await db.bodies.bulkDelete(headerIds);
@@ -228,42 +248,41 @@ export async function removeCachedHeaders(headerIds: string[]): Promise<void> {
   });
 }
 
-export async function saveDraft(draft: OutboxDraft): Promise<void> {
-  await emailDb().drafts.put({ ...draft, updatedAt: new Date().toISOString(), synced: false });
+export async function saveDraft(db: EmailDatabase, draft: OutboxDraft): Promise<void> {
+  await db.drafts.put({ ...draft, updatedAt: new Date().toISOString(), synced: false });
 }
 
-export function listDrafts(accountId?: string): Promise<OutboxDraft[]> {
-  const table = emailDb().drafts;
+export function listDrafts(db: EmailDatabase, accountId?: string): Promise<OutboxDraft[]> {
+  const table = db.drafts;
   const query = accountId ? table.where("accountId").equals(accountId) : table.toCollection();
   return query.reverse().sortBy("updatedAt");
 }
 
-export async function deleteDraft(id: string): Promise<void> {
-  await emailDb().drafts.delete(id);
+export async function deleteDraft(db: EmailDatabase, id: string): Promise<void> {
+  await db.drafts.delete(id);
 }
 
 /** Total bytes held by the local sent box, used to show reclaimable space. */
-export async function sentStorageBytes(): Promise<number> {
-  const rows = await emailDb().sent.toArray();
+export async function sentStorageBytes(db: EmailDatabase): Promise<number> {
+  const rows = await db.sent.toArray();
   return rows.reduce((sum, row) => sum + row.bytes, 0);
 }
 
-export function listSent(accountId?: string): Promise<SentMessage[]> {
-  const table = emailDb().sent;
+export function listSent(db: EmailDatabase, accountId?: string): Promise<SentMessage[]> {
+  const table = db.sent;
   const query = accountId ? table.where("accountId").equals(accountId) : table.toCollection();
   return query.reverse().sortBy("date");
 }
 
-export async function saveSentMessage(message: SentMessage): Promise<void> {
-  await emailDb().sent.put(message);
+export async function saveSentMessage(db: EmailDatabase, message: SentMessage): Promise<void> {
+  await db.sent.put(message);
 }
 
-export async function deleteSentMessage(id: string): Promise<void> {
-  await emailDb().sent.delete(id);
+export async function deleteSentMessage(db: EmailDatabase, id: string): Promise<void> {
+  await db.sent.delete(id);
 }
 
-export async function clearSentMessages(accountId?: string): Promise<void> {
-  const db = emailDb();
+export async function clearSentMessages(db: EmailDatabase, accountId?: string): Promise<void> {
   if (!accountId) {
     await db.sent.clear();
     return;
@@ -272,33 +291,18 @@ export async function clearSentMessages(accountId?: string): Promise<void> {
   await db.sent.bulkDelete(keys);
 }
 
-export function defaultTemplates(): EmailTemplate[] {
-  const now = new Date(0).toISOString();
-  return [
-    { id: "follow-up", name: "Follow up", subject: "Following up", body: "Hello,\n\nFollowing up on our conversation.\n\nBest regards", updatedAt: now },
-    { id: "quotation", name: "Quotation", subject: "Quotation", body: "Hello,\n\nPlease find our quotation below.\n\nBest regards", updatedAt: now },
-  ];
-}
-
-export async function ensureTemplates(): Promise<void> {
-  const db = emailDb();
-  if ((await db.templates.count()) === 0) await db.templates.bulkPut(defaultTemplates());
-}
-
-export async function cacheContactMatches(matches: CrmEmailMatch[]): Promise<void> {
-  const db = emailDb();
+export async function cacheContactMatches(db: EmailDatabase, matches: CrmEmailMatch[]): Promise<void> {
   const at = new Date().toISOString();
   await db.contacts.bulkPut(matches.map((entry) => ({ ...entry, cachedAt: at })));
 }
 
-export async function cachedContactMatch(email: string): Promise<CrmEmailMatch | undefined> {
+export async function cachedContactMatch(db: EmailDatabase, email: string): Promise<CrmEmailMatch | undefined> {
   const normalized = email.trim().toLowerCase();
-  const all = await emailDb().contacts.toArray();
+  const all = await db.contacts.toArray();
   return all.find((entry) => entry.email.trim().toLowerCase() === normalized);
 }
 
-export async function clearAccountCache(accountId: string): Promise<void> {
-  const db = emailDb();
+export async function clearAccountCache(db: EmailDatabase, accountId: string): Promise<void> {
   const headers = await db.headers.where("accountId").equals(accountId).primaryKeys();
   const bodies = await db.bodies.where("accountId").equals(accountId).primaryKeys();
   const attachments = await db.attachments.where("headerId").anyOf(headers as string[]).primaryKeys();

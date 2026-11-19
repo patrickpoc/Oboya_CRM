@@ -41,6 +41,9 @@ export type EmailAttachmentMeta = {
 
 export type MailFolder = "INBOX" | "Drafts" | "Sent" | "Trash";
 
+/** Refresh legacy headers after fixing MIME subject/address decoding. */
+export const MAIL_HEADER_VERSION = 3;
+
 export type MailHeader = {
   id: string;
   accountId: string;
@@ -48,6 +51,10 @@ export type MailHeader = {
   uid: number;
   subject: string;
   messageId?: string;
+  inReplyTo?: string;
+  references?: string[];
+  localSentId?: string;
+  headerVersion?: number;
   from: EmailAddress[];
   to: EmailAddress[];
   cc: EmailAddress[];
@@ -62,6 +69,9 @@ export type MailHeader = {
 export type MailBody = {
   headerId: string;
   accountId: string;
+  subject?: string;
+  inReplyTo?: string;
+  references?: string[];
   text: string;
   html: string;
   attachments: EmailAttachmentMeta[];

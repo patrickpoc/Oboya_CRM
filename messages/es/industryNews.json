@@ -134,6 +134,8 @@
     }
   },
   "ingest": {
+    "failed": "No se pudieron obtener noticias de ninguna fuente. La hora de la última consulta correcta no ha cambiado.",
+    "partial": "No se pudieron obtener noticias de {count} fuentes.",
     "done": "Añadidas {added}, actualizadas {updated}, purgadas {purged}",
     "aiDone": "IA localizó {count} artículos al {language}",
     "aiUnconfigured": "La IA está activada pero falta la clave del modelo en el servidor."

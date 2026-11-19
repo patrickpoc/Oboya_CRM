@@ -134,6 +134,8 @@
     }
   },
   "ingest": {
+    "failed": "Não foi possível buscar notícias de nenhuma fonte. O horário da última busca bem-sucedida não foi alterado.",
+    "partial": "Não foi possível buscar notícias de {count} fontes.",
     "done": "Adicionadas {added}, atualizadas {updated}, limpas {purged}",
     "aiDone": "IA localizou {count} artigos para {language}",
     "aiUnconfigured": "A IA está ativada, mas a chave do modelo não foi configurada no servidor."

@@ -4,7 +4,7 @@
   "tabs": {
     "mail": "E-mail",
     "drafts": "Rascunhos",
-    "sent": "Enviados locais",
+    "sent": "Enviados",
     "accounts": "Caixas"
   },
   "actions": {
@@ -99,6 +99,18 @@
     "attachmentTooMany": "São permitidos no máximo {count} anexos",
     "attachmentTotalTooLarge": "Os anexos ultrapassam o limite de {max}"
   },
+  "templates": {
+    "followUp": {
+      "name": "Acompanhamento",
+      "subject": "Retomando nossa conversa",
+      "body": "Olá,\n\nGostaria de dar continuidade à nossa conversa.\n\nAtenciosamente"
+    },
+    "quotation": {
+      "name": "Orçamento",
+      "subject": "Orçamento",
+      "body": "Olá,\n\nSegue abaixo nosso orçamento.\n\nAtenciosamente"
+    }
+  },
   "record": {
     "openHistory": "E-mails",
     "compose": "Escrever e-mail"
@@ -107,9 +119,9 @@
     "empty": "Nenhum e-mail enviado localmente",
     "emptyHint": "As mensagens que você enviar aparecem aqui com seus anexos. Nada é salvo no servidor.",
     "deleted": "Mensagem excluída deste dispositivo",
-    "cleared": "Caixa de enviados locais esvaziada",
-    "clearAll": "Limpar tudo",
-    "summary": "{count} mensagens · {size} usados neste dispositivo"
+    "cleared": "Cópias locais dos e-mails enviados removidas",
+    "clearAll": "Limpar cópias locais",
+    "summary": "{count} e-mails enviados em cache · {size} neste dispositivo"
   },
   "drafts": {
     "empty": "Nenhum rascunho local",

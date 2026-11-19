@@ -104,15 +104,10 @@ export async function saveAccount(
 
 export async function deleteAccount(
   supabase: CrmSupabaseClient,
-  userId: string,
+  _userId: string,
   accountId: string
 ): Promise<void> {
-  const { error } = await supabase
-    .from("crm_email_accounts")
-    .update({ deleted_at: new Date().toISOString(), deleted_by: userId, enabled: false })
-    .eq("id", accountId)
-    .eq("owner_id", userId)
-    .is("deleted_at", null);
+  const { error } = await supabase.rpc("crm_delete_email_account", { p_id: accountId });
   if (error) throw error;
   await purgeDeleted(supabase);
 }

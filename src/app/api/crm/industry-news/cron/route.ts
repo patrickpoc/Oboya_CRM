@@ -17,7 +17,8 @@ export async function GET(request: Request) {
   }
 
   try {
-    return NextResponse.json(await runIndustryNewsCron());
+    const result = await runIndustryNewsCron();
+    return NextResponse.json(result, { status: result.status === "failed" ? 502 : 200 });
   } catch (error) {
     return dbErrorResponse(error as { code?: string; message?: string }, "Industry news cron ingest");
   }

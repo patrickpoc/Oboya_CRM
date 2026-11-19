@@ -4,6 +4,7 @@ import path from "node:path";
 import { caseConfig, CASE_QUEUES, CASE_TYPES, CASE_STATUS_OPTIONS } from "../../objects/case";
 import { registeredObjects } from "../../objects/registry";
 import { OBJECT_META } from "../../objects/types";
+import { buildSchema } from "../../objects/schema";
 import {
   caseReport,
   formatResolution,
@@ -80,15 +81,26 @@ describe("case reporting", () => {
     expect(report.byState.met).toBe(1);
   });
 
-  it("formats resolution durations", () => {
-    expect(formatResolution(null)).toBe("—");
-    expect(formatResolution(45)).toBe("45m");
-    expect(formatResolution(120)).toBe("2.0h");
-    expect(formatResolution(2880)).toBe("2d");
+  it.each([
+    ["en", "45 min", "2.0 hr", "2 days"],
+    ["pt-BR", "45 min", "2,0 h", "2 dias"],
+    ["es", "45 min", "2,0 h", "2 d"],
+    ["zh-CN", "45分钟", "2.0小时", "2天"],
+  ])("formats resolution durations in %s", (locale, minutes, hours, days) => {
+    expect(formatResolution(45, locale)).toBe(minutes);
+    expect(formatResolution(120, locale)).toBe(hours);
+    expect(formatResolution(2880, locale)).toBe(days);
+  });
+
+  it.each([null, -1, Number.NaN, Number.POSITIVE_INFINITY])("omits unavailable or invalid resolution durations: %s", (minutes) => {
+    expect(formatResolution(minutes)).toBe("—");
   });
 });
 
 describe("case object config", () => {
+  it("can edit a case after several long emails were appended to its history", () => {
+    expect(buildSchema(caseConfig, "update").safeParse({ description: "email history ".repeat(1000) }).success).toBe(true);
+  });
   it("registers the case object with lookups, SLA and resolution fields", () => {
     expect(registeredObjects()).toContain("case");
     expect(OBJECT_META.case).toMatchObject({ table: "crm_cases", module: "cases", basePath: "/cases" });

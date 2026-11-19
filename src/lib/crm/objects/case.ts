@@ -130,7 +130,7 @@ export const caseConfig: RecordConfig = {
     { key: "contact_id", labelKey: "fields.contact", type: "lookup", lookup: "contact", listable: true, filterable: true },
     { key: "order_ref", labelKey: "fields.orderRef", type: "text", max: 120 },
     { key: "owner_id", labelKey: "fields.owner", type: "owner", listable: true, filterable: true },
-    { key: "description", labelKey: "fields.description", type: "textarea", wide: true, searchable: true },
+    { key: "description", labelKey: "fields.description", type: "textarea", max: 1_000_000, wide: true, searchable: true },
     { key: "source_email", labelKey: "fields.sourceEmail", type: "email", editable: false, creatable: false },
     {
       key: "source_message_id",

@@ -3,6 +3,7 @@ import { createDefaultConfig, normaliseConfig } from "../config";
 import { cacheKey, cachedFetch, invalidateIndustryNewsCache } from "../client-cache";
 import { decodeCursor, encodeCursor } from "../cursor";
 import { fetchSources, parseFeed } from "../feeds";
+import { industryNewsConfigSchema, keywordWordSchema } from "../schemas";
 import {
   applyFreshness,
   calculateWeight,
@@ -32,6 +33,14 @@ const config = (overrides: Partial<IndustryNewsConfig> = {}): IndustryNewsConfig
 });
 
 describe("TrendRadar first-run preset", () => {
+  it("can save the default config and AI/source-only edits without truncating its regexes", () => {
+    const preset = createDefaultConfig();
+    expect(industryNewsConfigSchema.safeParse(preset).success).toBe(true);
+    expect(industryNewsConfigSchema.safeParse({ ...preset, aiEnabled: true, sources: preset.sources.slice(0, 2) }).success).toBe(true);
+    expect(keywordWordSchema.safeParse({ text: "x".repeat(121) }).success).toBe(false);
+    expect(keywordWordSchema.safeParse({ text: "/[broken/", type: "regex" }).success).toBe(false);
+    expect(keywordWordSchema.safeParse({ text: "x".repeat(2001), type: "regex" }).success).toBe(false);
+  });
   it("loads the server-configured sources and keyword groups without setup", () => {
     const preset = createDefaultConfig();
     const hotlists = preset.sources.filter((source) => source.type === "hotlist");

@@ -134,6 +134,8 @@
     }
   },
   "ingest": {
+    "failed": "所有新闻源均抓取失败，最后成功抓取时间保持不变。",
+    "partial": "有 {count} 个新闻源抓取失败。",
     "done": "新增 {added} 条，更新 {updated} 条，清理 {purged} 条",
     "aiDone": "AI 已将 {count} 条内容本地化为 {language}",
     "aiUnconfigured": "已启用 AI，但服务端尚未配置模型密钥。"

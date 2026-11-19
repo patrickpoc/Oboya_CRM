@@ -230,7 +230,7 @@ describe("mail API schemas", () => {
       imapPort: 993,
       smtpSecure: true,
       imapSecure: true,
-      color: "#2563eb",
+      color: "#004F7C",
       enabled: true,
     });
   });

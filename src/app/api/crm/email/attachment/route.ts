@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { Readable } from "node:stream";
 import { mailError } from "@/lib/crm/email/api-response";
 import { fetchAttachment } from "@/lib/crm/email/imap";
 import { emailAttachmentQuerySchema } from "@/lib/crm/email/schemas";
@@ -9,21 +10,6 @@ import { crmGuard } from "@/lib/crm/server/require-crm-auth";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 export const maxDuration = 60;
-
-function toWebStream(source: NodeJS.ReadableStream): ReadableStream<Uint8Array> {
-  return new ReadableStream<Uint8Array>({
-    start(controller) {
-      source.on("data", (chunk: Buffer | string) => {
-        controller.enqueue(new Uint8Array(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)));
-      });
-      source.on("end", () => controller.close());
-      source.on("error", (error: unknown) => controller.error(error));
-    },
-    cancel() {
-      if ("destroy" in source && typeof source.destroy === "function") source.destroy();
-    },
-  });
-}
 
 /** Streams one MIME part; the server never stores the bytes. */
 export async function GET(request: Request) {
@@ -42,10 +28,9 @@ export async function GET(request: Request) {
 
     const safeName = attachment.filename.replace(/[\r\n"]/g, "_");
     const asciiName = safeName.replace(/[^\x20-\x7e]/g, "_");
-    return new NextResponse(toWebStream(attachment.content), {
+    return new NextResponse(Readable.toWeb(attachment.content) as ReadableStream<Uint8Array>, {
       headers: {
         "Content-Type": attachment.contentType,
-        "Content-Length": String(attachment.size || ""),
         "Content-Disposition": `attachment; filename="${asciiName}"; filename*=UTF-8''${encodeURIComponent(safeName)}`,
         "Cache-Control": "private, max-age=3600",
       },

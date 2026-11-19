@@ -4,7 +4,7 @@
   "tabs": {
     "mail": "Correo",
     "drafts": "Borradores",
-    "sent": "Enviados locales",
+    "sent": "Enviados",
     "accounts": "Buzones"
   },
   "actions": {
@@ -99,6 +99,18 @@
     "attachmentTooMany": "Se permiten como máximo {count} adjuntos",
     "attachmentTotalTooLarge": "Los adjuntos superan el límite de {max}"
   },
+  "templates": {
+    "followUp": {
+      "name": "Seguimiento",
+      "subject": "Seguimiento de nuestra conversación",
+      "body": "Hola,\n\nQuisiera dar seguimiento a nuestra conversación.\n\nSaludos cordiales"
+    },
+    "quotation": {
+      "name": "Presupuesto",
+      "subject": "Presupuesto",
+      "body": "Hola,\n\nEncontrará nuestro presupuesto a continuación.\n\nSaludos cordiales"
+    }
+  },
   "record": {
     "openHistory": "Correos",
     "compose": "Redactar correo"
@@ -107,9 +119,9 @@
     "empty": "No hay correos enviados localmente",
     "emptyHint": "Los mensajes que envíes aparecen aquí con sus adjuntos. Nada se guarda en el servidor.",
     "deleted": "Mensaje eliminado de este dispositivo",
-    "cleared": "Bandeja de enviados locales vaciada",
-    "clearAll": "Vaciar todo",
-    "summary": "{count} mensajes · {size} usados en este dispositivo"
+    "cleared": "Copias locales de los mensajes enviados eliminadas",
+    "clearAll": "Borrar copias locales",
+    "summary": "{count} mensajes enviados en caché · {size} en este dispositivo"
   },
   "drafts": {
     "empty": "No hay borradores locales",

@@ -2,20 +2,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Download, LifeBuoy, Mail, Reply } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { loadAttachmentBlob, type MailAction } from "@/lib/crm/email/sync-client";
 import type { CrmEmailMatch, MailBody, MailHeader } from "@/lib/crm/email/types";
-
-function formatFull(value: string): string {
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "" : date.toLocaleString();
-}
+import type { EmailDatabase } from "@/lib/crm/email/local-db";
 
 export function EmailReader({
+  db,
   header,
   body,
   match,
@@ -25,7 +22,9 @@ export function EmailReader({
   onReply,
   onCreateCase,
   canCreateCase,
+  canEdit,
 }: {
+  db: EmailDatabase;
   header: MailHeader | null;
   body: MailBody | null;
   match: CrmEmailMatch | null;
@@ -35,9 +34,11 @@ export function EmailReader({
   onReply: () => void;
   onCreateCase: () => void;
   canCreateCase: boolean;
+  canEdit: boolean;
 }) {
   const t = useTranslations("email");
   const tCases = useTranslations("cases");
+  const format = useFormatter();
   const [downloading, setDownloading] = useState<string | null>(null);
 
   if (!header) {
@@ -50,11 +51,12 @@ export function EmailReader({
       </div>
     );
   }
+  const date = new Date(header.date);
 
   const download = async (part: string, filename: string, contentType: string) => {
     setDownloading(part);
     try {
-      const blob = await loadAttachmentBlob(header, part, filename, contentType);
+      const blob = await loadAttachmentBlob(db, header, part, filename, contentType);
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -69,18 +71,20 @@ export function EmailReader({
   };
 
   return (
-    <div className="min-h-[420px] space-y-4 rounded-xl border border-border/60 bg-white p-5">
+    <div className="min-h-[420px] min-w-0 space-y-4 rounded-xl border border-border/60 bg-white p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="text-lg font-semibold text-oboya-blue-dark">{header.subject}</h2>
-          <p className="mt-1 text-xs text-muted-foreground">{formatFull(header.date)}</p>
+          <h2 className="break-words text-lg font-semibold text-oboya-blue-dark">{header.subject || t("reader.noSubject")}</h2>
+          <time dateTime={header.date} className="mt-1 block text-xs text-muted-foreground">
+            {Number.isNaN(date.getTime()) ? "" : format.dateTime(date, { dateStyle: "medium", timeStyle: "short" })}
+          </time>
         </div>
-        <div className="flex gap-2">
-          <Button size="sm" variant="outline" className="rounded-full" onClick={onReply}>
+        <div className="flex flex-wrap gap-2">
+          <Button size="sm" variant="outline" className="rounded-full" disabled={!canEdit} onClick={onReply}>
             <Reply className="size-4" /> {t("actions.reply")}
           </Button>
           {canCreateCase ? (
-            <Button size="sm" variant="outline" className="rounded-full border-oboya-blue text-oboya-blue" onClick={onCreateCase}>
+            <Button size="sm" variant="outline" className="rounded-full border-oboya-blue text-oboya-blue" disabled={loading || !body} onClick={onCreateCase}>
               <LifeBuoy className="size-4" /> {tCases("email.create")}
             </Button>
           ) : null}
@@ -89,6 +93,7 @@ export function EmailReader({
             variant="outline"
             className="rounded-full"
             onClick={() => onAction(header.seen ? "unread" : "read")}
+            disabled={!canEdit || header.uid === 0}
           >
             {header.seen ? t("actions.markUnread") : t("actions.markRead")}
           </Button>
@@ -129,7 +134,7 @@ export function EmailReader({
       ) : null}
 
       {body ? (
-        <div className="whitespace-pre-wrap rounded-lg border border-border/50 bg-oboya-soft-white/40 p-4 text-sm leading-relaxed">
+        <div className="whitespace-pre-wrap break-words rounded-lg border border-border/50 bg-oboya-soft-white/40 p-4 text-sm leading-relaxed">
           {body.text || body.html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()}
         </div>
       ) : loading ? (
