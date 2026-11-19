@@ -21,7 +21,14 @@ import { capPerKeyword, sortNewsItems } from "@/lib/crm/industry-news/matching";
 import { IndustryNewsConfigEditor } from "./IndustryNewsConfigEditor";
 import { emptyFilters, IndustryNewsFeed, type NewsFilters } from "./IndustryNewsFeed";
 
-type ConfigResponse = { configId: string; config: IndustryNewsConfig; name: string; saved: boolean; updatedAt: string | null };
+type ConfigResponse = {
+  configId: string;
+  config: IndustryNewsConfig;
+  name: string;
+  saved: boolean;
+  updatedAt: string | null;
+  lastFetchedAt?: string | null;
+};
 type BootstrapResponse = ConfigResponse & { items: NewsItem[]; nextCursor: string | null };
 type PageResponse = { items: NewsItem[]; nextCursor: string | null };
 type IngestResponse = {
@@ -30,6 +37,7 @@ type IngestResponse = {
   updated: number;
   matched: number;
   purged: number;
+  lastFetchedAt?: string | null;
   errors: Array<{ sourceId: string; message: string }>;
   ai: { status: "off" | "unconfigured" | "ok" | "partial" | "failed"; analyzed: number; failed: number };
 };
@@ -61,7 +69,7 @@ export function IndustryNewsView() {
 
   const [config, setConfig] = useState<IndustryNewsConfig | null>(null);
   const [configId, setConfigId] = useState("");
-  const [updatedAt, setUpdatedAt] = useState<string | null>(null);
+  const [lastFetchedAt, setLastFetchedAt] = useState<string | null>(null);
   const [dirty, setDirty] = useState(false);
   const [items, setItems] = useState<NewsItem[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
@@ -84,7 +92,7 @@ export function IndustryNewsView() {
       );
       setConfig(response.config);
       setConfigId(response.configId);
-      setUpdatedAt(response.updatedAt);
+      setLastFetchedAt(response.lastFetchedAt ?? null);
       setItems(response.items);
       setNextCursor(response.nextCursor);
       setDirty(false);
@@ -138,7 +146,7 @@ export function IndustryNewsView() {
       invalidateIndustryNewsCache();
       setConfig(response.config);
       setConfigId(response.configId);
-      setUpdatedAt(response.updatedAt);
+      setLastFetchedAt((current) => response.lastFetchedAt ?? current);
       setDirty(false);
       toast.success(t("config.saved"));
     } catch (caught) {
@@ -158,6 +166,7 @@ export function IndustryNewsView() {
     try {
       const response = await apiFetch<IngestResponse>("/api/crm/industry-news/ingest", { method: "POST" });
       invalidateIndustryNewsCache();
+      if (response.lastFetchedAt) setLastFetchedAt(response.lastFetchedAt);
       toast.success(
         t("ingest.done", { added: response.added, updated: response.updated, purged: response.purged })
       );
@@ -180,9 +189,9 @@ export function IndustryNewsView() {
         description={
           <div className="flex flex-wrap items-center gap-2">
             <span>{t("description")}</span>
-            {updatedAt ? (
+            {lastFetchedAt ? (
               <span className="text-xs text-muted-foreground">
-                {t("stats.updated", { time: new Date(updatedAt).toLocaleString() })}
+                {t("stats.updated", { time: new Date(lastFetchedAt).toLocaleString() })}
               </span>
             ) : null}
             {!canEdit ? (

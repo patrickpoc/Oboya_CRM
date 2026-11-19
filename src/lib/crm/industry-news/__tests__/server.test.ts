@@ -14,6 +14,7 @@ describe("bootstrapIndustryNews", () => {
         name: "Custom",
         saved: true,
         updatedAt: "2026-11-16T10:00:00.000Z",
+        lastFetchedAt: "2026-11-19T08:00:00.000Z",
         items: [],
       },
       error: null,
@@ -27,6 +28,7 @@ describe("bootstrapIndustryNews", () => {
     expect(result.configId).toBe("config-123");
     expect(result.saved).toBe(true);
     expect(result.name).toBe("Custom");
+    expect(result.lastFetchedAt).toBe("2026-11-19T08:00:00.000Z");
     expect(result.items).toEqual([]);
     expect(result.nextCursor).toBeNull();
   });
@@ -39,6 +41,7 @@ describe("bootstrapIndustryNews", () => {
         name: "Industry news",
         saved: false,
         updatedAt: null,
+        lastFetchedAt: null,
         items: [],
       },
       error: null,
@@ -51,6 +54,7 @@ describe("bootstrapIndustryNews", () => {
 
     expect(result.configId).toBe("");
     expect(result.saved).toBe(false);
+    expect(result.lastFetchedAt).toBeNull();
     expect(result.config.keywords.length).toBeGreaterThan(0);
   });
 });

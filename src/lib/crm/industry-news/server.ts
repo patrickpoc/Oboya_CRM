@@ -135,6 +135,7 @@ export type BootstrapResult = {
   name: string;
   saved: boolean;
   updatedAt: string | null;
+  lastFetchedAt: string | null;
   items: NewsItem[];
   nextCursor: string | null;
 };
@@ -157,11 +158,21 @@ export async function bootstrapIndustryNews(
     name: string;
     saved: boolean;
     updatedAt: string | null;
+    lastFetchedAt?: string | null;
     items: ItemRow[];
   } | null;
   if (!payload?.saved) {
     const config = createDefaultConfig();
-    return { configId: "", config, name: config.name, saved: false, updatedAt: null, items: [], nextCursor: null };
+    return {
+      configId: "",
+      config,
+      name: config.name,
+      saved: false,
+      updatedAt: null,
+      lastFetchedAt: null,
+      items: [],
+      nextCursor: null,
+    };
   }
   const config = rowToConfig({ id: "", owner_id: "", name: payload.name, config: payload.config, updated_at: payload.updatedAt ?? "" }).config;
   const page = shapePage((payload.items ?? []) as ItemRow[], query.limit, config);
@@ -171,6 +182,7 @@ export async function bootstrapIndustryNews(
     name: payload.name,
     saved: true,
     updatedAt: payload.updatedAt,
+    lastFetchedAt: payload.lastFetchedAt ?? null,
     items: page.items,
     nextCursor: page.nextCursor,
   };
@@ -182,6 +194,7 @@ export type IngestResult = {
   updated: number;
   matched: number;
   purged: number;
+  lastFetchedAt: string | null;
   errors: Array<{ sourceId: string; message: string }>;
   ai: AiRunResult;
 };
@@ -204,6 +217,7 @@ export async function ingestNews(
     updated: 0,
     matched: 0,
     purged: 0,
+    lastFetchedAt: null,
     errors,
     ai: { status: "off", analyzed: 0, failed: 0 },
   };
@@ -252,10 +266,16 @@ export async function ingestNews(
     p_updates: updates,
   });
   if (writeError) throw writeError;
-  const counts = (written ?? {}) as { added?: number; updated?: number; purged?: number };
+  const counts = (written ?? {}) as {
+    added?: number;
+    updated?: number;
+    purged?: number;
+    lastFetchedAt?: string | null;
+  };
   result.added = Number(counts.added ?? inserts.length);
   result.updated = Number(counts.updated ?? updates.length);
   result.purged = Number(counts.purged ?? 0);
+  result.lastFetchedAt = counts.lastFetchedAt ?? null;
 
   result.ai = await analysePending(supabase, stored);
   return result;
