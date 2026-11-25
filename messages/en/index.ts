@@ -16,6 +16,7 @@ import roadmap from "./roadmap.json";
 import industryNews from "./industryNews.json";
 import email from "./email.json";
 import shell from "./shell.json";
+import profile from "./profile.json";
 
 const messages = {
   setup,
@@ -34,6 +35,7 @@ const messages = {
   industryNews,
   email,
   shell,
+  profile,
   auth,
   common,
 };

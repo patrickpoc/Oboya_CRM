@@ -57,7 +57,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "wrong_current_password" }, { status: 400 });
   }
 
-  const { error } = await guard.supabase.auth.updateUser({ password });
+  // A verified password proves the account has a non-Casdoor way to sign in,
+  // which is required before the Casdoor link may be removed.
+  const { error } = await guard.supabase.auth.updateUser({
+    password,
+    data: { has_password: true },
+  });
   if (error) {
     console.error("Password update failed:", error.message);
     return NextResponse.json({ error: "update_failed" }, { status: 400 });

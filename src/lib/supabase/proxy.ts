@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
+import { isCasdoorSessionRevoked } from "@/lib/auth/casdoor/revocation";
 import { getSupabaseEnv } from "@/lib/supabase/env";
 import { DEFAULT_AFTER_LOGIN, safeNext } from "@/lib/supabase/safe-next";
 
@@ -10,7 +11,12 @@ const SIGNED_OUT_ONLY = ["/login", "/forgot-password"];
 const CHANGE_PASSWORD = "/change-password";
 
 function isAuthCallback(pathname: string) {
-  return pathname === "/auth" || pathname.startsWith("/auth/");
+  return (
+    pathname === "/auth" ||
+    pathname.startsWith("/auth/") ||
+    // Casdoor's OAuth redirect target (it must pass through unauthenticated).
+    pathname === "/callback"
+  );
 }
 
 /** Set by an admin (service role) on temporary passwords; users cannot edit app_metadata. */
@@ -56,6 +62,11 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname, searchParams } = request.nextUrl;
   const callback = isAuthCallback(pathname);
+
+  // A Casdoor back-channel logout can invalidate a still-valid Supabase token.
+  if (user && !callback && (await isCasdoorSessionRevoked(supabase, user))) {
+    return redirectTo(request, "/login", "?error=signedout");
+  }
 
   if (!user) {
     if (callback || PUBLIC_PATHS.includes(pathname)) return response;

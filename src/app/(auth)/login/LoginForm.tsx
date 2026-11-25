@@ -16,9 +16,18 @@ const ERROR_KEYS = {
   auth: "authFailed",
   inactive: "errorInactive",
   unavailable: "unavailable",
+  casdoor: "casdoorFailed",
+  casdoor_link: "casdoorLinkConflict",
+  signedout: "signedOut",
 } as const;
 
-export function LoginForm() {
+export function LoginForm({
+  casdoorEnabled,
+  casdoorSignupUrl,
+}: {
+  casdoorEnabled: boolean;
+  casdoorSignupUrl: string;
+}) {
   const t = useTranslations("auth");
   const searchParams = useSearchParams();
   const errorParam = searchParams.get("error") as keyof typeof ERROR_KEYS | null;
@@ -31,7 +40,7 @@ export function LoginForm() {
 
   // A session that the CRM rejected (disabled user) is dropped.
   useEffect(() => {
-    if (configured && errorParam === "inactive") {
+    if (configured && (errorParam === "inactive" || errorParam === "signedout")) {
       void createClient().auth.signOut();
     }
   }, [configured, errorParam]);
@@ -62,6 +71,10 @@ export function LoginForm() {
       setLoading(false);
       return;
     }
+
+    // A successful password sign-in proves the account can sign in without
+    // Casdoor, so unlinking the Casdoor account may be allowed later.
+    await supabase.auth.updateUser({ data: { has_password: true } });
 
     if (data.user.app_metadata?.must_change_password === true) {
       hardNavigate("/change-password");
@@ -105,6 +118,37 @@ export function LoginForm() {
           {loading ? t("signingIn") : t("signIn")}
         </Button>
       </form>
+
+      {casdoorEnabled ? (
+        <div className="mt-5 space-y-3">
+          <div className="flex items-center gap-3">
+            <span className="h-px flex-1 bg-border" />
+            <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
+              {t("orContinueWith")}
+            </span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full rounded-full"
+            onClick={() => hardNavigate(`/api/auth/casdoor/login?next=${encodeURIComponent(safeNext(searchParams.get("next")))}`)}
+          >
+            {t("signInWithCasdoor")}
+          </Button>
+          <p className="text-center text-xs text-muted-foreground">
+            {t("noCasdoorAccount")}{" "}
+            <a
+              href={casdoorSignupUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-oboya-green hover:underline"
+            >
+              {t("signUpCasdoor")}
+            </a>
+          </p>
+        </div>
+      ) : null}
     </AuthCard>
   );
 }

@@ -1,17 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { Check, ChevronDown, KeyRound, LogOut, Menu } from "lucide-react";
+import { Check, ChevronDown, KeyRound, LogOut, Menu, UserRound } from "lucide-react";
+import { hardNavigate } from "@/app/(auth)/_components/AuthCard";
 import { CrmLanguageSwitcher, useChangeCrmLocale } from "@/components/crm/layout/CrmLanguageSwitcher";
 import { EntityAvatar } from "@/components/crm/common/EntityAvatar";
 import { CRM_LOCALE_OPTIONS } from "@/contexts/CrmLocaleContext";
 import { useCrm } from "@/contexts/CrmContext";
 import { getBreadcrumbs, type Breadcrumb } from "@/lib/crm/navigation";
-import { createClient } from "@/lib/supabase/client";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { cn } from "@/lib/utils";
 import { closeEmailDatabases } from "@/lib/crm/email/local-db";
 
@@ -88,7 +87,6 @@ export function CrmTopbar({ onMenuClick, menuOpen, search }: CrmTopbarProps) {
 function CrmUserMenu() {
   const t = useTranslations("shell");
   const { user } = useCrm();
-  const router = useRouter();
   const { locale, change } = useChangeCrmLocale();
   const [open, setOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
@@ -111,18 +109,11 @@ function CrmUserMenu() {
     };
   }, [open]);
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     setSigningOut(true);
     closeEmailDatabases();
-    try {
-      if (isSupabaseConfigured()) {
-        await createClient().auth.signOut();
-      }
-    } finally {
-      router.replace("/login");
-      // Drop the router cache of the signed-in session.
-      router.refresh();
-    }
+    // The route drops the Supabase session and ends the Casdoor SSO session.
+    hardNavigate("/api/auth/casdoor/logout");
   };
 
   const itemClass =
@@ -160,6 +151,16 @@ function CrmUserMenu() {
             <p className="truncate text-xs text-muted-foreground">{user.email}</p>
             <p className="mt-0.5 text-[11px] text-muted-foreground">{user.roleLabel}</p>
           </div>
+
+          <Link
+            href="/profile"
+            role="menuitem"
+            className={itemClass}
+            onClick={() => setOpen(false)}
+          >
+            <UserRound className="size-4 text-muted-foreground" aria-hidden />
+            {t("profileSettings")}
+          </Link>
 
           <Link
             href="/change-password"

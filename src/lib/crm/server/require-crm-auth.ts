@@ -16,6 +16,7 @@ import { canAccessUser, resolvePermissions } from "@/lib/crm/permissions/access-
 import { getBuiltinRoleLabel } from "@/lib/crm/permissions/defaults";
 import { loadAccessMatrix } from "@/lib/crm/server/access-control.server";
 import { isLocale, defaultLocale } from "@/i18n/routing";
+import { isCasdoorSessionRevoked } from "@/lib/auth/casdoor/revocation";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { mustChangePassword } from "@/lib/supabase/proxy";
 import { createClient, type CrmSupabaseClient } from "@/lib/supabase/server";
@@ -109,6 +110,7 @@ const resolveCrmSession = cache(async (): Promise<CrmAuthResult> => {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return FAIL.unauthenticated;
+  if (await isCasdoorSessionRevoked(supabase, user)) return FAIL.unauthenticated;
 
   const { data: profile, error } = await supabase
     .from("crm_users")

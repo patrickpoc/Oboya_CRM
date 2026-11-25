@@ -38,6 +38,7 @@ The files in `supabase/migrations/` must run in filename order:
 | `20261119010000_crm_audit_repairs.sql` | Restore converted-lead guard; case delete/restore, activities and recent views; owner-scoped email deletion; credential audit redaction |
 | `20261119020000_crm_case_email_threads.sql` | Atomic RLS-scoped thread conversion, message aliases, idempotent replies and owner-scoped uniqueness |
 | `20261119030000_crm_visibility_and_credential_audit.sql` | Parent-visible activity audit reads without broader deletion; redact historical mailbox credential differences |
+| `20261120000000_crm_casdoor_sso.sql` | Casdoor `sub` ↔ Supabase user links, back-channel logout timestamps, owner-readable RLS policy |
 
 Either:
 
@@ -69,6 +70,34 @@ After `20261117000000_crm_industry_news_global.sql`, the source list is a single
 The Email module stores **only** encrypted mailbox settings in Supabase. Browsers cannot open raw IMAP/SMTP TCP sockets, so a thin Node bridge translates IMAP/SMTP on demand; it never persists messages or attachments. The client requests headers first, keeps headers/bodies/attachments/drafts in IndexedDB, and streams attachments only when opened. Outgoing attachments are uploaded as multipart/form-data, read into memory and handed straight to SMTP — never written to disk or the database — with a 4 MB total / 4 MB per-file / 10-file cap that stays under Vercel's request-body limit. Sent copies (including attachment Blobs) are kept only in the browser's IndexedDB sent box and can be deleted individually or cleared to reclaim local space. Generate `EMAIL_CREDENTIALS_KEY` with `openssl rand -base64 32` and keep it server-only. Header sync uses per-folder UID cursors in batches of at most 200 with client concurrency capped at 3; customer record links use IMAP SEARCH across enabled mailboxes and cache the result locally without resetting the cursor. Deleted accounts are soft-deleted, then purged in 200-row batches after 30 days.
 
 Cases use the standard object framework (`/cases`, `/cases/[id]`) with `cases` permissions and RLS that follows the owner plus the linked account/contact. `crm_case_rules()` stamps `sla_due_at` from `crm_settings.case_sla_hours` (low 72h / normal 48h / high 24h / urgent 8h by default) and records `resolved_at` / `resolution_minutes` on resolution; the read-only `case.sla` virtual field derives on-track / warning / overdue / met / missed from those timestamps. `/api/crm/cases/report` runs one RLS-scoped aggregate for the list summary. "Create case" in the email reader upserts by `source_message_id`, so replying on the same thread updates the existing case instead of duplicating it; contact/account pages can open the create drawer with the relationship prefilled. Case permission is included in the `20261118000000_crm_cases.sql` access seed, so the migration must be applied before the menu appears for the standard roles.
+
+## 2b. Casdoor SSO (optional, OIDC authorization code + PKCE)
+
+The app is an OIDC relying party of Casdoor at `https://oboss.psorai.eu.org`; its discovery document publishes `authorization_endpoint=/login/oauth/authorize`, `token_endpoint=/api/login/oauth/access_token`, `userinfo_endpoint=/api/userinfo`, `end_session_endpoint=/api/logout` and `jwks_uri=/.well-known/jwks`. No Casdoor SDK is used: the browser only sees `/api/auth/casdoor/login`, the token exchange and profile lookup happen server-side, and the result is exchanged into a normal Supabase session. `auth.uid()`, RLS and `crm_users` activation therefore stay unchanged.
+
+Configure the Casdoor application `oboyacrm` (client ID `51a7f410327c44d55e4e`):
+
+- **Redirect URLs** must contain both `https://oboyacrm.vercel.app/callback` and `https://oboyacrm.vercel.app/login?signed_out=1` (add `http://localhost:3000/callback` and `http://localhost:3000/login?signed_out=1` for local development). Casdoor validates `post_logout_redirect_uri` against this list.
+- **Backchannel logout URL**: `https://oboyacrm.vercel.app/api/auth/casdoor/backchannel-logout`. Casdoor POSTs a signed `logout_token` there; the receiver verifies it against the JWKS and records a logout timestamp that invalidates older CRM sessions. A public HTTPS URL is required — Casdoor will not call loopback addresses.
+- Sign-up page: `https://oboss.psorai.eu.org/signup/oboyacrm` (shown as a link on the login page).
+- Request scopes are `openid profile email`. The discovery document does **not** list a `read` scope; a hand-built URL with `scope=read` cannot return usable OIDC profile claims, so do not use it.
+
+Environment variables (server-only secret, set the same values in Vercel):
+
+| Variable | Value |
+|---|---|
+| `CASDOOR_CLIENT_SECRET` | the `oboyacrm` application secret (no default — login button is hidden without it) |
+| `CASDOOR_ISSUER` | optional, defaults to `https://oboss.psorai.eu.org` |
+| `CASDOOR_CLIENT_ID` | optional, defaults to `51a7f410327c44d55e4e` |
+| `CASDOOR_REDIRECT_URI` | optional, defaults to `${NEXT_PUBLIC_SITE_URL}/callback` |
+| `CASDOOR_POST_LOGOUT_URI` | optional, defaults to `${NEXT_PUBLIC_SITE_URL}/login?signed_out=1` |
+| `CASDOOR_SIGNUP_URL` | optional, defaults to `https://oboss.psorai.eu.org/signup/oboyacrm` |
+
+Flow: `/api/auth/casdoor/login` creates a PKCE verifier and CSRF state in short-lived httpOnly cookies and redirects to Casdoor. `/callback` validates the state and RFC 9207 `iss`, exchanges the code, reads the OIDC profile (with a `/api/get-account` fallback), finds or creates the Supabase Auth user by email, generates an admin email OTP and verifies it through the cookie-backed client. The ID token is kept in an httpOnly cookie only as an `id_token_hint` for logout. Every newly created user still gets a `crm_users` row with `status = 'disabled'` — an admin must activate them in Setup → Users (or use `CRM_BOOTSTRAP_ADMIN_EMAIL` for the first super admin).
+
+"Sign out" in the topbar goes through `/api/auth/casdoor/logout`: it clears the Supabase session, then sends the browser to Casdoor's `/api/logout` with `id_token_hint`, `client_id`, `post_logout_redirect_uri` and `state`, ending the SSO session as well. Casdoor then notifies other relying parties through back-channel logout. Supabase access tokens are stateless, so the back-channel receiver also stores `logout_at`; proxy and `crmGuard()` reject a Casdoor-backed session whose `casdoor_auth_at` predates that timestamp. Apply `20261120000000_crm_casdoor_sso.sql` before enabling this flow.
+
+**Account linking:** normal Casdoor sign-in already reuses an existing CRM user with the same email and attaches `casdoor_sub` to them; a Casdoor identity bound to a different user is rejected instead of hijacking an account. For a different email, the signed-in user can open **Personal settings** (`/profile`, topbar user menu) and choose "Link Casdoor account": `/api/auth/casdoor/login?intent=link` keeps the current session, and `/callback` attaches the verified `sub` to that user without creating or switching accounts. One `sub` and one CRM user may be linked only once. The imported profile (display name, title, email, country/region and avatar) is stored in `user_metadata`; "Sync name and title from Casdoor" copies the imported name/title into the editable `crm_users` row, while the Casdoor email is displayed read-only because changing the Supabase email requires verification. Unlinking is only enabled after the user has signed in with a password at least once (or changed their password), so a Casdoor-only account cannot lock itself out. `/profile` also exposes self-editing of full name, job title, phone and language.
 
 ## 3. Environment variables
 

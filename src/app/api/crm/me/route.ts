@@ -7,9 +7,16 @@ import { LOCALE_COOKIE, locales } from "@/i18n/routing";
 export async function GET() {
   const guard = await crmGuard(undefined, "view", { allowPasswordChangePending: true });
   if (guard instanceof NextResponse) return guard;
+
+  const { data: profile } = await guard.supabase
+    .from("crm_users")
+    .select("title, phone")
+    .eq("id", guard.user.id)
+    .maybeSingle<{ title: string | null; phone: string | null }>();
   return NextResponse.json({
     ok: true,
     user: guard.user,
+    profile: { title: profile?.title ?? null, phone: profile?.phone ?? null },
     permissions: resolvePermissions(guard.user, guard.matrix),
   });
 }
@@ -17,12 +24,15 @@ export async function GET() {
 const patchSchema = z
   .object({
     fullName: z.string().trim().min(1).max(120).optional(),
+    title: z.string().trim().max(120).optional(),
+    phone: z.string().trim().max(60).optional(),
     locale: z.enum(locales).optional(),
   })
   .strict()
-  .refine((v) => v.fullName !== undefined || v.locale !== undefined, {
-    message: "Nothing to update",
-  });
+  .refine(
+    (v) => v.fullName !== undefined || v.title !== undefined || v.phone !== undefined || v.locale !== undefined,
+    { message: "Nothing to update" }
+  );
 
 export async function PATCH(request: Request) {
   const guard = await crmGuard(undefined, "view", { allowPasswordChangePending: true });
@@ -32,13 +42,15 @@ export async function PATCH(request: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid input" }, { status: 400 });
   }
-  const { fullName, locale } = parsed.data;
+  const { fullName, title, phone, locale } = parsed.data;
 
   // User-scoped client: RLS + crm_users_guard limit self-updates to these columns.
   const { error } = await guard.supabase
     .from("crm_users")
     .update({
       ...(fullName !== undefined ? { full_name: fullName } : {}),
+      ...(title !== undefined ? { title: title || null } : {}),
+      ...(phone !== undefined ? { phone: phone || null } : {}),
       ...(locale !== undefined ? { locale } : {}),
     })
     .eq("id", guard.user.id);
