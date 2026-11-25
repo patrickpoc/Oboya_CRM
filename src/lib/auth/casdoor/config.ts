@@ -24,6 +24,11 @@ export function getCasdoorConfig(origin?: string) {
   const issuer = clean(process.env.CASDOOR_ISSUER, DEFAULT_ISSUER).replace(/\/+$/, "");
   const clientId = clean(process.env.CASDOOR_CLIENT_ID, DEFAULT_CLIENT_ID);
   const clientSecret = clean(process.env.CASDOOR_CLIENT_SECRET);
+  // Server-to-server calls (token, userinfo, get-account, JWKS) can use a
+  // separate hostname when the browser-facing Casdoor URL sits behind a
+  // Cloudflare challenge that Vercel Functions cannot solve. Leave unset to
+  // use the issuer for everything.
+  const apiOrigin = clean(process.env.CASDOOR_API_ORIGIN, issuer).replace(/\/+$/, "");
   const siteUrl = clean(process.env.NEXT_PUBLIC_SITE_URL).replace(/\/+$/, "");
   const baseUrl = clean(origin)?.replace(/\/+$/, "") || siteUrl;
   const redirectUri = clean(
@@ -46,11 +51,13 @@ export function getCasdoorConfig(origin?: string) {
     postLogoutUri,
     signupUrl: clean(process.env.CASDOOR_SIGNUP_URL, DEFAULT_SIGNUP_URL),
     authorizeUrl: `${issuer}/login/oauth/authorize`,
-    tokenUrl: `${issuer}/api/login/oauth/access_token`,
-    userinfoUrl: `${issuer}/api/userinfo`,
-    accountUrl: `${issuer}/api/get-account`,
+    tokenUrl: `${apiOrigin}/api/login/oauth/access_token`,
+    userinfoUrl: `${apiOrigin}/api/userinfo`,
+    accountUrl: `${apiOrigin}/api/get-account`,
+    // Front-channel logout is a browser redirect: keep it on the issuer so
+    // the browser can solve any challenge posed by the protected hostname.
     logoutUrl: `${issuer}/api/logout`,
-    jwksUrl: `${issuer}/.well-known/jwks`,
+    jwksUrl: `${apiOrigin}/.well-known/jwks`,
   };
 }
 
