@@ -17,9 +17,29 @@ export function getCasdoorAllowedEmailDomains(): string[] {
   return envList("CASDOOR_ALLOWED_EMAIL_DOMAINS", []);
 }
 
-/** Casdoor user `type`; `guest-user` accounts are customers, not employees. */
+/** Casdoor user `type`; self-service signup normally gets `normal-user`. */
 export function getCasdoorAllowedUserTypes(): string[] {
   return envList("CASDOOR_ALLOWED_USER_TYPES", ["normal-user"]);
+}
+
+/**
+ * Casdoor's real guest marker is the user `tag`: auto-created guests have
+ * Type=normal-user but Tag=guest-user. Empty by default: the tag is recorded
+ * for admin review but does not block access unless explicitly configured.
+ */
+export function getCasdoorForbiddenUserTags(): string[] {
+  return envList("CASDOOR_FORBIDDEN_USER_TAGS", []);
+}
+
+/** Returns the offending tag, or null when no tag is forbidden. */
+export function findForbiddenCasdoorTag(tags: string[]): string | null {
+  const forbidden = getCasdoorForbiddenUserTags();
+  if (forbidden.length === 0) return null;
+  for (const tag of tags) {
+    const normalized = tag.trim().toLowerCase();
+    if (normalized && forbidden.includes(normalized)) return tag;
+  }
+  return null;
 }
 
 export function getCasdoorAllowedOrganizations(): string[] {

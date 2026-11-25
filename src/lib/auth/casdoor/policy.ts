@@ -1,4 +1,5 @@
 import {
+  findForbiddenCasdoorTag,
   isCasdoorEmailAllowed,
   isCasdoorOrganizationAllowed,
   isCasdoorUserTypeAllowed,
@@ -19,6 +20,16 @@ export type CasdoorPolicyResult =
 export function evaluateCasdoorPolicy(profile: CasdoorProfile): CasdoorPolicyResult {
   if (!isCasdoorEmailAllowed(profile.email)) {
     return { allowed: false, code: "email_domain", message: "Casdoor email domain is not allowed" };
+  }
+  // Casdoor guest accounts have type=normal-user but tag=guest-user, so the
+  // tag must be checked separately to keep customer accounts out.
+  const guestTag = findForbiddenCasdoorTag(profile.casdoorTags);
+  if (guestTag) {
+    return {
+      allowed: false,
+      code: "account_type",
+      message: `Casdoor tag "${guestTag}" identifies a guest/customer account`,
+    };
   }
   if (!isCasdoorUserTypeAllowed(profile.casdoorType)) {
     return {
