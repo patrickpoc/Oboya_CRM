@@ -47,6 +47,20 @@ function clearFlowCookies(response: NextResponse, secure: boolean) {
   return response;
 }
 
+function tokenHeaders(authorization?: string): Record<string, string> {
+  return authorization
+    ? { "Content-Type": "application/x-www-form-urlencoded", Authorization: authorization }
+    : { "Content-Type": "application/x-www-form-urlencoded" };
+}
+
+function redactTokenError(text: string): string {
+  const redacted = text.replace(
+    /(client_secret|access_token|id_token|refresh_token|code)=([^&\s"']+)/gi,
+    "$1=[redacted]"
+  );
+  return redacted.length > 600 ? `${redacted.slice(0, 600)}…` : redacted;
+}
+
 async function exchangeCode(
   tokenUrl: string,
   params: {
@@ -64,29 +78,48 @@ async function exchangeCode(
     redirect_uri: params.redirectUri,
     code_verifier: params.codeVerifier,
   };
-  let response = await fetch(tokenUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({ ...fields, client_secret: params.clientSecret }),
-    cache: "no-store",
-    signal: AbortSignal.timeout(15_000),
-  });
-  if (!response.ok) {
-    // Casdoor supports both client_secret_post and client_secret_basic.
-    const basic = Buffer.from(`${params.clientId}:${params.clientSecret}`).toString("base64");
-    response = await fetch(tokenUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: `Basic ${basic}`,
-      },
+  const basic = Buffer.from(`${params.clientId}:${params.clientSecret}`).toString("base64");
+  // Casdoor accepts PKCE without a client secret. Try that first: a wrong or
+  // stale CASDOOR_CLIENT_SECRET must not break an otherwise valid PKCE flow.
+  // Keep the secret-based variants for older Casdoor deployments.
+  const attempts = [
+    {
+      label: "pkce",
+      headers: tokenHeaders(),
       body: new URLSearchParams(fields),
+    },
+    {
+      label: "client_secret_post",
+      headers: tokenHeaders(),
+      body: new URLSearchParams({ ...fields, client_secret: params.clientSecret }),
+    },
+    {
+      label: "client_secret_basic",
+      headers: tokenHeaders(`Basic ${basic}`),
+      body: new URLSearchParams(fields),
+    },
+  ];
+
+  const failures: string[] = [];
+  for (const attempt of attempts) {
+    const response = await fetch(tokenUrl, {
+      method: "POST",
+      headers: attempt.headers,
+      body: attempt.body,
       cache: "no-store",
       signal: AbortSignal.timeout(15_000),
     });
+    if (response.ok) {
+      try {
+        return (await response.json()) as TokenResponse;
+      } catch {
+        throw new Error("Casdoor token response was not valid JSON");
+      }
+    }
+    const detail = redactTokenError(await response.text());
+    failures.push(`${attempt.label}: ${response.status}${detail ? ` ${detail}` : ""}`);
   }
-  if (!response.ok) throw new Error(`Casdoor token exchange failed (${response.status})`);
-  return (await response.json()) as TokenResponse;
+  throw new Error(`Casdoor token exchange failed: ${failures.join(" | ")}`);
 }
 
 /**
