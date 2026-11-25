@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { ProfileSettings, type CasdoorLinkState } from "@/components/crm/profile/ProfileSettings";
-import { getCasdoorLink } from "@/lib/crm/server/admin-only/casdoor-session";
+import {
+  getCasdoorAccessRequest,
+  getCasdoorLink,
+} from "@/lib/crm/server/admin-only/casdoor-session";
 import { requireCrmAuth } from "@/lib/crm/server/require-crm-auth";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -21,15 +24,16 @@ export default async function ProfilePage({
     return Array.isArray(value) ? value[0] : value;
   };
 
-  const [profileResult, authResult, linkResult] = await Promise.all([
+  const [profileResult, authResult, linkResult, requestResult] = await Promise.all([
     supabase
       .from("crm_users")
       .select("full_name, title, phone, locale")
       .eq("id", user.id)
       .maybeSingle<{ full_name: string; title: string | null; phone: string | null; locale: string }>(),
     supabase.auth.getUser(),
-    // The profile page must render even before the Casdoor migration is applied.
+    // The profile page must render even before the Casdoor migrations are applied.
     getCasdoorLink(user.id).catch(() => null),
+    getCasdoorAccessRequest(user.id).catch(() => null),
   ]);
 
   const profile = profileResult.data;
@@ -40,6 +44,15 @@ export default async function ProfilePage({
       : null;
 
   const initialLink: CasdoorLinkState = {
+    approval:
+      requestResult && requestResult.status !== "approved"
+        ? {
+            status: requestResult.status,
+            createdAt: requestResult.createdAt,
+            email: requestResult.email,
+            displayName: requestResult.displayName,
+          }
+        : null,
     linked: Boolean(linkResult),
     sub: linkResult?.sub ?? null,
     linkedAt: text("casdoor_linked_at"),
@@ -59,7 +72,11 @@ export default async function ProfilePage({
       initialPhone={profile?.phone ?? null}
       initialLocale={user.locale}
       initialLink={initialLink}
-      notice={{ linked: first("linked") === "1", error: first("error") }}
+      notice={{
+        linked: first("linked") === "1",
+        linkPending: first("link_pending") === "1",
+        error: first("error"),
+      }}
     />
   );
 }

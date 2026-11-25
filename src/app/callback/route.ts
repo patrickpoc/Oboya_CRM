@@ -5,9 +5,10 @@ import { safeEqual } from "@/lib/auth/casdoor/pkce";
 import { fetchCasdoorProfile, type CasdoorProfile } from "@/lib/auth/casdoor/profile";
 import {
   CasdoorLinkError,
-  linkCasdoorAccount,
   provisionCasdoorSession,
+  requestCasdoorLink,
 } from "@/lib/crm/server/admin-only/casdoor-session";
+import type { CasdoorPolicyCode } from "@/lib/auth/casdoor/policy";
 import { safeNext } from "@/lib/supabase/safe-next";
 import { createClient } from "@/lib/supabase/server";
 
@@ -19,6 +20,12 @@ const OAUTH_COOKIES = [
   "casdoor_link_user",
 ] as const;
 const ID_TOKEN_COOKIE = "casdoor_id_token";
+
+const POLICY_ERRORS: Record<CasdoorPolicyCode, string> = {
+  email_domain: "domain_not_allowed",
+  account_type: "account_type_not_allowed",
+  organization: "organization_not_allowed",
+};
 
 type TokenResponse = {
   access_token?: string;
@@ -50,20 +57,34 @@ async function exchangeCode(
     codeVerifier: string;
   }
 ): Promise<TokenResponse> {
-  const response = await fetch(tokenUrl, {
+  const fields = {
+    grant_type: "authorization_code",
+    client_id: params.clientId,
+    code: params.code,
+    redirect_uri: params.redirectUri,
+    code_verifier: params.codeVerifier,
+  };
+  let response = await fetch(tokenUrl, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      grant_type: "authorization_code",
-      client_id: params.clientId,
-      client_secret: params.clientSecret,
-      code: params.code,
-      redirect_uri: params.redirectUri,
-      code_verifier: params.codeVerifier,
-    }),
+    body: new URLSearchParams({ ...fields, client_secret: params.clientSecret }),
     cache: "no-store",
     signal: AbortSignal.timeout(15_000),
   });
+  if (!response.ok) {
+    // Casdoor supports both client_secret_post and client_secret_basic.
+    const basic = Buffer.from(`${params.clientId}:${params.clientSecret}`).toString("base64");
+    response = await fetch(tokenUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Basic ${basic}`,
+      },
+      body: new URLSearchParams(fields),
+      cache: "no-store",
+      signal: AbortSignal.timeout(15_000),
+    });
+  }
   if (!response.ok) throw new Error(`Casdoor token exchange failed (${response.status})`);
   return (await response.json()) as TokenResponse;
 }
@@ -103,11 +124,10 @@ export async function GET(request: Request) {
   const linking = cookieStore.get("casdoor_intent")?.value === "link";
   const linkUserId = cookieStore.get("casdoor_link_user")?.value;
   if (!safeEqual(state, url.searchParams.get("state")) || !verifier) {
-    return fail("casdoor", linking ? "profile" : "login");
+    return fail("oauth_state", linking ? "profile" : "login");
   }
-  if (linking && !linkUserId) return fail("casdoor", "profile");
+  if (linking && !linkUserId) return fail("oauth_session", "profile");
 
-  let profile: CasdoorProfile;
   let tokens: TokenResponse;
   try {
     tokens = await exchangeCode(config.tokenUrl, {
@@ -120,10 +140,17 @@ export async function GET(request: Request) {
     if (!tokens.access_token) {
       throw new Error(tokens.error_description || tokens.error || "no access token");
     }
-    profile = await fetchCasdoorProfile(config, tokens.access_token);
   } catch (error) {
-    console.error("Casdoor sign-in failed:", error);
-    return fail("casdoor", linking ? "profile" : "login");
+    console.error("Casdoor token exchange failed:", error);
+    return fail("oauth_token", linking ? "profile" : "login");
+  }
+
+  let profile: CasdoorProfile;
+  try {
+    profile = await fetchCasdoorProfile(config, tokens.access_token, tokens.id_token);
+  } catch (error) {
+    console.error("Casdoor profile fetch failed:", error);
+    return fail("oauth_profile", linking ? "profile" : "login");
   }
 
   const supabase = await createClient();
@@ -132,13 +159,32 @@ export async function GET(request: Request) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user || user.id !== linkUserId) return fail("casdoor", "profile");
+    if (!user || user.id !== linkUserId) return fail("oauth_session", "profile");
 
     try {
-      await linkCasdoorAccount(profile, linkUserId);
+      await requestCasdoorLink(profile, linkUserId);
     } catch (error) {
+      if (error instanceof CasdoorLinkError && error.code === "pending") {
+        const pendingResponse = clearFlowCookies(
+          NextResponse.redirect(`${origin}/profile?link_pending=1`),
+          secure
+        );
+        if (tokens.id_token) {
+          pendingResponse.cookies.set(ID_TOKEN_COOKIE, tokens.id_token, {
+            httpOnly: true,
+            sameSite: "lax",
+            secure,
+            path: "/",
+            maxAge: 60 * 60 * 24,
+          });
+        }
+        return pendingResponse;
+      }
       if (error instanceof CasdoorLinkError) {
-        return fail(error.code, "profile");
+        if (error.code === "policy" && error.policyCode) {
+          return fail(POLICY_ERRORS[error.policyCode], "profile");
+        }
+        if (error.code !== "failed") return fail(error.code, "profile");
       }
       console.error("Casdoor link failed:", error);
       return fail("unavailable", "profile");
@@ -164,8 +210,16 @@ export async function GET(request: Request) {
   try {
     seed = await provisionCasdoorSession(profile, Date.now());
   } catch (error) {
-    if (error instanceof CasdoorLinkError && error.code !== "failed") {
-      return fail("casdoor_link");
+    // A rejected or unapproved Casdoor identity must never keep a Supabase
+    // session, even if somebody was signed in before starting the flow.
+    await supabase.auth.signOut();
+    if (error instanceof CasdoorLinkError) {
+      if (error.code === "policy" && error.policyCode) {
+        return fail(POLICY_ERRORS[error.policyCode]);
+      }
+      if (error.code === "pending") return fail("pending_approval");
+      if (error.code === "rejected") return fail("access_rejected");
+      if (error.code !== "failed") return fail("casdoor_link");
     }
     console.error("Casdoor session provisioning failed:", error);
     return fail("unavailable");

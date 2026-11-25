@@ -1,7 +1,7 @@
 /**
  * Casdoor OIDC profile mapping. Casdoor's /api/userinfo follows the standard
- * claim mapping; /api/get-account enriches it with Casdoor-specific fields
- * (title, location/region/country code) when the token format omits them.
+ * claim mapping; /api/get-account returns the full Casdoor user object and is
+ * needed for the employee/customer policy fields (type, tag, roles, owner).
  */
 export type CasdoorProfile = {
   sub: string;
@@ -12,6 +12,10 @@ export type CasdoorProfile = {
   country: string | null;
   countryCode: string | null;
   location: string | null;
+  casdoorType: string | null;
+  casdoorTags: string[];
+  casdoorRoles: string[];
+  organization: string | null;
 };
 
 type JsonRecord = Record<string, unknown>;
@@ -39,6 +43,20 @@ function claimCountry(userInfo: JsonRecord, account: JsonRecord | null): string 
   );
 }
 
+function stringList(value: unknown): string[] {
+  const items = typeof value === "string" ? value.split(",") : Array.isArray(value) ? value : [];
+  return items
+    .map((item) => {
+      if (typeof item === "string") return item.trim();
+      if (item && typeof item === "object") {
+        const record = item as JsonRecord;
+        return text(record.name) || text(record.id);
+      }
+      return "";
+    })
+    .filter(Boolean);
+}
+
 export function mapCasdoorProfile(userInfo: JsonRecord, account: JsonRecord | null = null): CasdoorProfile {
   const sub = text(userInfo.sub) || text(account?.id) || text(account?.name);
   const email = text(userInfo.email) || text(account?.email);
@@ -61,6 +79,10 @@ export function mapCasdoorProfile(userInfo: JsonRecord, account: JsonRecord | nu
     country: claimCountry(userInfo, account),
     countryCode: optional(account?.countryCode),
     location: optional(account?.location) || optional(account?.region),
+    casdoorType: optional(account?.type),
+    casdoorTags: stringList(account?.tag ?? account?.tags),
+    casdoorRoles: stringList(account?.roles),
+    organization: optional(account?.owner) || optional(account?.organization),
   };
 }
 
@@ -69,15 +91,44 @@ async function readJson(response: Response): Promise<JsonRecord> {
     throw new Error(`Casdoor profile request failed (${response.status})`);
   }
   const value: unknown = await response.json();
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
+  if (!value || typeof value !== "object") {
     throw new Error("Casdoor returned an unexpected profile payload");
   }
   return value as JsonRecord;
 }
 
+/** Some Casdoor versions wrap /api/get-account in `{ status, data }`. */
+function unwrapAccount(value: JsonRecord): JsonRecord {
+  const data = value.data;
+  return data && typeof data === "object" && !Array.isArray(data)
+    ? (data as JsonRecord)
+    : value;
+}
+
+/**
+ * The ID token arrives directly from Casdoor's token endpoint over TLS. Its
+ * claims are a safe fallback when /api/userinfo omits email or sub (a common
+ * Casdoor token-format setting); it is never used as proof by itself because
+ * the code exchange has already authenticated it.
+ */
+function decodeIdTokenClaims(idToken: string | null | undefined): JsonRecord {
+  if (!idToken) return {};
+  const parts = idToken.split(".");
+  if (parts.length < 2) return {};
+  try {
+    const value: unknown = JSON.parse(Buffer.from(parts[1], "base64url").toString("utf8"));
+    return value && typeof value === "object" && !Array.isArray(value)
+      ? (value as JsonRecord)
+      : {};
+  } catch {
+    return {};
+  }
+}
+
 export async function fetchCasdoorProfile(
   endpoints: { userinfoUrl: string; accountUrl: string },
-  accessToken: string
+  accessToken: string,
+  idToken?: string | null
 ): Promise<CasdoorProfile> {
   const userInfo = await readJson(
     await fetch(endpoints.userinfoUrl, {
@@ -85,26 +136,24 @@ export async function fetchCasdoorProfile(
       cache: "no-store",
     })
   );
+  // Userinfo claims win; only missing fields are filled from the ID token.
+  const claims: JsonRecord = { ...decodeIdTokenClaims(idToken), ...userInfo };
 
-  // Enrichment is best effort: the application's token format may omit the
-  // email or Casdoor-specific claims even though the token is still valid.
-  const needsAccount =
-    !text(userInfo.email) ||
-    !text(userInfo.sub) ||
-    !optional(userInfo.address) ||
-    !optional(userInfo.title);
+  // Always try the account endpoint: OIDC scopes do not expose Casdoor's
+  // user type/tags, which decide whether this is an employee or a customer.
   let account: JsonRecord | null = null;
-  if (needsAccount) {
-    try {
-      account = await readJson(
+  try {
+    account = unwrapAccount(
+      await readJson(
         await fetch(`${endpoints.accountUrl}?accessToken=${encodeURIComponent(accessToken)}`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
           cache: "no-store",
         })
-      );
-    } catch {
-      // Keep the standard OIDC claims; optional fields stay null.
-    }
+      )
+    );
+  } catch {
+    // Keep the OIDC claims; policy fields stay null and fail closed.
   }
 
-  return mapCasdoorProfile(userInfo, account);
+  return mapCasdoorProfile(claims, account);
 }

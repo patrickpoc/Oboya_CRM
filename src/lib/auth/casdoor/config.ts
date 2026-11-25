@@ -30,9 +30,12 @@ export function getCasdoorConfig(origin?: string) {
     process.env.CASDOOR_REDIRECT_URI,
     baseUrl ? `${baseUrl}/callback` : ""
   );
+  // Casdoor validates post_logout_redirect_uri with an exact match against
+  // Redirect URLs, and its UI does not accept query strings there. Keep the
+  // default query-free; a signed-out notice is carried by a short-lived cookie.
   const postLogoutUri = clean(
     process.env.CASDOOR_POST_LOGOUT_URI,
-    baseUrl ? `${baseUrl}/login?signed_out=1` : ""
+    baseUrl ? `${baseUrl}/login` : ""
   );
 
   return {

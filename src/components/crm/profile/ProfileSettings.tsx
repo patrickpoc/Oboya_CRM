@@ -20,6 +20,12 @@ import { CRM_LOCALE_OPTIONS } from "@/contexts/CrmLocaleContext";
 import type { Locale } from "@/i18n/routing";
 
 export type CasdoorLinkState = {
+  approval: {
+    status: "pending" | "rejected" | "revoked";
+    createdAt: string;
+    email: string;
+    displayName: string;
+  } | null;
   linked: boolean;
   sub: string | null;
   linkedAt: string | null;
@@ -38,6 +44,15 @@ const LINK_ERRORS: Record<string, string> = {
   not_found: "loadFailed",
   unavailable: "loadFailed",
   casdoor: "linkFailed",
+  oauth_state: "linkStateExpired",
+  oauth_session: "linkSessionLost",
+  oauth_token: "linkTokenFailed",
+  oauth_profile: "linkProfileFailed",
+  pending_approval: "linkPendingHint",
+  access_rejected: "linkRejectedHint",
+  domain_not_allowed: "linkDomainNotAllowed",
+  account_type_not_allowed: "linkAccountTypeNotAllowed",
+  organization_not_allowed: "linkOrganizationNotAllowed",
 };
 
 export function ProfileSettings({
@@ -53,7 +68,7 @@ export function ProfileSettings({
   initialPhone: string | null;
   initialLocale: Locale;
   initialLink: CasdoorLinkState;
-  notice: { linked?: boolean; error?: string };
+  notice: { linked?: boolean; linkPending?: boolean; error?: string };
 }) {
   const t = useTranslations("profile");
   const [fullName, setFullName] = useState(initialFullName);
@@ -66,10 +81,11 @@ export function ProfileSettings({
 
   useEffect(() => {
     if (notice.linked) toast.success(t("linkDone"));
+    if (notice.linkPending) toast.info(t("linkPendingHint"));
     if (notice.error && LINK_ERRORS[notice.error]) {
       toast.error(t(LINK_ERRORS[notice.error]));
     }
-  }, [notice.linked, notice.error, t]);
+  }, [notice.linked, notice.linkPending, notice.error, t]);
 
   const saveProfile = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -213,6 +229,21 @@ export function ProfileSettings({
           <CardDescription>{t("casdoorDescription")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {link.approval?.status === "pending" ? (
+            <p className="rounded-lg border border-oboya-orange/40 bg-oboya-orange/5 px-3 py-2 text-xs text-oboya-orange">
+              {t("linkPendingHint")}
+            </p>
+          ) : null}
+          {link.approval?.status === "rejected" ? (
+            <p className="rounded-lg border border-border/60 px-3 py-2 text-xs text-muted-foreground">
+              {t("linkRejectedHint")}
+            </p>
+          ) : null}
+          {link.approval?.status === "revoked" ? (
+            <p className="rounded-lg border border-border/60 px-3 py-2 text-xs text-muted-foreground">
+              {t("linkRevokedHint")}
+            </p>
+          ) : null}
           {link.linked ? (
             <dl className="grid gap-2 text-sm md:grid-cols-2">
               <div>
@@ -259,6 +290,7 @@ export function ProfileSettings({
             ) : (
               <Button
                 type="button"
+                disabled={link.approval?.status === "pending"}
                 onClick={() => hardNavigate("/api/auth/casdoor/login?intent=link&next=%2Fprofile")}
               >
                 {t("linkButton")}

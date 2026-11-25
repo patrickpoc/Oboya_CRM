@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import {
   CasdoorLinkError,
+  getCasdoorAccessRequest,
   getCasdoorLink,
   syncCasdoorProfile,
   unlinkCasdoorAccount,
@@ -30,8 +31,12 @@ export async function GET() {
 
   const metadata = (user.user_metadata ?? {}) as Record<string, unknown>;
   let link: Awaited<ReturnType<typeof getCasdoorLink>> = null;
+  let request: Awaited<ReturnType<typeof getCasdoorAccessRequest>> = null;
   try {
-    link = await getCasdoorLink(guard.user.id);
+    [link, request] = await Promise.all([
+      getCasdoorLink(guard.user.id),
+      getCasdoorAccessRequest(guard.user.id),
+    ]);
   } catch (error) {
     return fail(error);
   }
@@ -42,6 +47,15 @@ export async function GET() {
       : null;
 
   return NextResponse.json({
+    approval:
+      request && request.status !== "approved"
+        ? {
+            status: request.status,
+            createdAt: request.createdAt,
+            email: request.email,
+            displayName: request.displayName,
+          }
+        : null,
     linked: Boolean(link),
     sub: link?.sub ?? null,
     linkedAt: text("casdoor_linked_at"),

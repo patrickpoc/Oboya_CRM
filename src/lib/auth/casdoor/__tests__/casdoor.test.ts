@@ -1,11 +1,12 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   buildAuthorizeUrl,
   createOAuthState,
   createPkceChallenge,
   safeEqual,
 } from "../pkce";
-import { mapCasdoorProfile } from "../profile";
+import { evaluateCasdoorPolicy } from "../policy";
+import { fetchCasdoorProfile, mapCasdoorProfile } from "../profile";
 import { isCasdoorSessionRevoked } from "../revocation";
 
 describe("Casdoor OAuth helpers", () => {
@@ -61,6 +62,10 @@ describe("Casdoor profile mapping", () => {
       country: null,
       countryCode: null,
       location: null,
+      casdoorType: null,
+      casdoorTags: [],
+      casdoorRoles: [],
+      organization: null,
     });
   });
 
@@ -75,6 +80,10 @@ describe("Casdoor profile mapping", () => {
           title: "Sales Manager",
           location: "Shanghai",
           countryCode: "CN",
+          type: "normal-user",
+          tag: "employee,vip",
+          roles: ["sales", "manager"],
+          owner: "oboya",
         }
       )
     ).toEqual({
@@ -86,11 +95,105 @@ describe("Casdoor profile mapping", () => {
       country: "Shanghai",
       countryCode: "CN",
       location: "Shanghai",
+      casdoorType: "normal-user",
+      casdoorTags: ["employee", "vip"],
+      casdoorRoles: ["sales", "manager"],
+      organization: "oboya",
     });
   });
 
   it("rejects a profile without an email", () => {
     expect(() => mapCasdoorProfile({ sub: "sub-3" })).toThrow(/email/i);
+  });
+});
+
+describe("Casdoor profile fetch", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("falls back to ID token claims when userinfo omits email and sub", async () => {
+    const claims = { sub: "sub-9", email: "carol@oboya.cc", name: "Carol" };
+    const idToken = `header.${Buffer.from(JSON.stringify(claims)).toString("base64url")}.sig`;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockImplementation((url: string) =>
+        Promise.resolve(
+          new Response(
+            JSON.stringify(url.includes("userinfo") ? {} : { status: "error" }),
+            { status: 200, headers: { "Content-Type": "application/json" } }
+          )
+        )
+      )
+    );
+
+    const profile = await fetchCasdoorProfile(
+      {
+        userinfoUrl: "https://oboss.psorai.eu.org/api/userinfo",
+        accountUrl: "https://oboss.psorai.eu.org/api/get-account",
+      },
+      "access-token",
+      idToken
+    );
+    expect(profile.sub).toBe("sub-9");
+    expect(profile.email).toBe("carol@oboya.cc");
+    expect(profile.displayName).toBe("Carol");
+  });
+});
+
+describe("Casdoor employee policy", () => {
+  const envKeys = [
+    "CASDOOR_ALLOWED_EMAIL_DOMAINS",
+    "CASDOOR_ALLOWED_USER_TYPES",
+    "CASDOOR_ALLOWED_ORGANIZATIONS",
+  ] as const;
+  const original: Record<string, string | undefined> = Object.fromEntries(
+    envKeys.map((key) => [key, process.env[key]])
+  );
+
+  afterEach(() => {
+    for (const key of envKeys) {
+      const value = original[key];
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  });
+
+  const profile = {
+    ...mapCasdoorProfile({
+      sub: "employee-1",
+      email: "alice@oboya.cc",
+      name: "Alice",
+    }),
+    casdoorType: "normal-user",
+    organization: "oboya",
+  };
+
+  it("rejects non-employee Casdoor account types by default", () => {
+    delete process.env.CASDOOR_ALLOWED_USER_TYPES;
+    expect(evaluateCasdoorPolicy({ ...profile, casdoorType: "guest-user" })).toMatchObject({
+      allowed: false,
+      code: "account_type",
+    });
+    expect(evaluateCasdoorPolicy({ ...profile, casdoorType: "normal-user" })).toEqual({
+      allowed: true,
+    });
+  });
+
+  it("rejects email domains outside the allowlist", () => {
+    process.env.CASDOOR_ALLOWED_EMAIL_DOMAINS = "oboya.cc, oboya-horticulture.com";
+    expect(evaluateCasdoorPolicy({ ...profile, email: "buyer@customer.com" })).toMatchObject({
+      allowed: false,
+      code: "email_domain",
+    });
+    expect(evaluateCasdoorPolicy(profile)).toEqual({ allowed: true });
+  });
+
+  it("rejects organizations outside the allowlist", () => {
+    process.env.CASDOOR_ALLOWED_ORGANIZATIONS = "oboya";
+    expect(evaluateCasdoorPolicy({ ...profile, organization: "customers" })).toMatchObject({
+      allowed: false,
+      code: "organization",
+    });
+    expect(evaluateCasdoorPolicy({ ...profile, organization: "oboya" })).toEqual({ allowed: true });
   });
 });
 

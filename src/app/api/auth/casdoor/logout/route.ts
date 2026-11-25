@@ -39,5 +39,14 @@ export async function GET(request: Request) {
     path: "/",
     maxAge: 0,
   });
+  // The post-logout URI must be query-free for Casdoor's Redirect URL check.
+  // A short-lived first-party cookie lets /login still show the signed-out notice.
+  response.cookies.set("casdoor_signed_out", "1", {
+    httpOnly: false,
+    sameSite: "lax",
+    secure,
+    path: "/",
+    maxAge: 5 * 60,
+  });
   return response;
 }

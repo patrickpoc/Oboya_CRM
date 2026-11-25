@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useCrm } from "@/contexts/CrmContext";
 import { CrmPageHeader } from "@/components/crm/layout/CrmPageHeader";
 import { DataTable, type DataTableColumn } from "@/components/crm/data-table/DataTable";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormDrawer } from "@/components/crm/forms/FormDrawer";
 import { EntityAvatar } from "@/components/crm/common/EntityAvatar";
 import { FilterBar, FilterSelect, SearchInput } from "@/components/crm/common/FilterBar";
@@ -26,12 +27,23 @@ import { localeLabels, locales } from "@/i18n/routing";
 import type { AccessMatrix } from "@/lib/crm/permissions/access-types";
 import type { PermissionOverrides } from "@/lib/crm/types";
 import { countOverrides, normalizeOverrides } from "@/lib/crm/setup/matrix";
-import type { SetupRole, SetupTeam, SetupUser } from "@/lib/crm/setup/rows";
+import type {
+  CasdoorAccessRequestView,
+  SetupRole,
+  SetupTeam,
+  SetupUser,
+} from "@/lib/crm/setup/rows";
 import { canAssignRole, checkUserUpdate } from "@/lib/crm/setup/users";
 import { UserOverridesEditor } from "./UserOverridesEditor";
 import { Field, apiFetch, selectClass, useErrorMessage, useSetupData } from "./shared";
 
-type UsersPayload = { users: SetupUser[]; roles: SetupRole[]; teams: SetupTeam[]; matrix: AccessMatrix };
+type UsersPayload = {
+  users: SetupUser[];
+  roles: SetupRole[];
+  teams: SetupTeam[];
+  matrix: AccessMatrix;
+  casdoorRequests: CasdoorAccessRequestView[];
+};
 
 type Draft = {
   id?: string;
@@ -72,6 +84,11 @@ export function UsersSetup() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
+  const [reviewTarget, setReviewTarget] = useState<CasdoorAccessRequestView | null>(null);
+  const [reviewRole, setReviewRole] = useState("sales_rep");
+  const [reviewTeamId, setReviewTeamId] = useState("");
+  const [reviewNote, setReviewNote] = useState("");
+  const [reviewing, setReviewing] = useState(false);
 
   const roles = useMemo(() => data?.roles ?? [], [data]);
   const teams = useMemo(() => data?.teams ?? [], [data]);
@@ -103,6 +120,43 @@ export function UsersSetup() {
         (!roleFilter || u.role === roleFilter)
     );
   }, [users, search, statusFilter, roleFilter]);
+
+  const pendingRequests = useMemo(
+    () => (data?.casdoorRequests ?? []).filter((request) => request.status === "pending"),
+    [data]
+  );
+
+  const openReview = (request: CasdoorAccessRequestView) => {
+    setReviewTarget(request);
+    setReviewRole(assignable.find((r) => r.id === "sales_rep")?.id ?? assignable[0]?.id ?? "sales_rep");
+    setReviewTeamId("");
+    setReviewNote("");
+  };
+
+  const review = async (
+    action: "approve" | "reject",
+    target: CasdoorAccessRequestView | null = reviewTarget
+  ) => {
+    if (!target) return;
+    setReviewing(true);
+    try {
+      await apiFetch(`/api/crm/casdoor-access/${target.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          action,
+          ...(action === "approve" ? { role: reviewRole, teamId: reviewTeamId || null } : {}),
+          note: reviewNote.trim() || null,
+        }),
+      });
+      toast.success(action === "approve" ? t("casdoorApproved") : t("casdoorRejected"));
+      setReviewTarget(null);
+      await reload();
+    } catch (e) {
+      toast.error(errorMessage(e));
+    } finally {
+      setReviewing(false);
+    }
+  };
 
   const openEdit = (u: SetupUser) =>
     setDraft({
@@ -237,6 +291,74 @@ export function UsersSetup() {
           ) : null
         }
       />
+
+      {pendingRequests.length > 0 ? (
+        <Card className="mb-4 border-oboya-orange/40">
+          <CardHeader>
+            <CardTitle>{t("casdoorApprovalsTitle")}</CardTitle>
+            <CardDescription>{t("casdoorApprovalsDescription")}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {pendingRequests.map((request) => (
+              <div
+                key={request.id}
+                className="flex flex-wrap items-start justify-between gap-3 rounded-lg border border-border/60 p-3"
+              >
+                <div className="min-w-0 space-y-1 text-sm">
+                  <p className="font-medium text-oboya-blue-dark">
+                    {request.displayName || request.email}{" "}
+                    <span className="font-normal text-muted-foreground">&lt;{request.email}&gt;</span>
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {[
+                      request.casdoorType ? `${t("casdoorType")}: ${request.casdoorType}` : "",
+                      request.organization ? `${t("casdoorOrganization")}: ${request.organization}` : "",
+                      request.casdoorRoles.length
+                        ? `${t("casdoorRoles")}: ${request.casdoorRoles.join(", ")}`
+                        : "",
+                      request.casdoorTags.length
+                        ? `${t("casdoorTags")}: ${request.casdoorTags.join(", ")}`
+                        : "",
+                      [request.country, request.countryCode].filter(Boolean).join(" / "),
+                      `${t("casdoorIntent")}: ${t(
+                        request.intent === "link" ? "casdoorIntentLink" : "casdoorIntentLogin"
+                      )}`,
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {t("casdoorRequested", {
+                      time: new Date(request.createdAt).toLocaleString(),
+                    })}
+                  </p>
+                </div>
+                <div className="flex shrink-0 gap-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => openReview(request)}
+                    disabled={!can("setup_users", "edit")}
+                  >
+                    {t("casdoorReview")}
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    disabled={!can("setup_users", "edit")}
+                    onClick={() => {
+                      if (window.confirm(t("casdoorRejectConfirm"))) void review("reject", request);
+                    }}
+                  >
+                    {t("casdoorReject")}
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      ) : null}
 
       <FilterBar
         className="mb-4"
@@ -440,6 +562,80 @@ export function UsersSetup() {
           <DialogFooter>
             <Button className="rounded-full" onClick={() => setPassword(null)}>
               {t("passwordDone")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={reviewTarget !== null} onOpenChange={(open) => (!open ? setReviewTarget(null) : undefined)}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{t("casdoorReviewTitle")}</DialogTitle>
+            <DialogDescription>
+              {reviewTarget?.displayName} · {reviewTarget?.email}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            {reviewTarget?.intent === "login" ? (
+              <>
+                <Field label={t("role")} htmlFor="casdoor-review-role">
+                  <select
+                    id="casdoor-review-role"
+                    className={selectClass}
+                    value={reviewRole}
+                    onChange={(event) => setReviewRole(event.target.value)}
+                  >
+                    {assignable.map((role) => (
+                      <option key={role.id} value={role.id}>
+                        {role.label}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label={t("team")} htmlFor="casdoor-review-team">
+                  <select
+                    id="casdoor-review-team"
+                    className={selectClass}
+                    value={reviewTeamId}
+                    onChange={(event) => setReviewTeamId(event.target.value)}
+                  >
+                    <option value="">{t("noTeam")}</option>
+                    {teams.map((team) => (
+                      <option key={team.id} value={team.id}>
+                        {team.name}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+              </>
+            ) : null}
+            <Field label={t("casdoorReviewNote")} htmlFor="casdoor-review-note">
+              <Input
+                id="casdoor-review-note"
+                value={reviewNote}
+                maxLength={500}
+                onChange={(event) => setReviewNote(event.target.value)}
+              />
+            </Field>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" className="rounded-full" onClick={() => setReviewTarget(null)}>
+              {tc("cancel")}
+            </Button>
+            <Button
+              variant="outline"
+              className="rounded-full"
+              disabled={reviewing}
+              onClick={() => void review("reject")}
+            >
+              {t("casdoorReject")}
+            </Button>
+            <Button
+              className="rounded-full bg-oboya-green text-white hover:bg-oboya-green/90"
+              disabled={reviewing || !assignable.some((role) => role.id === reviewRole)}
+              onClick={() => void review("approve")}
+            >
+              {t("casdoorApprove")}
             </Button>
           </DialogFooter>
         </DialogContent>

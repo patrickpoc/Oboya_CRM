@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { listCasdoorAccessRequests } from "@/lib/crm/server/admin-only/casdoor-session";
 import { crmGuard } from "@/lib/crm/server/require-crm-auth";
 import {
   AuthUserExistsError,
@@ -23,10 +24,12 @@ export async function GET() {
   const guard = await crmGuard("setup_users", "view");
   if (guard instanceof NextResponse) return guard;
 
-  const [users, roles, teams] = await Promise.all([
+  const [users, roles, teams, requests] = await Promise.all([
     guard.supabase.from("crm_users").select(USER_COLUMNS).order("full_name"),
     guard.supabase.from("crm_roles").select(ROLE_COLUMNS).order("sort_order"),
     guard.supabase.from("crm_teams").select(TEAM_COLUMNS).order("name"),
+    // Review queue is optional until the Casdoor migration has been applied.
+    listCasdoorAccessRequests().catch(() => []),
   ]);
   const error = users.error ?? roles.error ?? teams.error;
   if (error) return dbErrorResponse(error, "Users read");
@@ -36,6 +39,7 @@ export async function GET() {
     roles: (roles.data ?? []).map(toSetupRole),
     teams: (teams.data ?? []).map(toSetupTeam),
     matrix: guard.matrix,
+    casdoorRequests: requests,
   });
 }
 

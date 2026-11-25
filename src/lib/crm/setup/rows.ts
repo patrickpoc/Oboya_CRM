@@ -18,6 +18,27 @@ export type SetupUser = {
   createdAt: string;
 };
 
+/** Client-safe view of a pending Casdoor identity review. */
+export type CasdoorAccessRequestView = {
+  id: string;
+  sub: string;
+  userId: string;
+  email: string;
+  displayName: string;
+  title: string | null;
+  country: string | null;
+  countryCode: string | null;
+  location: string | null;
+  casdoorType: string | null;
+  casdoorTags: string[];
+  casdoorRoles: string[];
+  organization: string | null;
+  intent: "login" | "link";
+  status: "pending" | "approved" | "rejected" | "revoked";
+  reviewNote: string | null;
+  createdAt: string;
+};
+
 export type SetupRole = {
   id: string;
   label: string;

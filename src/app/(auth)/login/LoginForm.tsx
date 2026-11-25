@@ -17,21 +17,36 @@ const ERROR_KEYS = {
   inactive: "errorInactive",
   unavailable: "unavailable",
   casdoor: "casdoorFailed",
+  oauth_state: "casdoorStateExpired",
+  oauth_session: "casdoorSessionLost",
+  oauth_token: "casdoorTokenFailed",
+  oauth_profile: "casdoorProfileFailed",
   casdoor_link: "casdoorLinkConflict",
+  pending_approval: "casdoorPendingApproval",
+  access_rejected: "casdoorAccessRejected",
+  domain_not_allowed: "casdoorDomainNotAllowed",
+  account_type_not_allowed: "casdoorAccountTypeNotAllowed",
+  organization_not_allowed: "casdoorOrganizationNotAllowed",
   signedout: "signedOut",
 } as const;
 
 export function LoginForm({
   casdoorEnabled,
   casdoorSignupUrl,
+  signedOut = false,
 }: {
   casdoorEnabled: boolean;
   casdoorSignupUrl: string;
+  signedOut?: boolean;
 }) {
   const t = useTranslations("auth");
   const searchParams = useSearchParams();
   const errorParam = searchParams.get("error") as keyof typeof ERROR_KEYS | null;
-  const initialError = errorParam && ERROR_KEYS[errorParam] ? t(ERROR_KEYS[errorParam]) : null;
+  const initialError = errorParam && ERROR_KEYS[errorParam]
+    ? t(ERROR_KEYS[errorParam])
+    : signedOut
+      ? t("signedOut")
+      : null;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(initialError);
@@ -43,7 +58,10 @@ export function LoginForm({
     if (configured && (errorParam === "inactive" || errorParam === "signedout")) {
       void createClient().auth.signOut();
     }
-  }, [configured, errorParam]);
+    if (signedOut) {
+      document.cookie = "casdoor_signed_out=; Max-Age=0; path=/; SameSite=Lax";
+    }
+  }, [configured, errorParam, signedOut]);
 
   if (!configured) {
     return (

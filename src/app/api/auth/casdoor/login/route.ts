@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { getCasdoorConfig, isCasdoorConfigured } from "@/lib/auth/casdoor/config";
 import {
@@ -51,14 +50,16 @@ export async function GET(request: Request) {
   const verifier = createCodeVerifier();
   const secure = requestUrl.protocol === "https:";
 
-  const cookieStore = await cookies();
-  cookieStore.set("casdoor_oauth_state", state, cookieOptions(secure));
-  cookieStore.set("casdoor_code_verifier", verifier, cookieOptions(secure));
-  cookieStore.set("casdoor_next", next, cookieOptions(secure));
-  cookieStore.set("casdoor_intent", linking ? "link" : "login", cookieOptions(secure));
-  if (linkUserId) cookieStore.set("casdoor_link_user", linkUserId, cookieOptions(secure));
-
-  return NextResponse.redirect(
+  // Set the short-lived flow cookies on the redirect itself so they are
+  // guaranteed to reach the browser before the cross-site Casdoor hop.
+  const response = NextResponse.redirect(
     buildAuthorizeUrl(config, { state, codeChallenge: createPkceChallenge(verifier) })
   );
+  const options = cookieOptions(secure);
+  response.cookies.set("casdoor_oauth_state", state, options);
+  response.cookies.set("casdoor_code_verifier", verifier, options);
+  response.cookies.set("casdoor_next", next, options);
+  response.cookies.set("casdoor_intent", linking ? "link" : "login", options);
+  if (linkUserId) response.cookies.set("casdoor_link_user", linkUserId, options);
+  return response;
 }
