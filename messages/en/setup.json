@@ -166,6 +166,8 @@
     "casdoorOrganization": "Organization",
     "casdoorRoles": "Roles",
     "casdoorTags": "Tags",
+    "casdoorCompany": "Company",
+    "casdoorPhone": "Phone",
     "casdoorIntent": "Request",
     "casdoorIntentLogin": "Sign in",
     "casdoorIntentLink": "Link account",

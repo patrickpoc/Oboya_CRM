@@ -62,6 +62,9 @@ describe("Casdoor profile mapping", () => {
       country: null,
       countryCode: null,
       location: null,
+      phone: null,
+      region: null,
+      company: null,
       casdoorType: null,
       casdoorTags: [],
       casdoorRoles: [],
@@ -79,7 +82,10 @@ describe("Casdoor profile mapping", () => {
           displayName: "Bob",
           title: "Sales Manager",
           location: "Shanghai",
+          region: "Shanghai",
           countryCode: "CN",
+          phone: "+86 138 0000 0000",
+          affiliation: "Oboya Horticulture",
           type: "normal-user",
           tag: "employee,vip",
           roles: ["sales", "manager"],
@@ -95,10 +101,28 @@ describe("Casdoor profile mapping", () => {
       country: "Shanghai",
       countryCode: "CN",
       location: "Shanghai",
+      phone: "+86 138 0000 0000",
+      region: "Shanghai",
+      company: "Oboya Horticulture",
       casdoorType: "normal-user",
       casdoorTags: ["employee", "vip"],
       casdoorRoles: ["sales", "manager"],
       organization: "oboya",
+    });
+  });
+
+  it("maps custom signup properties and normalizes the country code", () => {
+    expect(
+      mapCasdoorProfile({
+        sub: "sub-4",
+        email: "dan@example.com",
+        properties: { country: "China", phone: "123456789", company: "OBOYA Design Studio" },
+      })
+    ).toMatchObject({
+      country: "China",
+      countryCode: "CN",
+      phone: "123456789",
+      company: "OBOYA Design Studio",
     });
   });
 

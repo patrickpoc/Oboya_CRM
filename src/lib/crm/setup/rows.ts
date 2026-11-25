@@ -29,6 +29,9 @@ export type CasdoorAccessRequestView = {
   country: string | null;
   countryCode: string | null;
   location: string | null;
+  phone: string | null;
+  region: string | null;
+  company: string | null;
   casdoorType: string | null;
   casdoorTags: string[];
   casdoorRoles: string[];

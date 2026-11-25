@@ -35,6 +35,9 @@ export type CasdoorLinkState = {
   country: string | null;
   countryCode: string | null;
   location: string | null;
+  phone: string | null;
+  region: string | null;
+  company: string | null;
   canUnlink: boolean;
 };
 
@@ -59,6 +62,8 @@ export function ProfileSettings({
   initialFullName,
   initialTitle,
   initialPhone,
+  initialCountryCode,
+  initialCompany,
   initialLocale,
   initialLink,
   notice,
@@ -66,6 +71,8 @@ export function ProfileSettings({
   initialFullName: string;
   initialTitle: string | null;
   initialPhone: string | null;
+  initialCountryCode: string | null;
+  initialCompany: string | null;
   initialLocale: Locale;
   initialLink: CasdoorLinkState;
   notice: { linked?: boolean; linkPending?: boolean; error?: string };
@@ -74,6 +81,8 @@ export function ProfileSettings({
   const [fullName, setFullName] = useState(initialFullName);
   const [title, setTitle] = useState(initialTitle ?? "");
   const [phone, setPhone] = useState(initialPhone ?? "");
+  const [countryCode, setCountryCode] = useState(initialCountryCode);
+  const [company, setCompany] = useState(initialCompany);
   const [locale, setLocale] = useState<Locale>(initialLocale);
   const [link, setLink] = useState(initialLink);
   const [savingProfile, setSavingProfile] = useState(false);
@@ -110,9 +119,18 @@ export function ProfileSettings({
     try {
       const response = await fetch("/api/crm/me/casdoor", { method: "PATCH" });
       if (!response.ok) throw new Error("sync failed");
-      const data = (await response.json()) as { fullName: string; title: string | null };
+      const data = (await response.json()) as {
+        fullName: string;
+        title: string | null;
+        phone: string | null;
+        countryCode: string | null;
+        company: string | null;
+      };
       setFullName(data.fullName);
       setTitle(data.title ?? "");
+      setPhone(data.phone ?? "");
+      setCountryCode(data.countryCode);
+      setCompany(data.company);
       toast.success(t("syncDone"));
     } catch {
       toast.error(t("syncFailed"));
@@ -142,6 +160,9 @@ export function ProfileSettings({
         country: null,
         countryCode: null,
         location: null,
+        phone: null,
+        region: null,
+        company: null,
         linkedAt: null,
       }));
       toast.success(t("unlinkDone"));
@@ -194,6 +215,16 @@ export function ProfileSettings({
                   onChange={(event) => setPhone(event.target.value)}
                   maxLength={60}
                 />
+              </div>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="profile-country-code">{t("importedCountry")}</Label>
+                <Input id="profile-country-code" value={countryCode ?? ""} readOnly />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="profile-company">{t("importedCompany")}</Label>
+                <Input id="profile-company" value={company ?? ""} readOnly />
               </div>
             </div>
             <div className="space-y-1.5">
@@ -257,8 +288,16 @@ export function ProfileSettings({
               <div>
                 <dt className="text-muted-foreground">{t("importedCountry")}</dt>
                 <dd className="font-medium">
-                  {[link.country, link.countryCode, link.location].filter(Boolean).join(" / ") || "—"}
+                  {[link.country, link.countryCode, link.location, link.region].filter(Boolean).join(" / ") || "—"}
                 </dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">{t("importedPhone")}</dt>
+                <dd className="font-medium">{link.phone ?? "—"}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">{t("importedCompany")}</dt>
+                <dd className="font-medium">{link.company ?? "—"}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground">{t("linkedAt")}</dt>

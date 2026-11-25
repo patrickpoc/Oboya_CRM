@@ -166,6 +166,8 @@
     "casdoorOrganization": "Organización",
     "casdoorRoles": "Roles",
     "casdoorTags": "Etiquetas",
+    "casdoorCompany": "Empresa",
+    "casdoorPhone": "Teléfono",
     "casdoorIntent": "Solicitud",
     "casdoorIntentLogin": "Iniciar sesión",
     "casdoorIntentLink": "Vincular cuenta",

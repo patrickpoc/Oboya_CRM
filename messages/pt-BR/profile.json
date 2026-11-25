@@ -38,10 +38,12 @@
   "unlinkFailed": "Não foi possível desvincular o Casdoor. Tente novamente.",
   "unlinkConfirm": "Após desvincular, você só poderá entrar com sua senha. Continuar?",
   "noPasswordHint": "Entre uma vez com sua senha ou defina uma em alterar senha antes de desvincular.",
-  "syncDone": "Nome e cargo importados do Casdoor.",
+  "syncDone": "Perfil importado do Casdoor.",
   "syncFailed": "Não foi possível importar o perfil do Casdoor. Tente novamente.",
   "importedEmail": "E-mail do Casdoor",
   "importedName": "Nome no Casdoor",
   "importedCountry": "País / região",
+  "importedPhone": "Telefone",
+  "importedCompany": "Empresa / unidade de trabalho",
   "linkedAt": "Vinculada em"
 }

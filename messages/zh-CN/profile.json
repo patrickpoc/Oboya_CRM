@@ -38,10 +38,12 @@
   "unlinkFailed": "无法解除关联，请重试。",
   "unlinkConfirm": "解除关联后只能用密码登录，是否继续？",
   "noPasswordHint": "请先使用密码登录一次，或在修改密码页面设置密码后再解绑。",
-  "syncDone": "已从 Casdoor 导入姓名和职位。",
+  "syncDone": "已从 Casdoor 导入资料。",
   "syncFailed": "无法导入 Casdoor 资料，请重试。",
   "importedEmail": "Casdoor 邮箱",
   "importedName": "Casdoor 姓名",
   "importedCountry": "国家 / 地区",
+  "importedPhone": "手机",
+  "importedCompany": "工作单位",
   "linkedAt": "关联时间"
 }

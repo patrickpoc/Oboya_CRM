@@ -166,6 +166,8 @@
     "casdoorOrganization": "组织",
     "casdoorRoles": "角色",
     "casdoorTags": "标签",
+    "casdoorCompany": "工作单位",
+    "casdoorPhone": "手机",
     "casdoorIntent": "申请类型",
     "casdoorIntentLogin": "登录",
     "casdoorIntentLink": "关联账号",

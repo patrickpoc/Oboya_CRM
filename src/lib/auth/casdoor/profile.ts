@@ -1,7 +1,8 @@
 /**
  * Casdoor OIDC profile mapping. Casdoor's /api/userinfo follows the standard
  * claim mapping; /api/get-account returns the full Casdoor user object and is
- * needed for the employee/customer policy fields (type, tag, roles, owner).
+ * needed for the employee/customer policy fields (type, tag, roles, owner) and
+ * for signup fields such as countryCode, region, phone and affiliation.
  */
 export type CasdoorProfile = {
   sub: string;
@@ -12,6 +13,10 @@ export type CasdoorProfile = {
   country: string | null;
   countryCode: string | null;
   location: string | null;
+  phone: string | null;
+  region: string | null;
+  /** Casdoor "affiliation" / work unit. */
+  company: string | null;
   casdoorType: string | null;
   casdoorTags: string[];
   casdoorRoles: string[];
@@ -21,7 +26,9 @@ export type CasdoorProfile = {
 type JsonRecord = Record<string, unknown>;
 
 function text(value: unknown): string {
-  return typeof value === "string" ? value.trim() : "";
+  if (typeof value === "string") return value.trim();
+  if (typeof value === "number" && Number.isFinite(value)) return String(value);
+  return "";
 }
 
 function optional(value: unknown): string | null {
@@ -29,17 +36,62 @@ function optional(value: unknown): string | null {
   return trimmed || null;
 }
 
+function jsonRecord(value: unknown): JsonRecord | null {
+  return value && typeof value === "object" && !Array.isArray(value) ? (value as JsonRecord) : null;
+}
+
+function pick(...values: unknown[]): string | null {
+  for (const value of values) {
+    const found = optional(value);
+    if (found) return found;
+  }
+  return null;
+}
+
+function fromProperties(record: JsonRecord | null, ...keys: string[]): string | null {
+  if (!record) return null;
+  return pick(...keys.map(key => record[key]));
+}
+
+function firstListName(value: unknown): string | null {
+  if (!Array.isArray(value)) return null;
+  for (const item of value) {
+    const found = typeof item === "string" ? optional(item) : optional(jsonRecord(item)?.name);
+    if (found) return found;
+  }
+  return null;
+}
+
+/** CRM picklists use ISO-style two-letter codes; map common Casdoor values. */
+export function normalizeCountryCode(value: unknown): string | null {
+  const raw = text(value);
+  if (!raw) return null;
+  const upper = raw.toUpperCase();
+  if (/^[A-Z]{2}$/.test(upper)) return upper;
+  const aliases: Record<string, string> = {
+    CHINA: "CN", "中国": "CN",
+    USA: "US", AMERICA: "US", "美国": "US",
+    NETHERLANDS: "NL", HOLLAND: "NL", "荷兰": "NL",
+    GERMANY: "DE", DEUTSCHLAND: "DE", "德国": "DE",
+    UNITEDKINGDOM: "GB", ENGLAND: "GB", "英国": "GB",
+    COLOMBIA: "CO", "哥伦比亚": "CO",
+    ECUADOR: "EC", "厄瓜多尔": "EC",
+  };
+  return aliases[upper] ?? aliases[raw] ?? null;
+}
+
 function validEmail(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
 /** `/api/userinfo` returns `address` as a plain location string. */
-function claimCountry(userInfo: JsonRecord, account: JsonRecord | null): string | null {
+function claimCountry(userInfo: JsonRecord, account: JsonRecord | null, properties: JsonRecord): string | null {
   return (
     optional(userInfo.address) ||
     optional(account?.location) ||
     optional(account?.region) ||
-    optional(account?.countryCode)
+    optional(account?.countryCode) ||
+    fromProperties(properties, "country", "countryCode", "country_region", "countryRegion")
   );
 }
 
@@ -70,19 +122,30 @@ export function mapCasdoorProfile(userInfo: JsonRecord, account: JsonRecord | nu
   if (!sub) throw new Error("Casdoor profile is missing 'sub'");
   if (!validEmail(email)) throw new Error("Casdoor profile is missing a valid email");
 
+  const properties: JsonRecord = { ...(jsonRecord(userInfo.properties) ?? {}), ...(jsonRecord(account?.properties) ?? {}) };
+
   return {
     sub,
     email: email.toLowerCase(),
     displayName: displayName || sub,
     avatar: optional(userInfo.picture) || optional(account?.avatar),
     title: optional(userInfo.title) || optional(account?.title),
-    country: claimCountry(userInfo, account),
-    countryCode: optional(account?.countryCode),
+    country: claimCountry(userInfo, account, properties),
+    countryCode: normalizeCountryCode(
+      pick(account?.countryCode, userInfo.country_code, userInfo.countryCode, userInfo.country) ??
+      fromProperties(properties, "countryCode", "country")
+    ),
     location: optional(account?.location) || optional(account?.region),
-    casdoorType: optional(account?.type),
-    casdoorTags: stringList(account?.tag ?? account?.tags),
-    casdoorRoles: stringList(account?.roles),
-    organization: optional(account?.owner) || optional(account?.organization),
+    phone: pick(account?.phone, userInfo.phone, userInfo.phone_number) ??
+      fromProperties(properties, "phone", "mobile", "telephone"),
+    region: pick(account?.region, userInfo.region) ??
+      fromProperties(properties, "region", "state", "province"),
+    company: pick(account?.affiliation, userInfo.affiliation, userInfo.company, firstListName(account?.affiliations)) ??
+      fromProperties(properties, "company", "affiliation", "workUnit", "work_unit", "工作单位"),
+    casdoorType: optional(account?.type) || optional(userInfo.type),
+    casdoorTags: stringList(account?.tag ?? account?.tags ?? userInfo.tag ?? userInfo.tags),
+    casdoorRoles: stringList(account?.roles ?? userInfo.roles),
+    organization: optional(account?.owner) || optional(account?.organization) || optional(userInfo.organization),
   };
 }
 
@@ -134,6 +197,7 @@ export async function fetchCasdoorProfile(
     await fetch(endpoints.userinfoUrl, {
       headers: { Authorization: `Bearer ${accessToken}` },
       cache: "no-store",
+      signal: AbortSignal.timeout(15_000),
     })
   );
   // Userinfo claims win; only missing fields are filled from the ID token.
@@ -148,6 +212,7 @@ export async function fetchCasdoorProfile(
         await fetch(`${endpoints.accountUrl}?accessToken=${encodeURIComponent(accessToken)}`, {
           headers: { Authorization: `Bearer ${accessToken}` },
           cache: "no-store",
+          signal: AbortSignal.timeout(15_000),
         })
       )
     );

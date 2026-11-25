@@ -320,6 +320,8 @@ export function UsersSetup() {
                         ? `${t("casdoorTags")}: ${request.casdoorTags.join(", ")}`
                         : "",
                       [request.country, request.countryCode].filter(Boolean).join(" / "),
+                      request.company ? `${t("casdoorCompany")}: ${request.company}` : "",
+                      request.phone ? `${t("casdoorPhone")}: ${request.phone}` : "",
                       `${t("casdoorIntent")}: ${t(
                         request.intent === "link" ? "casdoorIntentLink" : "casdoorIntentLogin"
                       )}`,

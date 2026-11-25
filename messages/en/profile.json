@@ -38,10 +38,12 @@
   "unlinkFailed": "Could not unlink Casdoor. Please try again.",
   "unlinkConfirm": "After unlinking you can only sign in with your password. Continue?",
   "noPasswordHint": "To unlink, sign in once with your password or set one on the change-password page first.",
-  "syncDone": "Name and title imported from Casdoor.",
+  "syncDone": "Profile imported from Casdoor.",
   "syncFailed": "Could not import the Casdoor profile. Please try again.",
   "importedEmail": "Casdoor email",
   "importedName": "Casdoor name",
   "importedCountry": "Country / region",
+  "importedPhone": "Phone",
+  "importedCompany": "Company / work unit",
   "linkedAt": "Linked at"
 }

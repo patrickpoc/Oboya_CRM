@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { CasdoorProfile } from "@/lib/auth/casdoor/profile";
+import { normalizeCountryCode, type CasdoorProfile } from "@/lib/auth/casdoor/profile";
 import { evaluateCasdoorPolicy, type CasdoorPolicyCode } from "@/lib/auth/casdoor/policy";
 import { createServiceClient } from "@/lib/supabase/admin";
 
@@ -44,6 +44,9 @@ export type CasdoorAccessRequest = {
   country: string | null;
   countryCode: string | null;
   location: string | null;
+  phone: string | null;
+  region: string | null;
+  company: string | null;
   avatar: string | null;
   casdoorType: string | null;
   casdoorTags: string[];
@@ -68,6 +71,9 @@ const LINKED_METADATA_KEYS = [
   "casdoor_country",
   "casdoor_country_code",
   "casdoor_location",
+  "casdoor_phone",
+  "casdoor_region",
+  "casdoor_company",
   "casdoor_avatar",
   "casdoor_type",
   "casdoor_tags",
@@ -87,6 +93,9 @@ const REQUEST_COLUMNS = [
   "country",
   "country_code",
   "location",
+  "phone",
+  "region",
+  "company",
   "avatar",
   "casdoor_type",
   "casdoor_tags",
@@ -110,6 +119,9 @@ type RequestRow = {
   country: string | null;
   country_code: string | null;
   location: string | null;
+  phone: string | null;
+  region: string | null;
+  company: string | null;
   avatar: string | null;
   casdoor_type: string | null;
   casdoor_tags: string[] | null;
@@ -134,6 +146,9 @@ function toAccessRequest(row: RequestRow): CasdoorAccessRequest {
     country: row.country,
     countryCode: row.country_code,
     location: row.location,
+    phone: row.phone,
+    region: row.region,
+    company: row.company,
     avatar: row.avatar,
     casdoorType: row.casdoor_type,
     casdoorTags: row.casdoor_tags ?? [],
@@ -161,6 +176,9 @@ function profileFromRequest(request: CasdoorAccessRequest): CasdoorProfile {
     country: request.country,
     countryCode: request.countryCode,
     location: request.location,
+    phone: request.phone,
+    region: request.region,
+    company: request.company,
     casdoorType: request.casdoorType,
     casdoorTags: request.casdoorTags,
     casdoorRoles: request.casdoorRoles,
@@ -181,6 +199,9 @@ function profileMetadata(profile: CasdoorProfile, authAt: number) {
     casdoor_country: profile.country,
     casdoor_country_code: profile.countryCode,
     casdoor_location: profile.location,
+    casdoor_phone: profile.phone,
+    casdoor_region: profile.region,
+    casdoor_company: profile.company,
     casdoor_avatar: profile.avatar,
     casdoor_type: profile.casdoorType,
     casdoor_tags: profile.casdoorTags,
@@ -189,6 +210,18 @@ function profileMetadata(profile: CasdoorProfile, authAt: number) {
     casdoor_linked_at: new Date(authAt).toISOString(),
     casdoor_auth_at: authAt,
   };
+}
+
+/** Only fill CRM profile fields the user has not already populated. */
+function emptyProfilePatch(
+  profile: { phone: string | null; countryCode: string | null; company: string | null },
+  current: { phone: string | null; country_code: string | null; company: string | null }
+): Record<string, unknown> {
+  const patch: Record<string, unknown> = {};
+  if (!current.phone && profile.phone) patch.phone = profile.phone.slice(0, 40);
+  if (!current.country_code && profile.countryCode) patch.country_code = profile.countryCode;
+  if (!current.company && profile.company) patch.company = profile.company.slice(0, 200);
+  return patch;
 }
 
 function assertPolicy(profile: CasdoorProfile) {
@@ -296,6 +329,9 @@ async function createAccessRequest(
       country: profile.country,
       country_code: profile.countryCode,
       location: profile.location,
+      phone: profile.phone,
+      region: profile.region,
+      company: profile.company,
       avatar: profile.avatar,
       casdoor_type: profile.casdoorType,
       casdoor_tags: profile.casdoorTags,
@@ -488,6 +524,20 @@ export async function approveCasdoorRequest(input: {
       : request.displayName
         ? { full_name: request.displayName }
         : {};
+  const profile = profileFromRequest(request);
+  const { data: current } = await admin
+    .from("crm_users")
+    .select("phone, country_code, company")
+    .eq("id", request.userId)
+    .maybeSingle<{ phone: string | null; country_code: string | null; company: string | null }>();
+  Object.assign(
+    userUpdate,
+    emptyProfilePatch(profile, {
+      phone: current?.phone ?? null,
+      country_code: current?.country_code ?? null,
+      company: current?.company ?? null,
+    })
+  );
   if (Object.keys(userUpdate).length > 0) {
     const { error: userError } = await admin
       .from("crm_users")
@@ -496,7 +546,7 @@ export async function approveCasdoorRequest(input: {
     if (userError) throw new CasdoorLinkError("failed", `User activation failed: ${userError.message}`);
   }
 
-  await applyCasdoorIdentity(profileFromRequest(request), request.userId, authAt);
+  await applyCasdoorIdentity(profile, request.userId, authAt);
 
   const { data: reviewed, error: reviewError } = await admin
     .from("crm_casdoor_access_requests")
@@ -617,10 +667,10 @@ export async function unlinkCasdoorAccount(userId: string): Promise<void> {
   }
 }
 
-/** Copies the imported Casdoor name/title into the editable CRM profile. */
+/** Copies imported Casdoor fields into the editable CRM profile. */
 export async function syncCasdoorProfile(
   userId: string
-): Promise<{ fullName: string; title: string | null } | null> {
+): Promise<{ fullName: string; title: string | null; phone: string | null; countryCode: string | null; company: string | null } | null> {
   const admin = createServiceClient();
   const { data: user, error: userError } = await admin.auth.admin.getUserById(userId);
   if (userError || !user.user) {
@@ -628,17 +678,43 @@ export async function syncCasdoorProfile(
   }
 
   const metadata = (user.user.user_metadata ?? {}) as Record<string, unknown>;
-  const fullName = typeof metadata.casdoor_display_name === "string" ? metadata.casdoor_display_name.trim() : "";
-  const title = typeof metadata.casdoor_title === "string" ? metadata.casdoor_title.trim() : "";
+  const metaText = (key: string) => typeof metadata[key] === "string" ? (metadata[key] as string).trim() : "";
+  const fullName = metaText("casdoor_display_name");
+  const title = metaText("casdoor_title");
   if (!fullName) return null;
 
-  const { error } = await admin
+  const phone = metaText("casdoor_phone") || null;
+  const countryCode =
+    normalizeCountryCode(metaText("casdoor_country_code") || metaText("casdoor_country"));
+  const company = metaText("casdoor_company") || null;
+  const { data: current } = await admin
     .from("crm_users")
-    .update({ full_name: fullName.slice(0, 120), title: title ? title.slice(0, 120) : null })
-    .eq("id", userId);
+    .select("phone, country_code, company")
+    .eq("id", userId)
+    .maybeSingle<{ phone: string | null; country_code: string | null; company: string | null }>();
+
+  const update: Record<string, unknown> = {
+    full_name: fullName.slice(0, 120),
+    title: title ? title.slice(0, 120) : null,
+    ...emptyProfilePatch(
+      { phone, countryCode, company },
+      {
+        phone: current?.phone ?? null,
+        country_code: current?.country_code ?? null,
+        company: current?.company ?? null,
+      }
+    ),
+  };
+  const { error } = await admin.from("crm_users").update(update).eq("id", userId);
   if (error) throw new CasdoorLinkError("failed", `Profile sync failed: ${error.message}`);
 
-  return { fullName: fullName.slice(0, 120), title: title ? title.slice(0, 120) : null };
+  return {
+    fullName: fullName.slice(0, 120),
+    title: title ? title.slice(0, 120) : null,
+    phone: current?.phone || phone?.slice(0, 40) || null,
+    countryCode: current?.country_code || countryCode || null,
+    company: current?.company || company?.slice(0, 200) || null,
+  };
 }
 
 /** Called by the OIDC back-channel logout receiver after token verification. */

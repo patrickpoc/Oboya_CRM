@@ -27,9 +27,16 @@ export default async function ProfilePage({
   const [profileResult, authResult, linkResult, requestResult] = await Promise.all([
     supabase
       .from("crm_users")
-      .select("full_name, title, phone, locale")
+      .select("full_name, title, phone, country_code, company, locale")
       .eq("id", user.id)
-      .maybeSingle<{ full_name: string; title: string | null; phone: string | null; locale: string }>(),
+      .maybeSingle<{
+        full_name: string;
+        title: string | null;
+        phone: string | null;
+        country_code: string | null;
+        company: string | null;
+        locale: string;
+      }>(),
     supabase.auth.getUser(),
     // The profile page must render even before the Casdoor migrations are applied.
     getCasdoorLink(user.id).catch(() => null),
@@ -62,6 +69,9 @@ export default async function ProfilePage({
     country: text("casdoor_country"),
     countryCode: text("casdoor_country_code"),
     location: text("casdoor_location"),
+    phone: text("casdoor_phone"),
+    region: text("casdoor_region"),
+    company: text("casdoor_company"),
     canUnlink: metadata.has_password === true,
   };
 
@@ -70,6 +80,8 @@ export default async function ProfilePage({
       initialFullName={profile?.full_name ?? user.fullName}
       initialTitle={profile?.title ?? null}
       initialPhone={profile?.phone ?? null}
+      initialCountryCode={profile?.country_code ?? null}
+      initialCompany={profile?.company ?? null}
       initialLocale={user.locale}
       initialLink={initialLink}
       notice={{
