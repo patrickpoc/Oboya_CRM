@@ -35,14 +35,44 @@ const can = (
 ) => canAccessUser(u, m, a, mx);
 
 describe("BUILTIN_MATRIX (mirrors the SQL seed)", () => {
-  it("equals the crm_access_control seed in the latest migration", () => {
-    const sql = readFileSync(
-      path.resolve(__dirname, "../../../../../supabase/migrations/20261118000000_crm_cases.sql"),
-      "utf8"
+  const migration = (file: string) =>
+    readFileSync(path.resolve(__dirname, "../../../../../supabase/migrations", file), "utf8");
+  const without = (matrix: ReturnType<typeof parseAccessMatrix>, ...modules: CrmModule[]) =>
+    Object.fromEntries(
+      Object.entries(matrix).map(([role, cells]) => {
+        const rest = { ...cells };
+        for (const m of modules) delete rest[m];
+        return [role, rest];
+      })
     );
-    const seed = sql.match(/\$json\$([\s\S]*?)\$json\$/);
+
+  it("equals the crm_access_control seed in the cases migration (reports, automation omitted)", () => {
+    const seed = migration("20261118000000_crm_cases.sql").match(/\$json\$([\s\S]*?)\$json\$/);
     expect(seed).not.toBeNull();
-    expect(parseAccessMatrix(JSON.parse(seed![1]))).toEqual(BUILTIN_MATRIX);
+    // The cases seed predates the "reports" and "automation" modules.
+    expect(without(parseAccessMatrix(JSON.parse(seed![1])), "reports", "automation")).toEqual(
+      without(BUILTIN_MATRIX, "reports", "automation")
+    );
+  });
+
+  it("reports defaults equal the reports migration $json$ block", () => {
+    const seed = migration("20261127000000_crm_reports.sql").match(/\$json\$([\s\S]*?)\$json\$/);
+    expect(seed).not.toBeNull();
+    const defaults = JSON.parse(seed![1]) as Record<string, unknown>;
+    expect(Object.keys(defaults).sort()).toEqual(["read_only", "sales_manager", "sales_rep", "super_admin"]);
+    for (const [role, level] of Object.entries(defaults)) {
+      expect(BUILTIN_MATRIX[role].reports).toEqual(level);
+    }
+  });
+
+  it("automation defaults equal the automation migration $json$ block", () => {
+    const seed = migration("20261128000000_crm_automation.sql").match(/\$json\$([\s\S]*?)\$json\$/);
+    expect(seed).not.toBeNull();
+    const defaults = JSON.parse(seed![1]) as Record<string, unknown>;
+    expect(defaults).toEqual({ super_admin: "full", sales_manager: ["view"], sales_rep: "none", read_only: "none" });
+    for (const [role, level] of Object.entries(defaults)) {
+      expect(BUILTIN_MATRIX[role].automation).toEqual(level);
+    }
   });
 
   it("super_admin is full everywhere", () => {

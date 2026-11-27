@@ -1,0 +1,40 @@
+{
+  "bell": {
+    "label": "Notificaciones",
+    "labelUnread": "Notificaciones, {count} sin leer",
+    "title": "Notificaciones",
+    "markAllRead": "Marcar todas como leídas",
+    "loadMore": "Cargar más",
+    "loading": "Cargando…",
+    "empty": "Estás al día.",
+    "emptyDescription": "Las nuevas alertas y asignaciones aparecerán aquí.",
+    "unread": "Sin leer",
+    "failed": "No se pudieron cargar las notificaciones.",
+    "retry": "Reintentar",
+    "close": "Cerrar",
+    "announce": "{count, plural, =0 {Ninguna notificación sin leer} one {# notificación sin leer} other {# notificaciones sin leer}}",
+    "cap": "99+"
+  },
+  "kinds": {
+    "sla_escalation": {
+      "title": "Un lead incumplió su SLA de primera respuesta",
+      "body": "{name} lleva {hours} horas sin respuesta."
+    },
+    "stalled_deal": {
+      "title": "Oportunidad estancada",
+      "body": "{name} lleva {days} días sin avance."
+    },
+    "overdue_task": {
+      "title": "Tarea vencida",
+      "body": "{subject} venció y sigue abierta."
+    },
+    "task_assigned": {
+      "title": "Nueva tarea asignada a ti",
+      "body": "{subject}"
+    },
+    "lead_assigned": {
+      "title": "Nuevo lead asignado a ti",
+      "body": "{name} te fue asignado."
+    }
+  }
+}

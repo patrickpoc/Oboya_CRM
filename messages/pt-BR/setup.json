@@ -71,6 +71,7 @@
     "contacts": "Contatos",
     "opportunities": "Oportunidades",
     "activities": "Atividades",
+    "reports": "Relatórios",
     "setup_users": "Configuração: Usuários",
     "setup_roles": "Configuração: Perfis e equipes",
     "setup_access": "Configuração: Acesso",
@@ -78,7 +79,8 @@
     "setup_pipeline": "Configuração: Pipeline",
     "setup_picklists": "Configuração: Listas de opções",
     "setup_lead_assignment": "Configuração: Atribuição de leads",
-    "audit_logs": "Log de auditoria"
+    "audit_logs": "Log de auditoria",
+    "automation": "Automação"
   },
   "landing": {
     "title": "Configuração",
@@ -365,7 +367,11 @@
     "usersHint": "{count, plural, =0 {Nenhum usuário ativo recebe leads de entrada.} one {# usuário ativo recebe leads de entrada.} other {# usuários ativos recebem leads de entrada.}}",
     "disabled": "Desativado",
     "readOnlyRole": "Perfil somente leitura",
-    "receivesInboundNamed": "{name} recebe leads de entrada"
+    "receivesInboundNamed": "{name} recebe leads de entrada",
+    "automationBanner": {
+      "text": "As regras por país, empresa e origem têm prioridade sobre esta alternativa.",
+      "link": "Gerenciar regras de atribuição"
+    }
   },
   "audit": {
     "title": "Log de auditoria",
@@ -384,7 +390,10 @@
       "team": "Equipe",
       "user": "Usuário",
       "access_control": "Matriz de acesso",
-      "settings": "Configuração"
+      "settings": "Configuração",
+      "assignment_rule": "Regra de atribuição",
+      "stage_task": "Modelo de tarefa de etapa",
+      "alert_rule": "Regra de alerta"
     },
     "action": "Ação",
     "actions": {
@@ -410,6 +419,16 @@
     "field": "Campo",
     "before": "Antes",
     "after": "Depois",
-    "showing": "{from}–{to} de {total}"
+    "showing": "{from}–{to} de {total}",
+    "contextRule": "Regra: {name}",
+    "contextTemplate": "Modelo: {name}",
+    "contextKind": {
+      "sla_escalation": "Escalonamento de SLA",
+      "stalled_deal": "Alerta de oportunidade parada",
+      "overdue_task": "Alerta de tarefa atrasada",
+      "stage_task": "Tarefa de etapa",
+      "assignment": "Atribuição de leads"
+    },
+    "contextKindLabel": "Via: {kind}"
   }
 }

@@ -23,6 +23,8 @@ import {
   type RecordRow,
   type RelatedListData,
 } from "@/lib/crm/objects/types";
+import { addDays } from "@/lib/crm/activities/due";
+import { zonedMidnight } from "@/lib/crm/dashboard/time";
 import { fetchInChunks } from "./chunk";
 import { getEntities, getPicklists, getStages, getUsers } from "./lookups";
 import { getVirtualHandler } from "./virtual-fields";
@@ -48,9 +50,15 @@ function fail(error: { code?: string; message?: string }, context: string): neve
 // Display labels for references (owner, lookups, entities, picklists, stages)
 // ---------------------------------------------------------------------------
 
-async function attachVirtual(client: CrmSupabaseClient, config: RecordConfig, rows: RecordRow[]) {
+/** `only` restricts the loaded virtual fields (reports load just the ones they use). */
+export async function attachVirtual(
+  client: CrmSupabaseClient,
+  config: RecordConfig,
+  rows: RecordRow[],
+  only?: ReadonlySet<string>
+) {
   const ids = rows.map((r) => r.id);
-  for (const field of config.fields.filter((f) => f.virtual)) {
+  for (const field of config.fields.filter((f) => f.virtual && (!only || only.has(f.key)))) {
     const handler = getVirtualHandler(config.object, field.key);
     if (!handler) continue;
     const values = await handler.load(client, ids, rows);
@@ -58,7 +66,7 @@ async function attachVirtual(client: CrmSupabaseClient, config: RecordConfig, ro
   }
 }
 
-async function attachDisplay(client: CrmSupabaseClient, config: RecordConfig, rows: RecordRow[]) {
+export async function attachDisplay(client: CrmSupabaseClient, config: RecordConfig, rows: RecordRow[]) {
   if (rows.length === 0) return;
   const [users, entities, picklists, stages] = await Promise.all([
     getUsers(client),
@@ -154,15 +162,25 @@ async function recentIds(client: CrmSupabaseClient, config: RecordConfig, ctx: R
   return ((data ?? []) as Array<{ record_id: string }>).map((r) => r.record_id);
 }
 
-function baseQuery(
+export type BaseQueryOptions = {
+  /** Replaces the default column list (filter embeds are still added). */
+  select?: string;
+  /** Datetime range filters cover whole days of this IANA zone instead of UTC days. */
+  timeZone?: string;
+  /** false skips the exact count (default: exact). */
+  count?: boolean;
+};
+
+export function baseQuery(
   client: CrmSupabaseClient,
   config: RecordConfig,
   query: ListQuery,
   ctx: RepoContext,
-  restrictIds: string[] | null
+  restrictIds: string[] | null,
+  options: BaseQueryOptions = {}
 ) {
   const embeds: Array<{ column: string; values: string[] }> = [];
-  const selects = [selectColumns(config)];
+  const selects = [options.select ?? selectColumns(config)];
   for (const [key, values] of Object.entries(query.filters)) {
     const field = getField(config, key);
     const filter = field?.virtual ? getVirtualHandler(config.object, key)?.filter : undefined;
@@ -173,7 +191,7 @@ function baseQuery(
   }
   let builder = client
     .from(config.table)
-    .select(selects.join(","), { count: "exact" })
+    .select(selects.join(","), options.count === false ? undefined : { count: "exact" })
     .is("deleted_at", null);
   for (const embed of embeds) builder = builder.in(embed.column, embed.values);
   if (query.view === "mine") builder = builder.eq("owner_id", ctx.userId);
@@ -189,9 +207,15 @@ function baseQuery(
     if (!field || field.virtual || values.length === 0) continue;
     const range = field.type === "date" || field.type === "datetime" ? parseDateRange(values[0]) : null;
     if (range && field.type === "datetime") {
-      // Whole UTC days: [from 00:00, to + 1 day).
-      if (range.from) builder = builder.gte(key, `${range.from}T00:00:00Z`);
-      if (range.to) builder = builder.lt(key, new Date(Date.parse(`${range.to}T00:00:00Z`) + 864e5).toISOString());
+      if (options.timeZone) {
+        // Whole days of the viewer's zone: [from 00:00, to + 1 day 00:00).
+        if (range.from) builder = builder.gte(key, zonedMidnight(range.from, options.timeZone).toISOString());
+        if (range.to) builder = builder.lt(key, zonedMidnight(addDays(range.to, 1), options.timeZone).toISOString());
+      } else {
+        // Whole UTC days: [from 00:00, to + 1 day).
+        if (range.from) builder = builder.gte(key, `${range.from}T00:00:00Z`);
+        if (range.to) builder = builder.lt(key, new Date(Date.parse(`${range.to}T00:00:00Z`) + 864e5).toISOString());
+      }
     } else if (range) {
       if (range.from) builder = builder.gte(key, range.from);
       if (range.to) builder = builder.lte(key, range.to);
@@ -207,7 +231,7 @@ function baseQuery(
 }
 
 /** Removes filter-only embeds (keys starting with "_" other than _display). */
-function stripEmbeds(rows: RecordRow[]): RecordRow[] {
+export function stripEmbeds(rows: RecordRow[]): RecordRow[] {
   for (const row of rows) {
     for (const key of Object.keys(row)) if (key.startsWith("_") && key !== "_display") delete row[key];
   }

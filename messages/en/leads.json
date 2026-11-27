@@ -106,5 +106,31 @@
       "duplicate": "A record with these details already exists.",
       "unavailable": "Something went wrong. Please try again."
     }
+  },
+  "assignment": {
+    "createOption": "Assign using rules",
+    "createHint": "Pick the owner from the assignment rules after saving.",
+    "createFailed": "The lead was created but could not be assigned by the rules. It stays with the current owner.",
+    "reassign": "Reassign using rules",
+    "confirmTitle": "Reassign using rules",
+    "confirmDescription": "The assignment rules choose the owner for {name} from its country, company and source.",
+    "previewLoading": "Checking the rules…",
+    "previewOwner": "Owner: {name}",
+    "previewFallback": "No rule matches. The fallback owner is used: {name}",
+    "previewFailed": "Could not preview the result. You can still reassign.",
+    "cancel": "Cancel",
+    "confirm": "Reassign",
+    "assigning": "Reassigning…",
+    "success": "Lead reassigned",
+    "errors": {
+      "converted": "A converted lead cannot be reassigned.",
+      "rate_limited": "Too many requests. Try again in a minute.",
+      "forbidden": "You do not have permission to reassign this lead.",
+      "failed": "Could not reassign the lead. It stays with the current owner.",
+      "no_assignee": "No eligible owner is available. The lead stays with the current owner."
+    },
+    "previewFallbackUnknown": "No rule matches. The fallback owner is used.",
+    "ownedBy": "Lead now owned by {name}",
+    "ownedByUnknown": "Lead now owned by another user"
   }
 }

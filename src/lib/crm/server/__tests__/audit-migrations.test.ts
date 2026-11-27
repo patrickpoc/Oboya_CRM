@@ -218,7 +218,8 @@ describe("historical mailbox credential redaction", () => {
     const rows = (await db.query<AuditSnapshot>("select * from public.crm_audit_logs where actor_name like 'historical-fixture:%' order by id")).rows;
     expect(rows).toHaveLength(historicalFixtures.length);
     rows.forEach((row, index) => {
-      expect(row).toEqual({ ...historicalAudit[index], diff: { ...historicalAudit[index].diff, password_encrypted: historicalFixtures[index].expected } });
+      // context was added by the automation migration (null for historical rows).
+      expect(row).toEqual({ ...historicalAudit[index], context: null, diff: { ...historicalAudit[index].diff, password_encrypted: historicalFixtures[index].expected } });
     });
   });
 

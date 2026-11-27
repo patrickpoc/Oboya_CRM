@@ -177,17 +177,14 @@ async function processPayload(
     return { status: 200, body: { contactId: target.id, deduplicated: true } };
   }
 
-  const owner = await db.rpc("crm_assign_inbound_owner");
-  if (owner.error) throw owner.error;
-  if (!owner.data) throw new Error("No inbound owner available");
-
+  // No owner_id: the BEFORE INSERT trigger on crm_leads assigns it (rules, then
+  // the Setup fallback) and audits the insert as "Automation".
   const created = await db
     .from("crm_leads")
     .insert({
       ...mapToLead(payload, keys.primary),
       status: "new",
       entity_id: entityId,
-      owner_id: owner.data as string,
     })
     .select("id")
     .single();

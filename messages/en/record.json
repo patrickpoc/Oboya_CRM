@@ -51,7 +51,8 @@
       "stage_unavailable": "This stage is no longer available. Refresh the page and pick another stage.",
       "one_primary_required": "Choose exactly one primary group company.",
       "duplicate": "A record with these details already exists.",
-      "forbidden": "You do not have permission to do this."
+      "forbidden": "You do not have permission to do this.",
+      "no_assignee": "No eligible owner is available for this lead. It stays with the current owner."
     }
   },
   "deleteDialog": {

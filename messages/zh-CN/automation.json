@@ -1,0 +1,256 @@
+{
+  "title": "自动化",
+  "description": "分配规则、商机变更阶段时创建的任务、提醒和 SLA 升级。每次自动变更都会在审计日志中记录为“自动化”。",
+  "tabsLabel": "自动化分区",
+  "tabs": {
+    "assignment": "线索分配",
+    "stage-tasks": "阶段任务",
+    "alerts": "提醒与 SLA",
+    "runs": "运行记录"
+  },
+  "common": {
+    "save": "保存",
+    "saving": "保存中…",
+    "cancel": "取消",
+    "edit": "编辑",
+    "delete": "删除",
+    "add": "添加",
+    "active": "启用",
+    "inactive": "停用",
+    "saved": "已保存",
+    "deleted": "已删除",
+    "reordered": "顺序已保存",
+    "readOnly": "你可以查看这些设置，但无法修改。",
+    "loadFailed": "无法加载此分区。",
+    "retry": "重试",
+    "confirmDelete": "删除“{name}”？此操作无法撤销。",
+    "noneSelected": "未选择",
+    "user": "用户",
+    "unknownUser": "未知用户",
+    "any": "任意"
+  },
+  "assignment": {
+    "title": "分配规则",
+    "description": "规则对每条入站线索（以及勾选“按规则分配”的 CRM 线索）自上而下执行。第一条匹配的规则决定负责人。",
+    "add": "新建规则",
+    "editTitle": "编辑规则",
+    "newTitle": "新建规则",
+    "emptyTitle": "没有分配规则",
+    "emptyDescription": "没有规则时，线索将按下方的备用设置处理。",
+    "rulesLabel": "分配规则",
+    "anyCriteria": "任意线索",
+    "criteria": {
+      "countries": "国家",
+      "companies": "公司",
+      "sources": "来源"
+    },
+    "more": "另外 +{count} 个",
+    "targetUser": "分配给 {name}",
+    "targetPool": "在 {count, plural, one {# 位用户} other {# 位用户}} 之间轮流分配",
+    "stopChip": "停止后续处理",
+    "notifyChip": "通知被分配人",
+    "fields": {
+      "name": "规则名称",
+      "countries": "国家",
+      "countriesHint": "留空则匹配任意国家。",
+      "companies": "集团公司",
+      "companiesHint": "留空则匹配任意公司。",
+      "sources": "线索来源",
+      "sourcesHint": "留空则匹配任意来源。",
+      "target": "分配给",
+      "targetUserOption": "指定用户",
+      "targetPoolOption": "轮流分配池",
+      "targetUser": "用户",
+      "pool": "池成员",
+      "poolHint": "线索按顺序在这些用户之间轮流分配。已停用或只读的用户会被跳过。",
+      "stop": "此规则之后停止处理",
+      "stopHint": "此规则匹配时不再尝试后续规则。",
+      "notify": "通知被分配人",
+      "active": "规则已启用",
+      "selectUser": "选择用户"
+    },
+    "picker": {
+      "search": "搜索…",
+      "noResults": "无匹配项",
+      "clear": "清除",
+      "selected": "已选 {count} 项"
+    },
+    "preview": {
+      "title": "测试此规则集",
+      "description": "使用所有已保存的规则，查看具有这些信息的下一条线索会分配给谁。",
+      "country": "国家",
+      "company": "集团公司",
+      "source": "来源",
+      "anyOption": "任意",
+      "run": "预览",
+      "running": "检查中…",
+      "result": "这条线索将分配给 {name}。",
+      "resultRule": "这条线索将通过规则“{rule}”分配给 {name}。",
+      "resultNone": "无法确定负责人。",
+      "via": {
+        "rule": "匹配了规则",
+        "round_robin": "轮流分配",
+        "default": "备用默认负责人",
+        "super_admin": "备用：超级管理员"
+      },
+      "failed": "预览失败。"
+    },
+    "fallback": {
+      "title": "备用",
+      "description": "没有规则匹配时使用。在设置中管理。"
+    },
+    "saveFailed": "无法保存规则。",
+    "invalidTarget": "请选择一位用户，或至少一位池成员。",
+    "editorPreview": {
+      "title": "此规则的预估结果",
+      "description": "选择一条示例线索，查看在此规则及已保存规则下会分配给谁。未考虑轮流分配的位置，因此仅为估算。",
+      "country": "国家",
+      "company": "集团公司",
+      "source": "来源",
+      "any": "任意",
+      "result": "预估负责人：{name}",
+      "resultRound": "预估负责人：{name}（轮流中的下一位可能不同）",
+      "none": "没有规则会分配此线索；将使用备用设置。"
+    }
+  },
+  "stageTasks": {
+    "title": "阶段任务",
+    "description": "当商机进入某个阶段时，会自动创建这些任务。",
+    "pipeline": "管道",
+    "emptyPipelines": "未找到管道",
+    "noStages": "此管道没有阶段。",
+    "stageHeading": "{stage}",
+    "noTemplates": "此阶段没有任务。",
+    "add": "添加任务",
+    "newTitle": "新建阶段任务",
+    "editTitle": "编辑阶段任务",
+    "templatesLabel": "{stage} 的任务",
+    "dueIn": "{days, plural, =0 {0 天内到期（当天）} one {# 天内到期} other {# 天内到期}}",
+    "assignee": {
+      "owner": "商机负责人",
+      "owner_manager": "负责人的经理",
+      "user": "{name}"
+    },
+    "priority": {
+      "low": "低",
+      "normal": "普通",
+      "high": "高",
+      "urgent": "紧急"
+    },
+    "fields": {
+      "subject": "主题",
+      "description": "描述",
+      "dueInDays": "到期天数",
+      "dueInDaysHint": "0 to 365.",
+      "priority": "优先级",
+      "assigneeType": "分配给",
+      "assigneeUser": "用户",
+      "active": "模板已启用"
+    },
+    "assigneeTypes": {
+      "owner": "商机负责人",
+      "owner_manager": "负责人的经理",
+      "user": "指定用户"
+    },
+    "saveFailed": "无法保存任务。",
+    "inactiveStage": "已停用的阶段"
+  },
+  "alerts": {
+    "title": "提醒与 SLA",
+    "description": "提醒会显示在铃铛中。首次响应 SLA 会为负责人的经理创建一个紧急任务。",
+    "stalled": {
+      "title": "停滞商机",
+      "description": "当未结商机在此时长内没有阶段变更或活动时，通知负责人。",
+      "label": "无进展天数"
+    },
+    "overdue": {
+      "title": "逾期任务",
+      "description": "当未结任务逾期时，通知被分配人。",
+      "label": "宽限时间（小时）"
+    },
+    "sla": {
+      "title": "线索 SLA 升级",
+      "description": "当新线索在 SLA 内未获得首次响应时，负责人保留该线索，其经理会收到通知和一个紧急任务。",
+      "toggle": "升级错过的首次响应"
+    },
+    "notifyManager": "同时通知经理",
+    "enabled": "已启用",
+    "slaHours": {
+      "title": "首次响应 SLA",
+      "warning": "{hours, plural, one {# 小时后提醒} other {# 小时后提醒}}",
+      "overdue": "{hours, plural, one {# 小时后升级} other {# 小时后升级}}",
+      "explanation": "升级使用线索首次响应 SLA 的逾期阈值（{hours, plural, one {# 小时} other {# 小时}}）。这些小时数在此为只读；它们也决定线索列表上的徽章。"
+    },
+    "overrides": {
+      "title": "例外设置",
+      "description": "更具体的规则优先：先阶段，再管道，最后是全局设置。",
+      "add": "添加例外",
+      "scope": "范围",
+      "kind": "提醒",
+      "threshold": "阈值",
+      "pipelineScope": "管道：{pipeline}",
+      "stageScope": "{pipeline} · {stage}",
+      "kinds": {
+        "stalled_deal": "停滞商机",
+        "overdue_task": "逾期任务",
+        "sla_escalation": "SLA 升级"
+      },
+      "thresholdDays": "{value, plural, one {# 天} other {# 天}}",
+      "thresholdHours": "{value, plural, one {# 小时} other {# 小时}}",
+      "empty": "没有例外设置。",
+      "newTitle": "新建例外",
+      "editTitle": "编辑例外",
+      "pipeline": "管道",
+      "stage": "阶段",
+      "allPipelines": "所有管道",
+      "allStages": "管道中的所有阶段",
+      "actions": "操作"
+    },
+    "saveFailed": "无法保存提醒设置。",
+    "missingGlobal": "此提醒尚无全局规则。保存时将创建。"
+  },
+  "runs": {
+    "title": "运行记录",
+    "description": "引擎每 15 分钟运行一次（每日运行作为备用）。每次运行都会检查停滞商机、逾期任务和 SLA 升级。",
+    "lastRun": "上次运行",
+    "never": "尚未运行",
+    "runNow": "立即运行",
+    "running": "运行中…",
+    "ranOk": "运行完成",
+    "runFailed": "运行失败。",
+    "time": "开始时间",
+    "trigger": "触发方式",
+    "status": "状态",
+    "counts": "已处理",
+    "errors": "错误",
+    "triggers": {
+      "pg_cron": "定时（数据库）",
+      "vercel_cron": "定时（每日）",
+      "manual": "手动"
+    },
+    "statuses": {
+      "ok": "OK",
+      "partial": "部分完成",
+      "failed": "失败",
+      "skipped": "已跳过"
+    },
+    "sections": {
+      "stalled": "停滞",
+      "overdue": "逾期",
+      "sla": "SLA",
+      "retention": "已清理"
+    },
+    "noCounts": "无需处理",
+    "errorCount": "{count, plural, =0 {无} one {# 个错误} other {# 个错误}}",
+    "showErrors": "显示错误",
+    "hideErrors": "隐藏错误",
+    "empty": "尚无运行记录。",
+    "emptyDescription": "首次定时运行将显示在这里。",
+    "searchPlaceholder": "搜索运行记录…",
+    "refresh": "刷新"
+  },
+  "sla": {
+    "taskSubject": "线索 {name} 未在首次响应 SLA 内跟进",
+    "taskBody": "负责人未在 SLA 内响应。请跟进负责人或直接联系该线索。"
+  }
+}

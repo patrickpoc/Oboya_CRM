@@ -27,7 +27,7 @@ export async function GET(request: Request) {
 
   let query = guard.supabase
     .from("crm_audit_logs")
-    .select("id, actor_id, actor_name, object, record_id, record_key, action, diff, created_at", { count: "exact" })
+    .select("id, actor_id, actor_name, object, record_id, record_key, action, diff, context, created_at", { count: "exact" })
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
     .range(q.page * q.pageSize, q.page * q.pageSize + q.pageSize - 1);
@@ -55,6 +55,7 @@ export async function GET(request: Request) {
     recordKey: row.record_key ?? null,
     action: row.action,
     diff: (row.diff ?? {}) as SetupAuditLog["diff"],
+    context: (row.context ?? null) as SetupAuditLog["context"],
     createdAt: row.created_at,
   }));
 

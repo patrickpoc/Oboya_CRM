@@ -71,6 +71,7 @@
     "contacts": "联系人",
     "opportunities": "商机",
     "activities": "活动",
+    "reports": "报表",
     "setup_users": "设置：用户",
     "setup_roles": "设置：角色与团队",
     "setup_access": "设置：访问权限",
@@ -78,7 +79,8 @@
     "setup_pipeline": "设置：销售管道",
     "setup_picklists": "设置：选项列表",
     "setup_lead_assignment": "设置：线索分配",
-    "audit_logs": "审计日志"
+    "audit_logs": "审计日志",
+    "automation": "自动化"
   },
   "landing": {
     "title": "设置",
@@ -365,7 +367,11 @@
     "usersHint": "{count, plural, =0 {没有已启用的用户接收入站线索。} one {# 位已启用的用户接收入站线索。} other {# 位已启用的用户接收入站线索。}}",
     "disabled": "已停用",
     "readOnlyRole": "只读角色",
-    "receivesInboundNamed": "{name} 接收入站线索"
+    "receivesInboundNamed": "{name} 接收入站线索",
+    "automationBanner": {
+      "text": "按国家、公司和来源设置的规则优先于此备用设置。",
+      "link": "管理分配规则"
+    }
   },
   "audit": {
     "title": "审计日志",
@@ -384,7 +390,10 @@
       "team": "团队",
       "user": "用户",
       "access_control": "权限矩阵",
-      "settings": "设置项"
+      "settings": "设置项",
+      "assignment_rule": "分配规则",
+      "stage_task": "阶段任务模板",
+      "alert_rule": "提醒规则"
     },
     "action": "操作",
     "actions": {
@@ -410,6 +419,16 @@
     "field": "字段",
     "before": "变更前",
     "after": "变更后",
-    "showing": "第 {from}–{to} 条，共 {total} 条"
+    "showing": "第 {from}–{to} 条，共 {total} 条",
+    "contextRule": "规则：{name}",
+    "contextTemplate": "模板：{name}",
+    "contextKind": {
+      "sla_escalation": "SLA 升级",
+      "stalled_deal": "停滞商机提醒",
+      "overdue_task": "逾期任务提醒",
+      "stage_task": "阶段任务",
+      "assignment": "线索分配"
+    },
+    "contextKindLabel": "途径：{kind}"
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { useCrm } from "@/contexts/CrmContext";
@@ -26,7 +27,7 @@ type AssignmentUser = {
 type Payload = { mode: Mode; defaultOwnerId: string | null; users: AssignmentUser[] };
 
 /** Setup -> Lead assignment (D3). */
-export function LeadAssignmentSetup() {
+export function LeadAssignmentSetup({ embedded = false }: { embedded?: boolean } = {}) {
   const t = useTranslations("setup.leadAssignment");
   const errorMessage = useErrorMessage();
   const { can } = useCrm();
@@ -79,7 +80,19 @@ export function LeadAssignmentSetup() {
 
   return (
     <>
-      <CrmPageHeader title={t("title")} description={t("description")} />
+      {embedded ? null : (
+        <>
+          <CrmPageHeader title={t("title")} description={t("description")} />
+          {can("automation", "view") ? (
+            <p className="mb-4 rounded-lg border border-oboya-blue/20 bg-oboya-blue/5 px-3 py-2.5 text-sm text-oboya-blue-dark">
+              {t("automationBanner.text")}{" "}
+              <Link href="/automation?tab=assignment" className="font-medium text-oboya-blue underline underline-offset-2">
+                {t("automationBanner.link")}
+              </Link>
+            </p>
+          ) : null}
+        </>
+      )}
       {error && !data ? (
         <ErrorState message={errorMessage(error)} onRetry={() => void reload()} />
       ) : loading && !data ? (

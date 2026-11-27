@@ -1,0 +1,40 @@
+{
+  "bell": {
+    "label": "通知",
+    "labelUnread": "通知，{count} 条未读",
+    "title": "通知",
+    "markAllRead": "全部标为已读",
+    "loadMore": "加载更多",
+    "loading": "加载中…",
+    "empty": "你已处理完所有通知。",
+    "emptyDescription": "新的提醒和分配会显示在这里。",
+    "unread": "未读",
+    "failed": "无法加载通知。",
+    "retry": "重试",
+    "close": "关闭",
+    "announce": "{count, plural, =0 {没有未读通知} one {# 条未读通知} other {# 条未读通知}}",
+    "cap": "99+"
+  },
+  "kinds": {
+    "sla_escalation": {
+      "title": "线索错过了首次响应 SLA",
+      "body": "{name} 已 {hours} 小时无响应。"
+    },
+    "stalled_deal": {
+      "title": "商机停滞",
+      "body": "{name} 已 {days} 天无进展。"
+    },
+    "overdue_task": {
+      "title": "任务已逾期",
+      "body": "{subject} 已到期但仍未完成。"
+    },
+    "task_assigned": {
+      "title": "你有一项新任务",
+      "body": "{subject}"
+    },
+    "lead_assigned": {
+      "title": "你有一条新线索",
+      "body": "{name} 已分配给你。"
+    }
+  }
+}

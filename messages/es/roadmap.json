@@ -157,12 +157,12 @@
     "automation": {
       "title": "Automatización",
       "summary": "Reglas de asignación, tareas por etapa, alertas y escalado del SLA.",
-      "description": "La automatización sustituye los pasos manuales repetitivos. Las reglas de asignación reparten los nuevos leads por país, empresa del grupo o por turnos rotativos. Los cambios de etapa crean tareas de seguimiento. Las alertas avisan a los propietarios de los negocios estancados. Cuando un lead incumple el SLA de primera respuesta, se escala al responsable del propietario.",
+      "description": "La automatización sustituye pasos manuales repetitivos. Las reglas de asignación dirigen los nuevos leads por país, empresa del grupo y origen, con grupos de rotación. Entrar en una etapa crea tareas de seguimiento. Las alertas de la campana de notificaciones cubren las oportunidades estancadas y las tareas vencidas. Cuando un lead incumple su SLA de primera respuesta, el propietario lo conserva y su gerente recibe una notificación y una tarea urgente. Cada cambio automático se escribe en el registro de auditoría como \"Automatización\".",
       "capabilities": {
         "assignmentRules": "Reglas de asignación de leads por país, empresa del grupo y turnos rotativos",
         "stageTasks": "Tareas creadas automáticamente cuando una oportunidad entra en una etapa",
-        "alerts": "Alertas de negocios estancados y tareas vencidas",
-        "slaEscalation": "Escalado al responsable cuando se incumple el SLA de primera respuesta",
+        "alerts": "Alertas en la app para oportunidades estancadas y tareas vencidas",
+        "slaEscalation": "Notificación al gerente y tarea urgente cuando se incumple el SLA de primera respuesta",
         "auditTrail": "Cada cambio automático queda registrado en el registro de auditoría"
       },
       "dependencies": {}

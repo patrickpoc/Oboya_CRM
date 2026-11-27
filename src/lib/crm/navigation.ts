@@ -24,7 +24,7 @@ import {
 import type { CrmAction, CrmModule } from "@/lib/crm/types";
 import { ROADMAP_GROUPS, roadmap, type RoadmapGroup } from "@/lib/crm/roadmap";
 
-export type NavBadgeKey = "leadsNew" | "tasksDue";
+export type NavBadgeKey = "leadsNew" | "tasksDue" | "notificationsUnread";
 export type NavCounts = Partial<Record<NavBadgeKey, number>>;
 
 export interface CrmNavItem {

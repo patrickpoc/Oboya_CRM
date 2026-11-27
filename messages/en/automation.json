@@ -1,0 +1,256 @@
+{
+  "title": "Automation",
+  "description": "Assignment rules, tasks created when deals change stage, alerts and SLA escalation. Every automated change is recorded in the audit log as \"Automation\".",
+  "tabsLabel": "Automation sections",
+  "tabs": {
+    "assignment": "Lead assignment",
+    "stage-tasks": "Stage tasks",
+    "alerts": "Alerts & SLA",
+    "runs": "Runs"
+  },
+  "common": {
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "add": "Add",
+    "active": "Active",
+    "inactive": "Inactive",
+    "saved": "Saved",
+    "deleted": "Deleted",
+    "reordered": "Order saved",
+    "readOnly": "You can view these settings but not change them.",
+    "loadFailed": "Could not load this section.",
+    "retry": "Retry",
+    "confirmDelete": "Delete \"{name}\"? This cannot be undone.",
+    "noneSelected": "None selected",
+    "user": "User",
+    "unknownUser": "Unknown user",
+    "any": "Any"
+  },
+  "assignment": {
+    "title": "Assignment rules",
+    "description": "Rules run top to bottom for every inbound lead (and for CRM leads when \"Assign using rules\" is ticked). The first matching rule decides the owner.",
+    "add": "New rule",
+    "editTitle": "Edit rule",
+    "newTitle": "New rule",
+    "emptyTitle": "No assignment rules",
+    "emptyDescription": "Without rules, leads follow the fallback below.",
+    "rulesLabel": "Assignment rules",
+    "anyCriteria": "Any lead",
+    "criteria": {
+      "countries": "Countries",
+      "companies": "Companies",
+      "sources": "Sources"
+    },
+    "more": "+{count} more",
+    "targetUser": "Assign to {name}",
+    "targetPool": "Round-robin across {count, plural, one {# user} other {# users}}",
+    "stopChip": "Stops processing",
+    "notifyChip": "Notifies assignee",
+    "fields": {
+      "name": "Rule name",
+      "countries": "Countries",
+      "countriesHint": "Leave empty to match any country.",
+      "companies": "Group companies",
+      "companiesHint": "Leave empty to match any company.",
+      "sources": "Lead sources",
+      "sourcesHint": "Leave empty to match any source.",
+      "target": "Assign to",
+      "targetUserOption": "A specific user",
+      "targetPoolOption": "Round-robin pool",
+      "targetUser": "User",
+      "pool": "Pool members",
+      "poolHint": "Leads rotate through these users in order. Inactive or read-only users are skipped.",
+      "stop": "Stop processing after this rule",
+      "stopHint": "Do not try later rules when this one matches.",
+      "notify": "Notify the assignee",
+      "active": "Rule is active",
+      "selectUser": "Select a user"
+    },
+    "picker": {
+      "search": "Search…",
+      "noResults": "No matches",
+      "clear": "Clear",
+      "selected": "{count} selected"
+    },
+    "preview": {
+      "title": "Test this rule set",
+      "description": "See who the next lead with these details would go to, using all saved rules.",
+      "country": "Country",
+      "company": "Group company",
+      "source": "Source",
+      "anyOption": "Any",
+      "run": "Preview",
+      "running": "Checking…",
+      "result": "This lead would go to {name}.",
+      "resultRule": "This lead would go to {name} via rule \"{rule}\".",
+      "resultNone": "No owner could be determined.",
+      "via": {
+        "rule": "Matched a rule",
+        "round_robin": "Round-robin",
+        "default": "Fallback default owner",
+        "super_admin": "Fallback to a Super Admin"
+      },
+      "failed": "Preview failed."
+    },
+    "fallback": {
+      "title": "Fallback",
+      "description": "Used when no rule matches. Managed in Setup."
+    },
+    "saveFailed": "Could not save the rule.",
+    "invalidTarget": "Choose a user, or at least one pool member.",
+    "editorPreview": {
+      "title": "Estimate for this rule",
+      "description": "Pick a sample lead to see who would receive it with this rule and the saved ones. Round-robin position is not considered, so this is an estimate.",
+      "country": "Country",
+      "company": "Group company",
+      "source": "Source",
+      "any": "Any",
+      "result": "Estimated owner: {name}",
+      "resultRound": "Estimated owner: {name} (next in rotation may differ)",
+      "none": "No rule would assign this lead; the fallback applies."
+    }
+  },
+  "stageTasks": {
+    "title": "Stage tasks",
+    "description": "When an opportunity enters a stage, these tasks are created automatically.",
+    "pipeline": "Pipeline",
+    "emptyPipelines": "No pipeline found",
+    "noStages": "This pipeline has no stages.",
+    "stageHeading": "{stage}",
+    "noTemplates": "No tasks for this stage.",
+    "add": "Add task",
+    "newTitle": "New stage task",
+    "editTitle": "Edit stage task",
+    "templatesLabel": "Tasks for {stage}",
+    "dueIn": "Due in {days, plural, =0 {0 days (same day)} one {# day} other {# days}}",
+    "assignee": {
+      "owner": "Opportunity owner",
+      "owner_manager": "Owner's manager",
+      "user": "{name}"
+    },
+    "priority": {
+      "low": "Low",
+      "normal": "Normal",
+      "high": "High",
+      "urgent": "Urgent"
+    },
+    "fields": {
+      "subject": "Subject",
+      "description": "Description",
+      "dueInDays": "Due in (days)",
+      "dueInDaysHint": "0 to 365.",
+      "priority": "Priority",
+      "assigneeType": "Assign to",
+      "assigneeUser": "User",
+      "active": "Template is active"
+    },
+    "assigneeTypes": {
+      "owner": "Opportunity owner",
+      "owner_manager": "Owner's manager",
+      "user": "A specific user"
+    },
+    "saveFailed": "Could not save the task.",
+    "inactiveStage": "Inactive stage"
+  },
+  "alerts": {
+    "title": "Alerts & SLA",
+    "description": "Alerts appear in the bell. The first-response SLA creates an urgent task for the owner's manager.",
+    "stalled": {
+      "title": "Stalled deals",
+      "description": "Notify the owner when an open opportunity has had no stage change or activity for this long.",
+      "label": "Days without progress"
+    },
+    "overdue": {
+      "title": "Overdue tasks",
+      "description": "Notify the assignee when an open task is past due.",
+      "label": "Grace period (hours)"
+    },
+    "sla": {
+      "title": "Lead SLA escalation",
+      "description": "When a new lead gets no first response within the SLA, the owner keeps it and their manager gets a notification and an urgent task.",
+      "toggle": "Escalate missed first responses"
+    },
+    "notifyManager": "Also notify the manager",
+    "enabled": "Enabled",
+    "slaHours": {
+      "title": "First-response SLA",
+      "warning": "Warning after {hours, plural, one {# hour} other {# hours}}",
+      "overdue": "Escalates after {hours, plural, one {# hour} other {# hours}}",
+      "explanation": "Escalation uses the overdue threshold of the lead first-response SLA ({hours, plural, one {# hour} other {# hours}}). These hours are read-only here; they also drive the badges on the lead list."
+    },
+    "overrides": {
+      "title": "Overrides",
+      "description": "A more specific rule wins: stage, then pipeline, then the global setting.",
+      "add": "Add override",
+      "scope": "Scope",
+      "kind": "Alert",
+      "threshold": "Threshold",
+      "pipelineScope": "Pipeline: {pipeline}",
+      "stageScope": "{pipeline} · {stage}",
+      "kinds": {
+        "stalled_deal": "Stalled deal",
+        "overdue_task": "Overdue task",
+        "sla_escalation": "SLA escalation"
+      },
+      "thresholdDays": "{value, plural, one {# day} other {# days}}",
+      "thresholdHours": "{value, plural, one {# hour} other {# hours}}",
+      "empty": "No overrides.",
+      "newTitle": "New override",
+      "editTitle": "Edit override",
+      "pipeline": "Pipeline",
+      "stage": "Stage",
+      "allPipelines": "All pipelines",
+      "allStages": "All stages in the pipeline",
+      "actions": "Actions"
+    },
+    "saveFailed": "Could not save the alert settings.",
+    "missingGlobal": "No global rule exists for this alert yet. Saving creates it."
+  },
+  "runs": {
+    "title": "Runs",
+    "description": "The engine runs every 15 minutes (a daily run is the fallback). Stalled deals, overdue tasks and SLA escalations are checked on each run.",
+    "lastRun": "Last run",
+    "never": "No run yet",
+    "runNow": "Run now",
+    "running": "Running…",
+    "ranOk": "Run finished",
+    "runFailed": "The run failed.",
+    "time": "Started",
+    "trigger": "Trigger",
+    "status": "Status",
+    "counts": "Handled",
+    "errors": "Errors",
+    "triggers": {
+      "pg_cron": "Scheduled (database)",
+      "vercel_cron": "Scheduled (daily)",
+      "manual": "Manual"
+    },
+    "statuses": {
+      "ok": "OK",
+      "partial": "Partial",
+      "failed": "Failed",
+      "skipped": "Skipped"
+    },
+    "sections": {
+      "stalled": "Stalled",
+      "overdue": "Overdue",
+      "sla": "SLA",
+      "retention": "Cleaned"
+    },
+    "noCounts": "Nothing to do",
+    "errorCount": "{count, plural, =0 {None} one {# error} other {# errors}}",
+    "showErrors": "Show errors",
+    "hideErrors": "Hide errors",
+    "empty": "No runs recorded yet.",
+    "emptyDescription": "The first scheduled run will appear here.",
+    "searchPlaceholder": "Search runs…",
+    "refresh": "Refresh"
+  },
+  "sla": {
+    "taskSubject": "Lead {name} missed its first-response SLA",
+    "taskBody": "The owner has not responded within the SLA. Follow up with them or contact the lead."
+  }
+}

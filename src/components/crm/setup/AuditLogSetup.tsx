@@ -46,7 +46,17 @@ const ACTION_TONES: Record<string, PillTone> = {
 export function AuditLogSetup() {
   const t = useTranslations("setup.audit");
   const tc = useTranslations("setup.common");
+  const tAct = useTranslations("activities");
   const format = useFormatter();
+  const contextLabel = (ctx: SetupAuditLog["context"]) => {
+    if (!ctx) return null;
+    if (typeof ctx.rule_name === "string" && ctx.rule_name) return t("contextRule", { name: ctx.rule_name });
+    if (typeof ctx.template_name === "string" && ctx.template_name) return t("contextTemplate", { name: ctx.template_name });
+    if (typeof ctx.kind === "string" && ctx.kind) {
+      return t("contextKindLabel", { kind: t.has(`contextKind.${ctx.kind}`) ? t(`contextKind.${ctx.kind}`) : ctx.kind });
+    }
+    return null;
+  };
   const errorMessage = useErrorMessage();
   const { filters, setFilters, reset } = useUrlFilters({ object: "", action: "", actor: "", from: "", to: "", page: "0" });
   const [result, setResult] = useState<{ key: string; data?: Payload; error?: unknown } | null>(null);
@@ -168,8 +178,11 @@ export function AuditLogSetup() {
                         <td className="px-3 py-2">
                           <span className="inline-flex items-center gap-2">
                             <EntityAvatar name={log.actorName} size="sm" />
-                            {log.actorName}
+                            {log.actorName === "Automation" ? tAct("automationActor") : log.actorName}
                           </span>
+                          {contextLabel(log.context) ? (
+                            <span className="block text-[11px] text-muted-foreground">{contextLabel(log.context)}</span>
+                          ) : null}
                         </td>
                         <td className="px-3 py-2">
                           <StatusPill tone={ACTION_TONES[log.action] ?? "neutral"}>

@@ -106,5 +106,31 @@
       "duplicate": "已存在具有相同信息的记录。",
       "unavailable": "出现错误，请重试。"
     }
+  },
+  "assignment": {
+    "createOption": "按规则分配",
+    "createHint": "保存后根据分配规则选择负责人。",
+    "createFailed": "线索已创建，但规则无法为其分配负责人。仍由当前负责人持有。",
+    "reassign": "按规则重新分配",
+    "confirmTitle": "按规则重新分配",
+    "confirmDescription": "分配规则会根据 {name} 的国家、公司和来源选择负责人。",
+    "previewLoading": "正在检查规则…",
+    "previewOwner": "负责人：{name}",
+    "previewFallback": "没有规则匹配。将使用备用负责人：{name}",
+    "previewFailed": "无法预览结果。你仍可重新分配。",
+    "cancel": "取消",
+    "confirm": "重新分配",
+    "assigning": "重新分配中…",
+    "success": "线索已重新分配",
+    "errors": {
+      "converted": "已转化的线索无法重新分配。",
+      "rate_limited": "请求过多。请一分钟后重试。",
+      "forbidden": "你无权重新分配此线索。",
+      "failed": "无法重新分配线索。仍由当前负责人持有。",
+      "no_assignee": "没有可用的合格负责人。线索仍由当前负责人持有。"
+    },
+    "previewFallbackUnknown": "没有规则匹配。将使用备用负责人。",
+    "ownedBy": "线索现由 {name} 负责",
+    "ownedByUnknown": "线索现由其他用户负责"
   }
 }

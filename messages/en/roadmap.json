@@ -98,7 +98,7 @@
     "reports": {
       "title": "Reports & Dashboards",
       "summary": "A report builder on CRM objects, with saved reports and team dashboards.",
-      "description": "Users build reports on leads, accounts, contacts, opportunities and activities. They choose the columns, add filters, group rows and add a chart. Reports can be saved, shared with a team or with everyone, and placed on dashboards. Every report respects the record visibility of the person viewing it.",
+      "description": "Users build reports on leads, accounts, contacts, opportunities and activities. They choose the columns, add filters, group rows and add a chart. Reports are saved in private, team or public folders, placed on dashboards and pinned to Home. Sales managers and admins publish to a team or everyone; every report respects the record visibility of the person viewing it. Cases are not reportable yet.",
       "capabilities": {
         "builder": "Report builder with columns and filters on every CRM object",
         "grouping": "Group by rows and columns with sums, averages and counts",
@@ -157,12 +157,12 @@
     "automation": {
       "title": "Automation",
       "summary": "Assignment rules, stage-based tasks, alerts and SLA escalation.",
-      "description": "Automation replaces repetitive manual steps. Assignment rules route new leads by country, group company or round-robin. Stage changes create follow-up tasks. Alerts notify owners about stalled deals. When a lead misses its first-response SLA, it is escalated to the owner's manager.",
+      "description": "Automation replaces repetitive manual steps. Assignment rules route new leads by country, group company and source, with round-robin pools. Entering a stage creates follow-up tasks. Alerts in the notification bell cover stalled deals and overdue tasks. When a lead misses its first-response SLA, the owner keeps it and their manager gets a notification and an urgent task. Every automated change is written to the audit log as \"Automation\".",
       "capabilities": {
         "assignmentRules": "Lead assignment rules by country, group company and round-robin",
         "stageTasks": "Tasks created automatically when an opportunity enters a stage",
-        "alerts": "Alerts for stalled deals and overdue tasks",
-        "slaEscalation": "Escalation to the manager when the first-response SLA is missed",
+        "alerts": "In-app alerts for stalled deals and overdue tasks",
+        "slaEscalation": "Manager notification and urgent task when the first-response SLA is missed",
         "auditTrail": "Every automated change is recorded in the audit log"
       },
       "dependencies": {}

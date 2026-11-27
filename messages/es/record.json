@@ -51,7 +51,8 @@
       "stage_unavailable": "Esta etapa ya no está disponible. Actualiza la página y elige otra etapa.",
       "one_primary_required": "Elige exactamente una empresa del grupo como principal.",
       "duplicate": "Ya existe un registro con estos datos.",
-      "forbidden": "No tienes permiso para hacer esto."
+      "forbidden": "No tienes permiso para hacer esto.",
+      "no_assignee": "No hay ningún propietario elegible disponible para este lead. Se queda con el propietario actual."
     }
   },
   "deleteDialog": {

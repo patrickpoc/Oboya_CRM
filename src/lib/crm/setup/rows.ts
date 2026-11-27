@@ -93,6 +93,8 @@ export type SetupAuditLog = {
   recordKey: string | null;
   action: string;
   diff: Record<string, [unknown, unknown]>;
+  /** Set on automated writes: { kind, rule_id?, template_id?, rule_name?, template_name?, triggered_by? }. */
+  context: Record<string, unknown> | null;
   createdAt: string;
 };
 

@@ -1,0 +1,40 @@
+{
+  "bell": {
+    "label": "Notifications",
+    "labelUnread": "Notifications, {count} unread",
+    "title": "Notifications",
+    "markAllRead": "Mark all read",
+    "loadMore": "Load more",
+    "loading": "Loading…",
+    "empty": "You are all caught up.",
+    "emptyDescription": "New alerts and assignments will show up here.",
+    "unread": "Unread",
+    "failed": "Could not load notifications.",
+    "retry": "Retry",
+    "close": "Close",
+    "announce": "{count, plural, =0 {No unread notifications} one {# unread notification} other {# unread notifications}}",
+    "cap": "99+"
+  },
+  "kinds": {
+    "sla_escalation": {
+      "title": "Lead missed its first-response SLA",
+      "body": "{name} has had no response for {hours} hours."
+    },
+    "stalled_deal": {
+      "title": "Deal is stalled",
+      "body": "{name} has had no progress for {days} days."
+    },
+    "overdue_task": {
+      "title": "Task is overdue",
+      "body": "{subject} was due and is still open."
+    },
+    "task_assigned": {
+      "title": "New task assigned to you",
+      "body": "{subject}"
+    },
+    "lead_assigned": {
+      "title": "New lead assigned to you",
+      "body": "{name} was assigned to you."
+    }
+  }
+}

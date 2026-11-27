@@ -118,5 +118,7 @@
       "due": "截止时间（可选）",
       "submit": "添加"
     }
-  }
+  },
+  "automated": "自动",
+  "automationActor": "自动化"
 }

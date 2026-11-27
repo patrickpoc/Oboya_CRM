@@ -56,7 +56,7 @@ describe("matrix serialization", () => {
   });
 
   it("rejects unknown modules/actions in the PUT body", () => {
-    expect(accessControlPutSchema.safeParse({ matrix: { sales_rep: { reports: "full" } } }).success).toBe(false);
+    expect(accessControlPutSchema.safeParse({ matrix: { sales_rep: { widgets: "full" } } }).success).toBe(false);
     expect(accessControlPutSchema.safeParse({ matrix: { sales_rep: { leads: ["publish"] } } }).success).toBe(false);
   });
 });

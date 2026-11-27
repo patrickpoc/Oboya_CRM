@@ -106,5 +106,31 @@
       "duplicate": "Já existe um registro com esses dados.",
       "unavailable": "Algo deu errado. Tente novamente."
     }
+  },
+  "assignment": {
+    "createOption": "Atribuir usando regras",
+    "createHint": "Escolhe o proprietário pelas regras de atribuição após salvar.",
+    "createFailed": "O lead foi criado, mas as regras não conseguiram atribuí-lo. Ele permanece com o proprietário atual.",
+    "reassign": "Reatribuir usando regras",
+    "confirmTitle": "Reatribuir usando regras",
+    "confirmDescription": "As regras de atribuição escolhem o proprietário de {name} com base em país, empresa e origem.",
+    "previewLoading": "Verificando as regras…",
+    "previewOwner": "Proprietário: {name}",
+    "previewFallback": "Nenhuma regra corresponde. Será usado o proprietário alternativo: {name}",
+    "previewFailed": "Não foi possível pré-visualizar o resultado. Você ainda pode reatribuir.",
+    "cancel": "Cancelar",
+    "confirm": "Reatribuir",
+    "assigning": "Reatribuindo…",
+    "success": "Lead reatribuído",
+    "errors": {
+      "converted": "Um lead convertido não pode ser reatribuído.",
+      "rate_limited": "Muitas solicitações. Tente novamente em um minuto.",
+      "forbidden": "Você não tem permissão para reatribuir este lead.",
+      "failed": "Não foi possível reatribuir o lead. Ele permanece com o proprietário atual.",
+      "no_assignee": "Nenhum proprietário elegível está disponível. O lead permanece com o proprietário atual."
+    },
+    "previewFallbackUnknown": "Nenhuma regra corresponde. Será usado o proprietário alternativo.",
+    "ownedBy": "Lead agora pertence a {name}",
+    "ownedByUnknown": "Lead agora pertence a outro usuário"
   }
 }

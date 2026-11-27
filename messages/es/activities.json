@@ -118,5 +118,7 @@
       "due": "Vencimiento (opcional)",
       "submit": "Añadir"
     }
-  }
+  },
+  "automated": "Automatizada",
+  "automationActor": "Automatización"
 }

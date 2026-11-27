@@ -20,6 +20,9 @@ export const AUDIT_CONFIG_OBJECTS = [
   "user",
   "access_control",
   "settings",
+  "assignment_rule",
+  "stage_task",
+  "alert_rule",
 ] as const;
 
 export const AUDIT_OBJECTS = [...AUDIT_RECORD_OBJECTS, ...AUDIT_CONFIG_OBJECTS] as const;

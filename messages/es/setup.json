@@ -71,6 +71,7 @@
     "contacts": "Contactos",
     "opportunities": "Oportunidades",
     "activities": "Actividades",
+    "reports": "Informes",
     "setup_users": "Configuración: Usuarios",
     "setup_roles": "Configuración: Roles y equipos",
     "setup_access": "Configuración: Acceso",
@@ -78,7 +79,8 @@
     "setup_pipeline": "Configuración: Pipeline",
     "setup_picklists": "Configuración: Listas de selección",
     "setup_lead_assignment": "Configuración: Asignación de leads",
-    "audit_logs": "Registro de auditoría"
+    "audit_logs": "Registro de auditoría",
+    "automation": "Automatización"
   },
   "landing": {
     "title": "Configuración",
@@ -365,7 +367,11 @@
     "usersHint": "{count, plural, =0 {Ningún usuario activo recibe leads entrantes.} one {# usuario activo recibe leads entrantes.} other {# usuarios activos reciben leads entrantes.}}",
     "disabled": "Desactivado",
     "readOnlyRole": "Rol de solo lectura",
-    "receivesInboundNamed": "{name} recibe leads entrantes"
+    "receivesInboundNamed": "{name} recibe leads entrantes",
+    "automationBanner": {
+      "text": "Las reglas por país, empresa y origen tienen prioridad sobre esta alternativa.",
+      "link": "Gestionar reglas de asignación"
+    }
   },
   "audit": {
     "title": "Registro de auditoría",
@@ -384,7 +390,10 @@
       "team": "Equipo",
       "user": "Usuario",
       "access_control": "Matriz de acceso",
-      "settings": "Ajuste"
+      "settings": "Ajuste",
+      "assignment_rule": "Regla de asignación",
+      "stage_task": "Plantilla de tarea de etapa",
+      "alert_rule": "Regla de alerta"
     },
     "action": "Acción",
     "actions": {
@@ -410,6 +419,16 @@
     "field": "Campo",
     "before": "Antes",
     "after": "Después",
-    "showing": "{from}–{to} de {total}"
+    "showing": "{from}–{to} de {total}",
+    "contextRule": "Regla: {name}",
+    "contextTemplate": "Plantilla: {name}",
+    "contextKind": {
+      "sla_escalation": "Escalado de SLA",
+      "stalled_deal": "Alerta de oportunidad estancada",
+      "overdue_task": "Alerta de tarea vencida",
+      "stage_task": "Tarea de etapa",
+      "assignment": "Asignación de leads"
+    },
+    "contextKindLabel": "Vía: {kind}"
   }
 }

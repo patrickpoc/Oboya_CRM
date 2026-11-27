@@ -27,6 +27,7 @@ export function selectColumns(config: RecordConfig): string {
   for (const f of config.fields) if (f.currencyField) cols.add(f.currencyField);
   for (const n of config.nameFields) cols.add(n);
   if (config.path) cols.add(config.path.field);
+  if (config.object === "activity") cols.add("meta"); // meta.automation drives the "Automated" badge
   return [...cols].join(",");
 }
 

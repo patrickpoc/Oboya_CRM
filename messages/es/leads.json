@@ -106,5 +106,31 @@
       "duplicate": "Ya existe un registro con estos datos.",
       "unavailable": "Algo salió mal. Inténtalo de nuevo."
     }
+  },
+  "assignment": {
+    "createOption": "Asignar con reglas",
+    "createHint": "Elige el propietario según las reglas de asignación después de guardar.",
+    "createFailed": "El lead se creó, pero las reglas no pudieron asignarlo. Se queda con el propietario actual.",
+    "reassign": "Reasignar con reglas",
+    "confirmTitle": "Reasignar con reglas",
+    "confirmDescription": "Las reglas de asignación eligen el propietario de {name} según su país, empresa y origen.",
+    "previewLoading": "Comprobando las reglas…",
+    "previewOwner": "Propietario: {name}",
+    "previewFallback": "Ninguna regla coincide. Se usa el propietario alternativo: {name}",
+    "previewFailed": "No se pudo previsualizar el resultado. Aún puedes reasignar.",
+    "cancel": "Cancelar",
+    "confirm": "Reasignar",
+    "assigning": "Reasignando…",
+    "success": "Lead reasignado",
+    "errors": {
+      "converted": "Un lead convertido no se puede reasignar.",
+      "rate_limited": "Demasiadas solicitudes. Inténtalo de nuevo en un minuto.",
+      "forbidden": "No tienes permiso para reasignar este lead.",
+      "failed": "No se pudo reasignar el lead. Se queda con el propietario actual.",
+      "no_assignee": "No hay ningún propietario elegible disponible. El lead se queda con el propietario actual."
+    },
+    "previewFallbackUnknown": "Ninguna regla coincide. Se usa el propietario alternativo.",
+    "ownedBy": "Lead ahora de {name}",
+    "ownedByUnknown": "Lead ahora de otro usuario"
   }
 }

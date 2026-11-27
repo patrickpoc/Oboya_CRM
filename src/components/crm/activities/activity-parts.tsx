@@ -3,7 +3,8 @@
 import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import { CalendarClock, CheckSquare, Mail, Phone, StickyNote, type LucideIcon } from "lucide-react";
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
+import { StatusPill } from "@/components/crm/common/StatusPill";
 import { Checkbox } from "@/components/ui/checkbox";
 import { apiFetch } from "@/components/crm/record/api";
 import { browserTimeZone } from "@/lib/crm/activities/due";
@@ -111,4 +112,19 @@ export function localInputToIso(value: string): string | null {
   if (!value) return null;
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
+
+/** True when the activity was created by the automation engine (`meta.automation`). */
+export function isAutomated(row: RecordRow): boolean {
+  const meta = row.meta;
+  return Boolean(meta && typeof meta === "object" && (meta as Record<string, unknown>).automation);
+}
+
+export function AutomatedBadge() {
+  const t = useTranslations("activities");
+  return (
+    <StatusPill tone="info" size="xs">
+      {t("automated")}
+    </StatusPill>
+  );
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { AutomatedBadge, isAutomated } from "@/components/crm/activities/activity-parts";
 import { RecordPage } from "@/components/crm/record/RecordPage";
 import { requireCrmAuth } from "@/lib/crm/server/require-crm-auth";
 
@@ -12,5 +13,11 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ActivityPage({ params }: { params: Promise<{ id: string }> }) {
   await requireCrmAuth();
   const { id } = await params;
-  return <RecordPage object="activity" id={id} />;
+  return (
+    <RecordPage
+      object="activity"
+      id={id}
+      slots={({ record }) => ({ actionSlot: isAutomated(record) ? <AutomatedBadge /> : undefined })}
+    />
+  );
 }

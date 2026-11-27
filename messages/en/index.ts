@@ -1,3 +1,7 @@
+import notifications from "./notifications.json";
+import automation from "./automation.json";
+import home from "./home.json";
+import reports from "./reports.json";
 import setup from "./setup.json";
 import dashboard from "./dashboard.json";
 import search from "./search.json";
@@ -19,6 +23,10 @@ import shell from "./shell.json";
 import profile from "./profile.json";
 
 const messages = {
+  notifications,
+  automation,
+  home,
+  reports,
   setup,
   dashboard,
   search,

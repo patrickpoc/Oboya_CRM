@@ -169,6 +169,7 @@ export const leadConfig: RecordConfig = {
     { key: "delete", labelKey: "delete", permission: "delete", kind: "delete", icon: Trash2 },
   ],
   timeline: true,
+  assignOnCreate: true,
   readOnly: (row) => isLeadConverted(row),
   beforeUpdate: (current, patch, now) => applyLeadUpdateRules(current, patch, now),
 };

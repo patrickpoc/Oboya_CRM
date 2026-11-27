@@ -5,7 +5,7 @@ import { createSharedPoller } from "@/components/crm/common/shared-poll";
 import { browserTimeZone } from "@/lib/crm/activities/due";
 import type { NavBadgeKey, NavCounts } from "@/lib/crm/navigation";
 
-const KEYS: NavBadgeKey[] = ["leadsNew", "tasksDue"];
+const KEYS: NavBadgeKey[] = ["leadsNew", "tasksDue", "notificationsUnread"];
 
 /** Set once the endpoint answers 404 so a missing route is not polled again. */
 let unavailable = false;
@@ -38,7 +38,7 @@ const poller = createSharedPoller<NavCounts>({
 });
 
 /**
- * Sidebar badge counts from `/api/crm/nav-counts` ({ leadsNew, tasksDue }).
+ * Sidebar badge counts from `/api/crm/nav-counts` ({ leadsNew, tasksDue, notificationsUnread }).
  * Optional: a 404 or error leaves the badges empty. Dispatch
  * `window.dispatchEvent(new Event("crm:nav-counts"))` to refresh after a change.
  */

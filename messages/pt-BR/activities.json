@@ -118,5 +118,7 @@
       "due": "Prazo (opcional)",
       "submit": "Adicionar"
     }
-  }
+  },
+  "automated": "Automatizada",
+  "automationActor": "Automação"
 }

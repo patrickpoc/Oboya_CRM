@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { Check, ChevronDown, KeyRound, LogOut, Menu, UserRound } from "lucide-react";
 import { hardNavigate } from "@/app/(auth)/_components/AuthCard";
 import { CrmLanguageSwitcher, useChangeCrmLocale } from "@/components/crm/layout/CrmLanguageSwitcher";
+import { NotificationBell } from "@/components/crm/notifications/NotificationBell";
 import { EntityAvatar } from "@/components/crm/common/EntityAvatar";
 import { CRM_LOCALE_OPTIONS } from "@/contexts/CrmLocaleContext";
 import { useCrm } from "@/contexts/CrmContext";
@@ -77,7 +78,10 @@ export function CrmTopbar({ onMenuClick, menuOpen, search }: CrmTopbarProps) {
         {search}
       </div>
 
-      <CrmLanguageSwitcher className="hidden sm:block" />
+      {/* The user menu also switches language, so the standalone switcher yields room at 768-1024px. */}
+      <CrmLanguageSwitcher className="hidden lg:block" />
+
+      <NotificationBell />
 
       <CrmUserMenu />
     </header>

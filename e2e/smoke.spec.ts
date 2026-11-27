@@ -16,7 +16,7 @@ async function login(page: Page, baseURL: string | undefined) {
   await page.waitForLoadState("networkidle");
   await page.getByLabel("Email").fill(DEMO_EMAILS.lucas);
   await page.getByLabel("Password").fill(password());
-  await page.getByRole("button", { name: "Sign in" }).click();
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await page.waitForURL(/\/dashboard/);
 }
 

@@ -214,7 +214,7 @@ The key is the `Idempotency-Key` header (stored as `idem:<key>`), and for quotes
 
 ## Owner assignment (D3)
 
-New leads get `owner_id = rpc('crm_assign_inbound_owner')` (service role only). Setup → Lead assignment (`crm_settings.inbound_assignment.mode`) chooses:
+New leads are inserted without `owner_id`; a database trigger assigns it from the Automation assignment rules, then the fallback `crm_assign_fallback_owner()` (the former `crm_assign_inbound_owner`, still callable by the service role). Setup → Lead assignment (`crm_settings.inbound_assignment.mode`) chooses:
 
 - `round_robin` (default): the next active user with write access flagged `receives_inbound`, ordered by id, cursor in `crm_settings.inbound_rr_cursor` under a row lock;
 - `default_owner`: `crm_settings.inbound_default_owner`.

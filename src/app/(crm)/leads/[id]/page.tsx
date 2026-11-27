@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { RecordPage } from "@/components/crm/record/RecordPage";
-import { getEntityDefaultCurrency, leadSummaryFromRecord } from "@/lib/crm/leads/repository";
+import {
+  getEntityDefaultCurrency,
+  leadSummaryFromRecord,
+} from "@/lib/crm/leads/repository";
 import { requireCrmAuth } from "@/lib/crm/server/require-crm-auth";
 import { ConvertLeadButton } from "../_components/ConvertLeadButton";
+import { ReassignLeadButton } from "../_components/ReassignLeadButton";
 import { LeadStatusPath } from "../_components/LeadStatusPath";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -12,7 +16,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /** Lead record page (RecordPage handles 404/permissions and markViewed, and reads the lead once). */
-export default async function LeadPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function LeadPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { supabase, can } = await requireCrmAuth();
   const { id } = await params;
 
@@ -20,18 +28,33 @@ export default async function LeadPage({ params }: { params: Promise<{ id: strin
     <RecordPage
       object="lead"
       id={id}
-      slots={async ({ record }) => {
+      slots={async ({ record, lookups }) => {
         const lead = leadSummaryFromRecord(record);
         const canConvert = !lead.convertedAt && can("leads", "convert");
+        const canReassign = !lead.convertedAt && can("leads", "edit");
         return {
-          actionSlot: canConvert ? (
-            <ConvertLeadButton
-              leadId={lead.id}
-              leadName={lead.name}
-              company={lead.company}
-              defaultCurrency={await getEntityDefaultCurrency(supabase, record.entity_id)}
-            />
-          ) : undefined,
+          actionSlot: (
+            <>
+              {canReassign ? (
+                <ReassignLeadButton
+                  leadId={lead.id}
+                  leadName={lead.name}
+                  users={lookups.users}
+                />
+              ) : null}
+              {canConvert ? (
+                <ConvertLeadButton
+                  leadId={lead.id}
+                  leadName={lead.name}
+                  company={lead.company}
+                  defaultCurrency={await getEntityDefaultCurrency(
+                    supabase,
+                    record.entity_id,
+                  )}
+                />
+              ) : null}
+            </>
+          ),
           pathSlot: (
             <LeadStatusPath
               leadId={lead.id}

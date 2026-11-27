@@ -10,7 +10,7 @@ const querySchema = z.object({ tz: z.string().max(64).optional() });
 /**
  * GET /api/crm/nav-counts?tz= — sidebar badges for the current user:
  * `leadsNew` (new leads they own) and `tasksDue` (their open tasks due today
- * or overdue, "today" in the browser timezone).
+ * or overdue, "today" in the browser timezone) and `notificationsUnread` (their unread bell items).
  */
 export async function GET(request: Request) {
   const guard = await crmGuard();
@@ -21,7 +21,7 @@ export async function GET(request: Request) {
   const { end } = dayBounds(new Date(), safeTimeZone(parsed.data.tz));
   const userId = guard.user.id;
 
-  const [leads, tasks] = await Promise.all([
+  const [leads, tasks, notifications] = await Promise.all([
     can("leads")
       ? guard.supabase
           .from("crm_leads")
@@ -40,13 +40,18 @@ export async function GET(request: Request) {
           .lt("due_at", end.toISOString())
           .is("deleted_at", null)
       : null,
+    guard.supabase
+      .from("crm_notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .is("read_at", null),
   ]);
-  if (leads?.error || tasks?.error) {
-    console.error("[crm nav-counts]", leads?.error?.message ?? tasks?.error?.message);
+  if (leads?.error || tasks?.error || notifications.error) {
+    console.error("[crm nav-counts]", leads?.error?.message ?? tasks?.error?.message ?? notifications.error?.message);
     return NextResponse.json({ error: "Request failed", code: "unavailable" }, { status: 500 });
   }
   return NextResponse.json(
-    { leadsNew: leads?.count ?? 0, tasksDue: tasks?.count ?? 0 },
+    { leadsNew: leads?.count ?? 0, tasksDue: tasks?.count ?? 0, notificationsUnread: notifications.count ?? 0 },
     { headers: { "cache-control": "no-store" } }
   );
 }

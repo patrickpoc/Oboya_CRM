@@ -71,6 +71,7 @@
     "contacts": "Contacts",
     "opportunities": "Opportunities",
     "activities": "Activities",
+    "reports": "Reports",
     "setup_users": "Setup: Users",
     "setup_roles": "Setup: Roles & teams",
     "setup_access": "Setup: Access",
@@ -78,7 +79,8 @@
     "setup_pipeline": "Setup: Pipeline",
     "setup_picklists": "Setup: Picklists",
     "setup_lead_assignment": "Setup: Lead assignment",
-    "audit_logs": "Audit log"
+    "audit_logs": "Audit log",
+    "automation": "Automation"
   },
   "landing": {
     "title": "Setup",
@@ -365,7 +367,11 @@
     "usersHint": "{count, plural, =0 {No active users receive inbound leads.} one {# active user receives inbound leads.} other {# active users receive inbound leads.}}",
     "disabled": "Disabled",
     "readOnlyRole": "Read-only role",
-    "receivesInboundNamed": "{name} receives inbound leads"
+    "receivesInboundNamed": "{name} receives inbound leads",
+    "automationBanner": {
+      "text": "Rules by country, company and source take priority over this fallback.",
+      "link": "Manage assignment rules"
+    }
   },
   "audit": {
     "title": "Audit log",
@@ -384,7 +390,10 @@
       "team": "Team",
       "user": "User",
       "access_control": "Access matrix",
-      "settings": "Setting"
+      "settings": "Setting",
+      "assignment_rule": "Assignment rule",
+      "stage_task": "Stage task template",
+      "alert_rule": "Alert rule"
     },
     "action": "Action",
     "actions": {
@@ -410,6 +419,16 @@
     "field": "Field",
     "before": "Before",
     "after": "After",
-    "showing": "{from}–{to} of {total}"
+    "showing": "{from}–{to} of {total}",
+    "contextRule": "Rule: {name}",
+    "contextTemplate": "Template: {name}",
+    "contextKind": {
+      "sla_escalation": "SLA escalation",
+      "stalled_deal": "Stalled deal alert",
+      "overdue_task": "Overdue task alert",
+      "stage_task": "Stage task",
+      "assignment": "Lead assignment"
+    },
+    "contextKindLabel": "Via: {kind}"
   }
 }

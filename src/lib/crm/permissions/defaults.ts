@@ -31,6 +31,8 @@ export const BUILTIN_MATRIX: AccessMatrix = {
   super_admin: row(FULL),
   sales_manager: row(NONE, {
     home: FULL,
+    reports: FULL,
+    automation: VIEW,
     leads: FULL,
     accounts: FULL,
     contacts: FULL,
@@ -43,6 +45,7 @@ export const BUILTIN_MATRIX: AccessMatrix = {
   }),
   sales_rep: row(NONE, {
     home: VIEW,
+    reports: ["view", "create", "edit", "delete", "export"],
     leads: ["view", "create", "edit", "convert", "export"],
     accounts: ["view", "create", "edit", "export"],
     contacts: ["view", "create", "edit", "export"],
@@ -54,6 +57,7 @@ export const BUILTIN_MATRIX: AccessMatrix = {
   }),
   read_only: row(NONE, {
     home: VIEW,
+    reports: READ_EXPORT,
     leads: READ_EXPORT,
     accounts: READ_EXPORT,
     contacts: READ_EXPORT,

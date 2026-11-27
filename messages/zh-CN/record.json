@@ -51,7 +51,8 @@
       "stage_unavailable": "此阶段已不可用。请刷新页面并选择其他阶段。",
       "one_primary_required": "请选择且仅选择一家主要集团公司。",
       "duplicate": "已存在具有相同信息的记录。",
-      "forbidden": "你没有执行此操作的权限。"
+      "forbidden": "你没有执行此操作的权限。",
+      "no_assignee": "没有适合此线索的可用负责人。仍由当前负责人持有。"
     }
   },
   "deleteDialog": {

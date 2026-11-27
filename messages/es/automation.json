@@ -1,0 +1,256 @@
+{
+  "title": "Automatización",
+  "description": "Reglas de asignación, tareas creadas cuando las oportunidades cambian de etapa, alertas y escalado de SLA. Cada cambio automático se registra en el registro de auditoría como \"Automatización\".",
+  "tabsLabel": "Secciones de automatización",
+  "tabs": {
+    "assignment": "Asignación de leads",
+    "stage-tasks": "Tareas por etapa",
+    "alerts": "Alertas y SLA",
+    "runs": "Ejecuciones"
+  },
+  "common": {
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "add": "Añadir",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "saved": "Guardado",
+    "deleted": "Eliminado",
+    "reordered": "Orden guardado",
+    "readOnly": "Puedes ver esta configuración, pero no cambiarla.",
+    "loadFailed": "No se pudo cargar esta sección.",
+    "retry": "Reintentar",
+    "confirmDelete": "¿Eliminar \"{name}\"? Esta acción no se puede deshacer.",
+    "noneSelected": "Ninguno seleccionado",
+    "user": "Usuario",
+    "unknownUser": "Usuario desconocido",
+    "any": "Cualquiera"
+  },
+  "assignment": {
+    "title": "Reglas de asignación",
+    "description": "Las reglas se ejecutan de arriba abajo para cada lead entrante (y para los leads del CRM cuando \"Asignar con reglas\" está marcado). La primera regla que coincide decide el propietario.",
+    "add": "Nueva regla",
+    "editTitle": "Editar regla",
+    "newTitle": "Nueva regla",
+    "emptyTitle": "No hay reglas de asignación",
+    "emptyDescription": "Sin reglas, los leads siguen la alternativa de abajo.",
+    "rulesLabel": "Reglas de asignación",
+    "anyCriteria": "Cualquier lead",
+    "criteria": {
+      "countries": "Países",
+      "companies": "Empresas",
+      "sources": "Orígenes"
+    },
+    "more": "+{count} más",
+    "targetUser": "Asignar a {name}",
+    "targetPool": "Rotación entre {count, plural, one {# usuario} other {# usuarios}}",
+    "stopChip": "Detiene el procesamiento",
+    "notifyChip": "Notifica al responsable",
+    "fields": {
+      "name": "Nombre de la regla",
+      "countries": "Países",
+      "countriesHint": "Déjalo vacío para coincidir con cualquier país.",
+      "companies": "Empresas del grupo",
+      "companiesHint": "Déjalo vacío para coincidir con cualquier empresa.",
+      "sources": "Orígenes del lead",
+      "sourcesHint": "Déjalo vacío para coincidir con cualquier origen.",
+      "target": "Asignar a",
+      "targetUserOption": "Un usuario específico",
+      "targetPoolOption": "Grupo de rotación",
+      "targetUser": "Usuario",
+      "pool": "Miembros del grupo",
+      "poolHint": "Los leads rotan entre estos usuarios en orden. Se omiten los usuarios inactivos o de solo lectura.",
+      "stop": "Detener el procesamiento tras esta regla",
+      "stopHint": "No probar reglas posteriores cuando esta coincida.",
+      "notify": "Notificar al responsable",
+      "active": "La regla está activa",
+      "selectUser": "Selecciona un usuario"
+    },
+    "picker": {
+      "search": "Buscar…",
+      "noResults": "Sin coincidencias",
+      "clear": "Borrar",
+      "selected": "{count} seleccionados"
+    },
+    "preview": {
+      "title": "Probar este conjunto de reglas",
+      "description": "Mira a quién iría el siguiente lead con estos datos, usando todas las reglas guardadas.",
+      "country": "País",
+      "company": "Empresa del grupo",
+      "source": "Origen",
+      "anyOption": "Cualquiera",
+      "run": "Vista previa",
+      "running": "Comprobando…",
+      "result": "Este lead iría a {name}.",
+      "resultRule": "Este lead iría a {name} por la regla \"{rule}\".",
+      "resultNone": "No se pudo determinar un propietario.",
+      "via": {
+        "rule": "Coincidió con una regla",
+        "round_robin": "Rotación",
+        "default": "Propietario alternativo predeterminado",
+        "super_admin": "Alternativa: un Super Admin"
+      },
+      "failed": "Error en la vista previa."
+    },
+    "fallback": {
+      "title": "Alternativa",
+      "description": "Se usa cuando ninguna regla coincide. Se gestiona en Configuración."
+    },
+    "saveFailed": "No se pudo guardar la regla.",
+    "invalidTarget": "Elige un usuario, o al menos un miembro del grupo.",
+    "editorPreview": {
+      "title": "Estimación para esta regla",
+      "description": "Elige un lead de ejemplo para ver quién lo recibiría con esta regla y las guardadas. No se tiene en cuenta la posición de la rotación, así que es una estimación.",
+      "country": "País",
+      "company": "Empresa del grupo",
+      "source": "Origen",
+      "any": "Cualquiera",
+      "result": "Propietario estimado: {name}",
+      "resultRound": "Propietario estimado: {name} (el siguiente en la rotación puede ser otro)",
+      "none": "Ninguna regla asignaría este lead; se aplica la alternativa."
+    }
+  },
+  "stageTasks": {
+    "title": "Tareas por etapa",
+    "description": "Cuando una oportunidad entra en una etapa, estas tareas se crean automáticamente.",
+    "pipeline": "Pipeline",
+    "emptyPipelines": "No se encontró ningún pipeline",
+    "noStages": "Este pipeline no tiene etapas.",
+    "stageHeading": "{stage}",
+    "noTemplates": "No hay tareas para esta etapa.",
+    "add": "Añadir tarea",
+    "newTitle": "Nueva tarea de etapa",
+    "editTitle": "Editar tarea de etapa",
+    "templatesLabel": "Tareas de {stage}",
+    "dueIn": "Vence en {days, plural, =0 {0 días (el mismo día)} one {# día} other {# días}}",
+    "assignee": {
+      "owner": "Propietario de la oportunidad",
+      "owner_manager": "Gerente del propietario",
+      "user": "{name}"
+    },
+    "priority": {
+      "low": "Baja",
+      "normal": "Normal",
+      "high": "Alta",
+      "urgent": "Urgente"
+    },
+    "fields": {
+      "subject": "Asunto",
+      "description": "Descripción",
+      "dueInDays": "Vence en (días)",
+      "dueInDaysHint": "0 to 365.",
+      "priority": "Prioridad",
+      "assigneeType": "Asignar a",
+      "assigneeUser": "Usuario",
+      "active": "La plantilla está activa"
+    },
+    "assigneeTypes": {
+      "owner": "Propietario de la oportunidad",
+      "owner_manager": "Gerente del propietario",
+      "user": "Un usuario específico"
+    },
+    "saveFailed": "No se pudo guardar la tarea.",
+    "inactiveStage": "Etapa inactiva"
+  },
+  "alerts": {
+    "title": "Alertas y SLA",
+    "description": "Las alertas aparecen en la campana. El SLA de primera respuesta crea una tarea urgente para el gerente del propietario.",
+    "stalled": {
+      "title": "Oportunidades estancadas",
+      "description": "Notifica al propietario cuando una oportunidad abierta lleva este tiempo sin cambio de etapa ni actividad.",
+      "label": "Días sin avance"
+    },
+    "overdue": {
+      "title": "Tareas vencidas",
+      "description": "Notifica al responsable cuando una tarea abierta está vencida.",
+      "label": "Periodo de gracia (horas)"
+    },
+    "sla": {
+      "title": "Escalado de SLA de leads",
+      "description": "Cuando un lead nuevo no recibe primera respuesta dentro del SLA, el propietario lo conserva y su gerente recibe una notificación y una tarea urgente.",
+      "toggle": "Escalar primeras respuestas incumplidas"
+    },
+    "notifyManager": "Notificar también al gerente",
+    "enabled": "Activado",
+    "slaHours": {
+      "title": "SLA de primera respuesta",
+      "warning": "Aviso tras {hours, plural, one {# hora} other {# horas}}",
+      "overdue": "Escala tras {hours, plural, one {# hora} other {# horas}}",
+      "explanation": "El escalado usa el umbral de vencimiento del SLA de primera respuesta del lead ({hours, plural, one {# hora} other {# horas}}). Estas horas son de solo lectura aquí; también determinan las insignias de la lista de leads."
+    },
+    "overrides": {
+      "title": "Excepciones",
+      "description": "Gana la regla más específica: etapa, luego pipeline, luego la configuración global.",
+      "add": "Añadir excepción",
+      "scope": "Alcance",
+      "kind": "Alerta",
+      "threshold": "Umbral",
+      "pipelineScope": "Pipeline: {pipeline}",
+      "stageScope": "{pipeline} · {stage}",
+      "kinds": {
+        "stalled_deal": "Oportunidad estancada",
+        "overdue_task": "Tarea vencida",
+        "sla_escalation": "Escalado de SLA"
+      },
+      "thresholdDays": "{value, plural, one {# día} other {# días}}",
+      "thresholdHours": "{value, plural, one {# hora} other {# horas}}",
+      "empty": "Sin excepciones.",
+      "newTitle": "Nueva excepción",
+      "editTitle": "Editar excepción",
+      "pipeline": "Pipeline",
+      "stage": "Etapa",
+      "allPipelines": "Todos los pipelines",
+      "allStages": "Todas las etapas del pipeline",
+      "actions": "Acciones"
+    },
+    "saveFailed": "No se pudo guardar la configuración de alertas.",
+    "missingGlobal": "Aún no existe una regla global para esta alerta. Al guardar se crea."
+  },
+  "runs": {
+    "title": "Ejecuciones",
+    "description": "El motor se ejecuta cada 15 minutos (una ejecución diaria sirve de respaldo). En cada ejecución se comprueban las oportunidades estancadas, las tareas vencidas y los escalados de SLA.",
+    "lastRun": "Última ejecución",
+    "never": "Aún no hay ejecuciones",
+    "runNow": "Ejecutar ahora",
+    "running": "Ejecutando…",
+    "ranOk": "Ejecución finalizada",
+    "runFailed": "La ejecución falló.",
+    "time": "Inicio",
+    "trigger": "Disparador",
+    "status": "Estado",
+    "counts": "Procesados",
+    "errors": "Errores",
+    "triggers": {
+      "pg_cron": "Programada (base de datos)",
+      "vercel_cron": "Programada (diaria)",
+      "manual": "Manual"
+    },
+    "statuses": {
+      "ok": "OK",
+      "partial": "Parcial",
+      "failed": "Fallida",
+      "skipped": "Omitida"
+    },
+    "sections": {
+      "stalled": "Estancadas",
+      "overdue": "Vencidas",
+      "sla": "SLA",
+      "retention": "Limpiados"
+    },
+    "noCounts": "Nada que hacer",
+    "errorCount": "{count, plural, =0 {Ninguno} one {# error} other {# errores}}",
+    "showErrors": "Mostrar errores",
+    "hideErrors": "Ocultar errores",
+    "empty": "Aún no hay ejecuciones registradas.",
+    "emptyDescription": "La primera ejecución programada aparecerá aquí.",
+    "searchPlaceholder": "Buscar ejecuciones…",
+    "refresh": "Actualizar"
+  },
+  "sla": {
+    "taskSubject": "El lead {name} incumplió el SLA de primera respuesta",
+    "taskBody": "El responsable no respondió dentro del SLA. Haz seguimiento con él o contacta al lead."
+  }
+}

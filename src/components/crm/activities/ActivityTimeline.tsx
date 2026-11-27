@@ -12,7 +12,7 @@ import { isOverdue, splitTimeline } from "@/lib/crm/activities/due";
 import type { TimelineAuditEvent, TimelineResponse } from "@/lib/crm/activities/types";
 import type { CrmObject, RecordRow } from "@/lib/crm/objects/types";
 import { ActivityComposer } from "./ActivityComposer";
-import { ActivityTypeIcon, CompleteCheckbox, DueDate, useViewerClock } from "./activity-parts";
+import { ActivityTypeIcon, AutomatedBadge, CompleteCheckbox, DueDate, isAutomated, useViewerClock } from "./activity-parts";
 
 type Load = { key: string; data: TimelineResponse | null; failed: boolean };
 
@@ -109,6 +109,7 @@ export function ActivityTimeline({
               <DueDate value={row.completed_at ?? row.created_at} overdue={false} />
             )}
             {row._display?.owner_id ? <span>· {row._display.owner_id}</span> : null}
+            {isAutomated(row) ? <AutomatedBadge /> : null}
           </p>
         </div>
       </li>
@@ -176,7 +177,9 @@ const AUDIT_ICONS = { create: Sparkles, stage_change: ArrowRightLeft, owner_chan
 function AuditItem({ event }: { event: TimelineAuditEvent }) {
   const t = useTranslations("activities.timeline.audit");
   const tLeads = useTranslations("leads.statuses");
+  const tAuto = useTranslations("activities");
   const format = useFormatter();
+  const actor = event.actor === "Automation" ? tAuto("automationActor") : event.actor;
   const Icon = AUDIT_ICONS[event.action] ?? History;
   const value = (v: string | null) => (v && event.values === "lead_status" && tLeads.has(v) ? tLeads(v) : v);
   const from = value(event.from);
@@ -189,7 +192,7 @@ function AuditItem({ event }: { event: TimelineAuditEvent }) {
       </span>
       <div className="min-w-0 flex-1 text-xs">
         <p className="text-oboya-blue-dark">
-          {t(event.action, { actor: event.actor })}
+          {t(event.action, { actor })}
           {change ? <span className="text-muted-foreground"> · {change}</span> : null}
         </p>
         <time dateTime={event.created_at} className="text-[11px] text-muted-foreground">

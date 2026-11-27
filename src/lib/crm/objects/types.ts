@@ -134,6 +134,8 @@ export interface RecordConfig {
   relatedLists: RelatedListConfig[];
   actions: RecordActionConfig[];
   timeline: boolean;
+  /** Create drawer offers "Assign using rules" (needs `<module>.edit`); the new record is then POSTed to `<basePath>/:id/assign`. */
+  assignOnCreate?: boolean;
   /**
    * Record-level read-only state (pure, client-safe), e.g. converted leads.
    * When true the record page disables inline edits and the path and hides

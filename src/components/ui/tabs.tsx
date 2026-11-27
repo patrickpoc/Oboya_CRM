@@ -37,10 +37,11 @@ function Tabs({
   );
 }
 
-function TabsList({ className, children }: { className?: string; children: React.ReactNode }) {
+function TabsList({ className, children, ariaLabel }: { className?: string; children: React.ReactNode; ariaLabel?: string }) {
   return (
     <div
       role="tablist"
+      aria-label={ariaLabel}
       aria-orientation="horizontal"
       data-slot="tabs-list"
       className={cn(

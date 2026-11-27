@@ -157,12 +157,12 @@
     "automation": {
       "title": "Automação",
       "summary": "Regras de atribuição, tarefas por etapa, alertas e escalonamento de SLA.",
-      "description": "A automação substitui etapas manuais repetitivas. As regras de atribuição distribuem os novos leads por país, empresa do grupo ou rodízio. Mudanças de etapa criam tarefas de acompanhamento. Alertas avisam os proprietários sobre negócios parados. Quando um lead perde o SLA de primeira resposta, ele é escalonado para o gestor do proprietário.",
+      "description": "A automação substitui etapas manuais repetitivas. As regras de atribuição direcionam novos leads por país, empresa do grupo e origem, com grupos em rodízio. Entrar em uma etapa cria tarefas de acompanhamento. Os alertas no sino de notificações cobrem oportunidades paradas e tarefas atrasadas. Quando um lead perde o SLA de primeira resposta, o proprietário continua com ele e o gerente recebe uma notificação e uma tarefa urgente. Toda alteração automática é gravada no log de auditoria como \"Automação\".",
       "capabilities": {
         "assignmentRules": "Regras de atribuição de leads por país, empresa do grupo e rodízio",
         "stageTasks": "Tarefas criadas automaticamente quando uma oportunidade entra em uma etapa",
-        "alerts": "Alertas para negócios parados e tarefas atrasadas",
-        "slaEscalation": "Escalonamento para o gestor quando o SLA de primeira resposta não é cumprido",
+        "alerts": "Alertas no app para oportunidades paradas e tarefas atrasadas",
+        "slaEscalation": "Notificação ao gerente e tarefa urgente quando o SLA de primeira resposta é perdido",
         "auditTrail": "Toda alteração automática fica registrada no log de auditoria"
       },
       "dependencies": {}

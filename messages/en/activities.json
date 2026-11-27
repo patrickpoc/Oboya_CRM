@@ -118,5 +118,7 @@
       "due": "Due (optional)",
       "submit": "Add"
     }
-  }
+  },
+  "automated": "Automated",
+  "automationActor": "Automation"
 }

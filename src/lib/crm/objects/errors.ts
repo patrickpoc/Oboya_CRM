@@ -9,6 +9,7 @@ export const RULE_CODES = [
   "loss_reason_required",
   "stage_unavailable",
   "one_primary_required",
+  "no_assignee",
 ] as const;
 export type RuleCode = (typeof RULE_CODES)[number];
 
