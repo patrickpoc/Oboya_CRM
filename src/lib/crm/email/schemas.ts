@@ -66,14 +66,25 @@ export const emailMatchQuerySchema = z.object({
   emails: z.string().trim().min(1).max(2000),
 });
 
+/** Accepts `Name <user@host>` as well as a bare address and keeps only the address. */
+export function extractAddress(value: unknown): unknown {
+  if (typeof value !== "string") return value;
+  const angle = value.match(/<([^<>]+)>\s*$/);
+  return (angle ? angle[1] : value).trim();
+}
+
+const recipient = z.preprocess(extractAddress, email);
+/** Clients may send null or "" for "not set"; treat both as absent. */
+const absent = (value: unknown) => (value === null || value === "" ? undefined : value);
+
 export const emailSendSchema = z.object({
   accountId,
-  to: z.array(email).min(1).max(50),
-  cc: z.array(email).max(50).default([]),
-  subject: z.string().max(300).default(""),
-  text: z.string().max(100_000).default(""),
-  html: z.string().max(300_000).default(""),
-  inReplyTo: z.string().max(320).optional(),
-  logRecordId: z.string().uuid().optional(),
-  logRecordType: z.enum(["contact", "account"]).optional(),
+  to: z.array(recipient).min(1).max(50),
+  cc: z.preprocess(absent, z.array(recipient).max(50).default([])),
+  subject: z.preprocess(absent, z.string().max(300).default("")),
+  text: z.preprocess(absent, z.string().max(100_000).default("")),
+  html: z.preprocess(absent, z.string().max(300_000).default("")),
+  inReplyTo: z.preprocess(absent, z.string().max(998).optional()),
+  logRecordId: z.preprocess(absent, z.string().uuid().optional()),
+  logRecordType: z.preprocess(absent, z.enum(["contact", "account"]).optional()),
 });

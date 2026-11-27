@@ -19,9 +19,12 @@ export const EMAIL_PRESETS: readonly EmailPreset[] = [
     id: "simply",
     labelKey: "providers.simply",
     emailSuffix: "@oboya-horticulture.com",
+    // Simply.com: incoming is mail.simply.com (IMAP 993 SSL/TLS, 143 STARTTLS),
+    // outgoing is smtp.simply.com (465 SSL/TLS, 587 STARTTLS); username = full address.
+    // https://simply.com/en/support/faq/mail/115-email-setup/
     smtpHost: "smtp.simply.com",
     smtpPort: 465,
-    imapHost: "imap.simply.com",
+    imapHost: "mail.simply.com",
     imapPort: 993,
     secure: true,
   },

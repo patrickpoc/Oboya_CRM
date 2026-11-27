@@ -32,29 +32,73 @@
   "account": {
     "title": "Your mailboxes",
     "help": "Mailboxes are private to you. Passwords are encrypted on the server and never shown again.",
-    "label": "Tag label",
+    "label": "Mailbox name",
     "email": "Email address",
     "provider": "Provider preset",
     "custom": "Custom server",
-    "username": "Username",
-    "password": "Password / app password",
+    "username": "Login (username)",
+    "password": "Password",
     "passwordHint": "Stored encrypted; leave blank to keep the current password.",
     "smtpHost": "SMTP host",
     "smtpPort": "SMTP port",
     "imapHost": "IMAP host",
     "imapPort": "IMAP port",
-    "useTls": "Use TLS",
     "color": "Tag colour",
     "save": "Save mailbox",
     "saved": "Mailbox saved",
     "tested": "Connection verified",
     "testFailed": "Connection failed",
     "remove": "Remove mailbox",
-    "removeConfirm": "Remove this mailbox from CRM? Cached mail on this device stays until you clear browser data."
+    "removeConfirm": "Remove this mailbox from CRM? Cached mail on this device stays until you clear browser data.",
+    "labelPlaceholder": "e.g. Sales",
+    "labelHint": "Shown next to each message so you know which mailbox it came from.",
+    "emailPlaceholder": "name@company.com",
+    "emailHint": "Type only the part before @ and {suffix} is added for you.",
+    "passwordHintNew": "The mailbox password from your email provider. Stored encrypted; never shown again.",
+    "passwordRequired": "Enter the mailbox password.",
+    "usernameHint": "Leave blank to use the full email address, which is what 263 and Simply.com expect.",
+    "advanced": "Server settings (advanced)",
+    "advancedHint": "Filled in automatically for known providers. Only change them if your provider gave you different values.",
+    "secure": "Encrypted connection (SSL/TLS)",
+    "secureHint": "On: port {on}. Off: port {off} with STARTTLS. Unencrypted logins are never allowed.",
+    "colorHint": "Colour of the dot shown next to this mailbox.",
+    "editing": "Editing {email}",
+    "cancelEdit": "Cancel",
+    "duplicate": "You already added a mailbox with this address.",
+    "customHint": "Enter the IMAP and SMTP servers from your provider under “Server settings”.",
+    "afterSave": "After saving, open the Mail tab: the newest 100 inbox headers are downloaded and the mailbox then refreshes automatically about once a minute while this page is open.",
+    "providerHint": {
+      "263": "Server settings are filled in automatically. Use the password of your 263 mailbox.",
+      "simply": "Server settings are filled in automatically (mail.simply.com / smtp.simply.com). Use the password set for this mailbox in the Simply.com control panel (Mail Administration)."
+    },
+    "channel": {
+      "imap": "Incoming mail (IMAP)",
+      "smtp": "Outgoing mail (SMTP)"
+    },
+    "testErrors": {
+      "ok": "Connected",
+      "auth": "Login or password rejected. Use the full email address as login and the mailbox password from your provider.",
+      "host": "Server not found. Check the host name under “Server settings”.",
+      "refused": "The server refused the connection. Check the port.",
+      "timeout": "No answer from the server. Check host, port and your network or firewall.",
+      "tls": "Encryption mismatch. Ports 993/465 need “Encrypted connection” on; ports 143/587 need it off.",
+      "unknown": "Connection failed. Check host, port and encryption."
+    },
+    "colors": {
+      "blue": "Blue",
+      "green": "Green",
+      "olive": "Olive",
+      "orange": "Orange",
+      "navy": "Navy",
+      "lightBlue": "Light blue",
+      "lightGreen": "Light green",
+      "yellow": "Yellow",
+      "softWhite": "Soft white"
+    }
   },
   "providers": {
     "263": "263 · @oboya.cc",
-    "simply": "simply · @oboya-horticulture.com"
+    "simply": "Simply.com · @oboya-horticulture.com"
   },
   "list": {
     "search": "Search cached mail",
@@ -97,7 +141,8 @@
     "attachmentLimit": "Up to {count} files, {max} total (not stored on the server)",
     "attachmentTooLarge": "A file exceeds the {max} limit",
     "attachmentTooMany": "At most {count} attachments are allowed",
-    "attachmentTotalTooLarge": "Attachments exceed the {max} limit"
+    "attachmentTotalTooLarge": "Attachments exceed the {max} limit",
+    "invalidRecipients": "Check these addresses: {list}"
   },
   "templates": {
     "followUp": {

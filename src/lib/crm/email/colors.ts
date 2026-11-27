@@ -7,3 +7,16 @@ export const EMAIL_ACCOUNT_COLORS = [
 export function emailAccountColor(value: string): (typeof EMAIL_ACCOUNT_COLORS)[number] {
   return EMAIL_ACCOUNT_COLORS.find((color) => color === value.toUpperCase()) ?? EMAIL_ACCOUNT_COLORS[0];
 }
+
+/** i18n key suffix (email.account.colors.*) for each brand colour, so pickers can name them. */
+export const EMAIL_ACCOUNT_COLOR_NAMES: Record<(typeof EMAIL_ACCOUNT_COLORS)[number], string> = {
+  "#004F7C": "blue",
+  "#4DAF4E": "green",
+  "#909B03": "olive",
+  "#EA5744": "orange",
+  "#01203F": "navy",
+  "#009CD4": "lightBlue",
+  "#75C566": "lightGreen",
+  "#DBE64C": "yellow",
+  "#F1F5F1": "softWhite",
+};

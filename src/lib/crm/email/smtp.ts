@@ -15,6 +15,8 @@ function transport(config: SmtpConfig) {
     host: config.host,
     port: config.port,
     secure: config.secure,
+    // Implicit TLS on 465; otherwise STARTTLS is mandatory so credentials never travel in clear text.
+    requireTLS: !config.secure,
     auth: config.auth,
     connectionTimeout: 10_000,
     greetingTimeout: 10_000,

@@ -19,6 +19,7 @@ import {
 import { deleteDraft, saveDraft, type EmailDatabase, type EmailTemplate } from "@/lib/crm/email/local-db";
 import { mergeEmailTemplates } from "@/lib/crm/email/templates";
 import { sendEmailMessage } from "@/lib/crm/email/sync-client";
+import { extractAddress } from "@/lib/crm/email/schemas";
 import type { EmailAccount } from "@/lib/crm/email/types";
 
 export type ComposeInitial = {
@@ -145,6 +146,13 @@ export function EmailComposer({
     const list = recipients(to);
     if (!accountId || list.length === 0) {
       toast.error(t("compose.required"));
+      return;
+    }
+    const invalid = [...list, ...recipients(cc)].filter(
+      (entry) => !/^[^\s@<>,;]+@[^\s@<>,;]+\.[^\s@<>,;]+$/.test(String(extractAddress(entry)))
+    );
+    if (invalid.length > 0) {
+      toast.error(t("compose.invalidRecipients", { list: invalid.join(", ") }));
       return;
     }
     if (totalSize > MAX_TOTAL_ATTACHMENT_BYTES) {

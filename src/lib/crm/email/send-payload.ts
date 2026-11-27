@@ -30,7 +30,7 @@ export async function parseSendRequest(
   if (!contentType.toLowerCase().includes("multipart/form-data")) {
     const raw = await request.json().catch(() => null);
     const parsed = schema.safeParse(raw);
-    if (!parsed.success) return jsonError(400, "invalid_input", "Invalid input");
+    if (!parsed.success) return invalidFields(parsed.error);
     return { data: parsed.data, attachments: [] };
   }
 
@@ -44,7 +44,7 @@ export async function parseSendRequest(
   const rawPayload = form.get("payload");
   if (typeof rawPayload !== "string") return jsonError(400, "invalid_input", "Missing payload");
   const parsed = schema.safeParse(safeJson(rawPayload));
-  if (!parsed.success) return jsonError(400, "invalid_input", "Invalid input");
+  if (!parsed.success) return invalidFields(parsed.error);
 
   const files = form.getAll("attachments").filter((entry): entry is File => entry instanceof File);
   if (files.length > MAX_ATTACHMENT_COUNT) {
@@ -69,6 +69,12 @@ export async function parseSendRequest(
   }
 
   return { data: parsed.data, attachments };
+}
+
+/** 400 naming the failing fields (paths only, never the submitted values). */
+function invalidFields(error: z.ZodError): NextResponse {
+  const fields = [...new Set(error.issues.map((issue) => String(issue.path[0] ?? "_")))];
+  return jsonError(400, "invalid_input", `Invalid input: ${fields.join(", ")}`, { fields });
 }
 
 function safeJson(value: string): unknown {

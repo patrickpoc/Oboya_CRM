@@ -32,29 +32,73 @@
   "account": {
     "title": "Suas caixas",
     "help": "As caixas são privadas. A senha é criptografada no servidor e nunca é exibida novamente.",
-    "label": "Etiqueta",
+    "label": "Nome da caixa",
     "email": "Endereço de e-mail",
     "provider": "Provedor predefinido",
     "custom": "Servidor personalizado",
-    "username": "Usuário",
-    "password": "Senha / senha de aplicativo",
+    "username": "Login (usuário)",
+    "password": "Senha",
     "passwordHint": "Armazenada criptografada; deixe em branco para manter a atual.",
     "smtpHost": "Host SMTP",
     "smtpPort": "Porta SMTP",
     "imapHost": "Host IMAP",
     "imapPort": "Porta IMAP",
-    "useTls": "Usar TLS",
     "color": "Cor da etiqueta",
     "save": "Salvar caixa",
     "saved": "Caixa salva",
     "tested": "Conexão verificada",
     "testFailed": "Falha na conexão",
     "remove": "Remover caixa",
-    "removeConfirm": "Remover esta caixa do CRM? O e-mail em cache neste dispositivo permanece até você limpar os dados do navegador."
+    "removeConfirm": "Remover esta caixa do CRM? O e-mail em cache neste dispositivo permanece até você limpar os dados do navegador.",
+    "labelPlaceholder": "ex.: Vendas",
+    "labelHint": "Aparece ao lado de cada mensagem para você saber de qual caixa ela veio.",
+    "emailPlaceholder": "nome@empresa.com",
+    "emailHint": "Digite só a parte antes do @ e {suffix} é adicionado automaticamente.",
+    "passwordHintNew": "A senha da caixa de e-mail do seu provedor. Armazenada criptografada; nunca é exibida novamente.",
+    "passwordRequired": "Informe a senha da caixa de e-mail.",
+    "usernameHint": "Deixe em branco para usar o endereço de e-mail completo, que é o que a 263 e a Simply.com exigem.",
+    "advanced": "Configurações do servidor (avançado)",
+    "advancedHint": "Preenchidas automaticamente para provedores conhecidos. Altere só se o seu provedor informou valores diferentes.",
+    "secure": "Conexão criptografada (SSL/TLS)",
+    "secureHint": "Ligado: porta {on}. Desligado: porta {off} com STARTTLS. Logins sem criptografia nunca são permitidos.",
+    "colorHint": "Cor do ponto exibido ao lado desta caixa.",
+    "editing": "Editando {email}",
+    "cancelEdit": "Cancelar",
+    "duplicate": "Você já adicionou uma caixa com este endereço.",
+    "customHint": "Informe os servidores IMAP e SMTP do seu provedor em “Configurações do servidor”.",
+    "afterSave": "Depois de salvar, abra a aba E-mail: os 100 cabeçalhos mais recentes da caixa de entrada são baixados e a caixa passa a atualizar automaticamente a cada minuto enquanto esta página estiver aberta.",
+    "providerHint": {
+      "263": "As configurações do servidor são preenchidas automaticamente. Use a senha da sua caixa 263.",
+      "simply": "As configurações do servidor são preenchidas automaticamente (mail.simply.com / smtp.simply.com). Use a senha definida para esta caixa no painel da Simply.com (Mail Administration)."
+    },
+    "channel": {
+      "imap": "Recebimento (IMAP)",
+      "smtp": "Envio (SMTP)"
+    },
+    "testErrors": {
+      "ok": "Conectado",
+      "auth": "Login ou senha recusados. Use o endereço de e-mail completo como login e a senha da caixa definida no provedor.",
+      "host": "Servidor não encontrado. Verifique o nome do host em “Configurações do servidor”.",
+      "refused": "O servidor recusou a conexão. Verifique a porta.",
+      "timeout": "O servidor não respondeu. Verifique host, porta e sua rede ou firewall.",
+      "tls": "Criptografia incompatível. As portas 993/465 exigem “Conexão criptografada” ligada; as portas 143/587 exigem desligada.",
+      "unknown": "Falha na conexão. Verifique host, porta e criptografia."
+    },
+    "colors": {
+      "blue": "Azul",
+      "green": "Verde",
+      "olive": "Oliva",
+      "orange": "Laranja",
+      "navy": "Azul-marinho",
+      "lightBlue": "Azul-claro",
+      "lightGreen": "Verde-claro",
+      "yellow": "Amarelo",
+      "softWhite": "Branco suave"
+    }
   },
   "providers": {
     "263": "263 · @oboya.cc",
-    "simply": "simply · @oboya-horticulture.com"
+    "simply": "Simply.com · @oboya-horticulture.com"
   },
   "list": {
     "search": "Buscar no cache local",
@@ -97,7 +141,8 @@
     "attachmentLimit": "Até {count} arquivos, {max} no total (não são salvos no servidor)",
     "attachmentTooLarge": "Um arquivo ultrapassa o limite de {max}",
     "attachmentTooMany": "São permitidos no máximo {count} anexos",
-    "attachmentTotalTooLarge": "Os anexos ultrapassam o limite de {max}"
+    "attachmentTotalTooLarge": "Os anexos ultrapassam o limite de {max}",
+    "invalidRecipients": "Verifique estes endereços: {list}"
   },
   "templates": {
     "followUp": {

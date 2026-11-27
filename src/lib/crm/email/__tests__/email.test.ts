@@ -32,7 +32,7 @@ describe("mailbox presets", () => {
       emailSuffix: "@oboya-horticulture.com",
       smtpHost: "smtp.simply.com",
       smtpPort: 465,
-      imapHost: "imap.simply.com",
+      imapHost: "mail.simply.com",
       imapPort: 993,
       secure: true,
     });

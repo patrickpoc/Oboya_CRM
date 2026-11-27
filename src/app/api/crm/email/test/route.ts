@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { accountForBridge, loadSecretAccount } from "@/lib/crm/email/account-repository";
+import { classifyConnectionError } from "@/lib/crm/email/connection-error";
 import { decryptSecret } from "@/lib/crm/email/credentials";
 import { verifyImap } from "@/lib/crm/email/imap";
 import { emailAccountInputSchema } from "@/lib/crm/email/schemas";
@@ -41,11 +42,15 @@ export async function PUT(request: Request) {
       updatedAt: existing?.updated_at ?? new Date(0).toISOString(),
     };
     const config = accountForBridge(candidate, password);
-    const results = await Promise.allSettled([verifyImap(config.imap), verifySmtp(config.smtp)]);
-    const failed = results.find((result) => result.status === "rejected");
-    if (failed) {
-      console.error("email connection test failed:", (failed as PromiseRejectedResult).reason);
-      return jsonError(400, "invalid", "Connection failed");
+    const [imap, smtp] = await Promise.allSettled([verifyImap(config.imap), verifySmtp(config.smtp)]);
+    if (imap.status === "rejected" || smtp.status === "rejected") {
+      // Only a coarse per-channel code reaches the browser; raw provider text stays in the server log.
+      const fields = {
+        imap: imap.status === "rejected" ? classifyConnectionError(imap.reason) : "ok",
+        smtp: smtp.status === "rejected" ? classifyConnectionError(smtp.reason) : "ok",
+      };
+      console.error("email connection test failed:", fields, imap.status === "rejected" ? imap.reason : "", smtp.status === "rejected" ? smtp.reason : "");
+      return jsonError(400, "connection_failed", "Connection failed", { fields });
     }
     return NextResponse.json({ ok: true });
   } catch (error) {

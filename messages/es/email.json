@@ -32,29 +32,73 @@
   "account": {
     "title": "Tus buzones",
     "help": "Los buzones son privados. La contraseña se cifra en el servidor y no se vuelve a mostrar.",
-    "label": "Etiqueta",
+    "label": "Nombre del buzón",
     "email": "Dirección de correo",
     "provider": "Proveedor predefinido",
     "custom": "Servidor personalizado",
-    "username": "Usuario",
-    "password": "Contraseña / contraseña de aplicación",
-    "passwordHint": "Se guarda cifrada; déjalo vacío para conservar la actual.",
+    "username": "Inicio de sesión (usuario)",
+    "password": "Contraseña",
+    "passwordHint": "Se guarda cifrada; déjala en blanco para conservar la actual.",
     "smtpHost": "Host SMTP",
     "smtpPort": "Puerto SMTP",
     "imapHost": "Host IMAP",
     "imapPort": "Puerto IMAP",
-    "useTls": "Usar TLS",
     "color": "Color de la etiqueta",
     "save": "Guardar buzón",
     "saved": "Buzón guardado",
     "tested": "Conexión verificada",
     "testFailed": "Error de conexión",
     "remove": "Quitar buzón",
-    "removeConfirm": "¿Quitar este buzón del CRM? El correo cacheado en este dispositivo se conserva hasta que borres los datos del navegador."
+    "removeConfirm": "¿Quitar este buzón del CRM? El correo cacheado en este dispositivo se conserva hasta que borres los datos del navegador.",
+    "labelPlaceholder": "p. ej. Ventas",
+    "labelHint": "Se muestra junto a cada mensaje para saber de qué buzón proviene.",
+    "emailPlaceholder": "nombre@empresa.com",
+    "emailHint": "Escribe solo la parte anterior a @ y {suffix} se añade automáticamente.",
+    "passwordHintNew": "La contraseña del buzón de tu proveedor de correo. Se guarda cifrada y no se vuelve a mostrar.",
+    "passwordRequired": "Introduce la contraseña del buzón.",
+    "usernameHint": "Déjalo en blanco para usar la dirección de correo completa, que es lo que exigen 263 y Simply.com.",
+    "advanced": "Configuración del servidor (avanzado)",
+    "advancedHint": "Se rellena automáticamente para proveedores conocidos. Cámbiala solo si tu proveedor te dio otros valores.",
+    "secure": "Conexión cifrada (SSL/TLS)",
+    "secureHint": "Activado: puerto {on}. Desactivado: puerto {off} con STARTTLS. Nunca se permiten inicios de sesión sin cifrar.",
+    "colorHint": "Color del punto que se muestra junto a este buzón.",
+    "editing": "Editando {email}",
+    "cancelEdit": "Cancelar",
+    "duplicate": "Ya añadiste un buzón con esta dirección.",
+    "customHint": "Introduce los servidores IMAP y SMTP de tu proveedor en “Configuración del servidor”.",
+    "afterSave": "Después de guardar, abre la pestaña Correo: se descargan los 100 encabezados más recientes de la bandeja de entrada y el buzón se actualiza automáticamente cada minuto mientras esta página esté abierta.",
+    "providerHint": {
+      "263": "La configuración del servidor se rellena automáticamente. Usa la contraseña de tu buzón 263.",
+      "simply": "La configuración del servidor se rellena automáticamente (mail.simply.com / smtp.simply.com). Usa la contraseña definida para este buzón en el panel de Simply.com (Mail Administration)."
+    },
+    "channel": {
+      "imap": "Correo entrante (IMAP)",
+      "smtp": "Correo saliente (SMTP)"
+    },
+    "testErrors": {
+      "ok": "Conectado",
+      "auth": "Usuario o contraseña rechazados. Usa la dirección de correo completa como usuario y la contraseña del buzón definida en el proveedor.",
+      "host": "Servidor no encontrado. Revisa el nombre del host en “Configuración del servidor”.",
+      "refused": "El servidor rechazó la conexión. Revisa el puerto.",
+      "timeout": "El servidor no respondió. Revisa host, puerto y tu red o cortafuegos.",
+      "tls": "Cifrado incompatible. Los puertos 993/465 requieren “Conexión cifrada” activada; los puertos 143/587 la requieren desactivada.",
+      "unknown": "Error de conexión. Revisa host, puerto y cifrado."
+    },
+    "colors": {
+      "blue": "Azul",
+      "green": "Verde",
+      "olive": "Oliva",
+      "orange": "Naranja",
+      "navy": "Azul marino",
+      "lightBlue": "Azul claro",
+      "lightGreen": "Verde claro",
+      "yellow": "Amarillo",
+      "softWhite": "Blanco suave"
+    }
   },
   "providers": {
     "263": "263 · @oboya.cc",
-    "simply": "simply · @oboya-horticulture.com"
+    "simply": "Simply.com · @oboya-horticulture.com"
   },
   "list": {
     "search": "Buscar en la caché local",
@@ -97,7 +141,8 @@
     "attachmentLimit": "Hasta {count} archivos, {max} en total (no se guardan en el servidor)",
     "attachmentTooLarge": "Un archivo supera el límite de {max}",
     "attachmentTooMany": "Se permiten como máximo {count} adjuntos",
-    "attachmentTotalTooLarge": "Los adjuntos superan el límite de {max}"
+    "attachmentTotalTooLarge": "Los adjuntos superan el límite de {max}",
+    "invalidRecipients": "Revisa estas direcciones: {list}"
   },
   "templates": {
     "followUp": {
