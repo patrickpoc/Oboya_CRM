@@ -1,0 +1,51 @@
+{
+  "unavailable": "此小组件不可用。",
+  "openReport": "打开报表",
+  "openDashboard": "打开仪表板",
+  "widgets": {
+    "kpi_open_leads": "未结线索",
+    "kpi_pipeline": "管道金额",
+    "kpi_won_month": "本月赢单",
+    "kpi_tasks_today": "今日到期任务",
+    "pipeline_chart": "各阶段管道",
+    "my_tasks": "我的任务",
+    "recent_records": "最近记录",
+    "quick_access": "快速访问"
+  },
+  "edit": {
+    "start": "编辑首页",
+    "hint": "使用箭头按钮，或聚焦小组件后按 Alt+方向键，调整其顺序。",
+    "addWidget": "添加小组件",
+    "select": "选择小组件",
+    "add": "添加",
+    "groupBuiltin": "内置",
+    "groupReports": "报表",
+    "groupDashboards": "仪表板",
+    "reportFallback": "报表",
+    "dashboardFallback": "仪表板",
+    "saveAs": "另存为",
+    "scopes": {
+      "user": "我的首页",
+      "team": "团队首页",
+      "default": "默认"
+    },
+    "save": "保存",
+    "cancel": "取消",
+    "saved": "首页已保存",
+    "reset": "重置为团队默认",
+    "resetDone": "首页已重置为团队默认",
+    "moveUp": "上移 {name}",
+    "moveDown": "下移 {name}",
+    "remove": "移除 {name}",
+    "size": "{name} 的大小",
+    "sizes": {
+      "sm": "小",
+      "md": "中",
+      "lg": "全宽"
+    },
+    "moved": "{name} 已移至第 {position} 位（共 {count} 个）",
+    "added": "已添加 {name}",
+    "removed": "已移除 {name}",
+    "overriddenHint": "你有个人首页，它将覆盖此首页。"
+  }
+}

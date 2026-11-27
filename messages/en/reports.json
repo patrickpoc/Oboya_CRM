@@ -1,0 +1,286 @@
+{
+  "chart": {
+    "title": "Chart",
+    "none": "No chart is configured for this report.",
+    "noData": "No data to chart.",
+    "other": "Other",
+    "omitted": "Smaller series are not shown.",
+    "total": "Total: {value}",
+    "group": "Group",
+    "value": "Value"
+  },
+  "dashboards": {
+    "title": "Dashboard",
+    "back": "Dashboards",
+    "edit": "Edit",
+    "failed": "Could not load the dashboard.",
+    "empty": "This dashboard has no widgets yet.",
+    "emptyHint": "Edit the dashboard to add saved reports.",
+    "unavailable": "This widget is not available.",
+    "openReport": "Open report",
+    "reportFallback": "Report",
+    "addFromReports": "Add a saved report",
+    "selectReport": "Choose a report",
+    "noReports": "No more reports to add",
+    "addWidget": "Add widget",
+    "save": "Save",
+    "cancel": "Cancel",
+    "saved": "Dashboard saved",
+    "editHint": "Use the arrow buttons, or focus a widget and press Alt+Arrow, to reorder it.",
+    "emptyEditor": "Add a saved report to start.",
+    "moved": "{name} moved to position {position} of {count}",
+    "added": "{name} added",
+    "removed": "{name} removed",
+    "chartOverride": {
+      "label": "Chart for {name}",
+      "default": "Report chart",
+      "none": "No chart",
+      "bar": "Bar",
+      "line": "Line",
+      "funnel": "Funnel",
+      "donut": "Donut"
+    }
+  },
+  "index": {
+    "title": "Reports & Dashboards",
+    "description": "Build reports on your CRM data, organise them in folders and put them on dashboards.",
+    "tabs": {
+      "reports": "Reports",
+      "dashboards": "Dashboards"
+    },
+    "folders": "Folders",
+    "myReports": "My reports",
+    "noFolder": "No folder",
+    "visibilityGroup": {
+      "private": "Private",
+      "team": "Team",
+      "public": "Public"
+    },
+    "visibility": {
+      "private": "Private",
+      "team": "Team",
+      "public": "Everyone"
+    },
+    "visibilityHint": {
+      "private": "Only you can see it.",
+      "team": "Everyone on the chosen team can see it.",
+      "public": "Everyone with access to Reports can see it. Records still follow each person's own visibility."
+    },
+    "objects": {
+      "lead": "Leads",
+      "account": "Accounts",
+      "contact": "Contacts",
+      "opportunity": "Opportunities",
+      "activity": "Activities"
+    },
+    "columns": {
+      "name": "Name",
+      "object": "Object",
+      "folder": "Folder",
+      "owner": "Owner",
+      "updated": "Updated",
+      "visibility": "Visibility"
+    },
+    "newReport": "New report",
+    "newDashboard": "New dashboard",
+    "newFolder": "New folder",
+    "renameFolder": "Edit folder",
+    "deleteFolder": "Delete folder",
+    "searchReports": "Search reports",
+    "searchDashboards": "Search dashboards",
+    "emptyReports": "No reports here yet",
+    "emptyReportsHint": "Create a report to see it in this list.",
+    "emptyDashboards": "No dashboards yet",
+    "emptyDashboardsHint": "Create a dashboard and add saved reports to it.",
+    "form": {
+      "name": "Name",
+      "description": "Description",
+      "visibility": "Who can see it",
+      "team": "Team",
+      "managersOnly": "Only sales managers and admins can share with a team or everyone."
+    },
+    "deleteItem": "Delete {name}",
+    "deleteTitle": "Delete {name}?",
+    "deleteBody": {
+      "folder": "The folder is removed.",
+      "report": "The report is removed.",
+      "dashboard": "The dashboard is removed."
+    },
+    "deleteHint": "This cannot be undone from the app.",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "saved": "Saved",
+    "deleted": "Deleted"
+  },
+  "engine": {
+    "restricted": "(restricted)",
+    "empty": "(none)",
+    "total": "Total",
+    "agg": {
+      "count": "Count",
+      "sum": "Sum of {field}",
+      "avg": "Average of {field}",
+      "min": "Minimum of {field}",
+      "max": "Maximum of {field}"
+    }
+  },
+  "table": {
+    "empty": "No records match this report.",
+    "noGroups": "No groups to show.",
+    "total": "Total",
+    "group": "Group",
+    "expand": "Expand {name}",
+    "collapse": "Collapse {name}",
+    "multiValue": "Records with several values (tags, multi-selects, entities) count once per value. Totals count each record once.",
+    "matrix": "Matrix report",
+    "summary": "Summary report",
+    "tabular": "Report records"
+  },
+  "view": {
+    "title": "Report",
+    "back": "Reports",
+    "edit": "Edit",
+    "exportRows": "Export records (CSV)",
+    "exportGrouped": "Export summary (CSV)",
+    "running": "Running the report",
+    "failed": "Could not run this report.",
+    "notFound": "This report was not found, or you cannot see it.",
+    "forbidden": "You do not have access to the data in this report.",
+    "invalid": "This report uses a field that no longer exists. Edit it to fix the definition.",
+    "generated": "Updated {time}",
+    "notices": {
+      "truncated": "Showing results for the first {scanned} of {total} records. Add filters to narrow the report.",
+      "limited": "Showing {shown} of {total} records.",
+      "missingFx": "No exchange rate for {currencies}. Those amounts are left out of the totals (in {base})."
+    }
+  },
+  "builder": {
+    "newTitle": "New report",
+    "editTitle": "Edit report",
+    "back": "Reports",
+    "config": "Report settings",
+    "object": "Object",
+    "type": "Report type",
+    "types": {
+      "tabular": "Tabular",
+      "summary": "Summary",
+      "matrix": "Matrix"
+    },
+    "scope": "Records",
+    "scopes": {
+      "all": "All I can see",
+      "mine": "Only mine"
+    },
+    "search": "Search text",
+    "searchPlaceholder": "Contains...",
+    "columns": {
+      "title": "Columns",
+      "add": "Add a column",
+      "empty": "No columns selected.",
+      "remove": "Remove {name}",
+      "up": "Move {name} up",
+      "down": "Move {name} down"
+    },
+    "filters": {
+      "title": "Filters",
+      "all": "Any"
+    },
+    "group": {
+      "title": "Grouping",
+      "rows": "Group rows by",
+      "second": "Then by",
+      "column": "Group columns by",
+      "bucket": "Period",
+      "pick": "Choose a field",
+      "addRow": "Add a second level",
+      "remove": "Remove"
+    },
+    "buckets": {
+      "day": "Day",
+      "week": "Week (ISO)",
+      "month": "Month",
+      "quarter": "Quarter",
+      "year": "Year"
+    },
+    "aggregates": {
+      "title": "Measures",
+      "add": "Add a measure",
+      "fn": "Function",
+      "field": "Field",
+      "remove": "Remove measure {index}",
+      "fns": {
+        "count": "Count",
+        "sum": "Sum",
+        "avg": "Average",
+        "min": "Minimum",
+        "max": "Maximum"
+      }
+    },
+    "sort": {
+      "title": "Sorting",
+      "default": "Default",
+      "label": "Group name",
+      "agg": "Measure {index}",
+      "asc": "Ascending",
+      "desc": "Descending",
+      "field": "Sort by",
+      "dir": "Direction"
+    },
+    "limit": "Maximum rows or groups",
+    "chart": {
+      "title": "Chart",
+      "type": "Chart type",
+      "metric": "Measure to plot",
+      "stacked": "Stack the series",
+      "types": {
+        "none": "No chart",
+        "bar": "Bar",
+        "line": "Line",
+        "funnel": "Funnel",
+        "donut": "Donut"
+      }
+    },
+    "preview": {
+      "title": "Preview",
+      "invalid": "Fix these points to see the preview:",
+      "failed": "The preview could not be loaded.",
+      "running": "Updating the preview"
+    },
+    "issues": {
+      "unknown_field": "A selected field does not exist on this object.",
+      "wrong_object": "The report object does not match.",
+      "invalid_filter": "A filter has a value that is not valid.",
+      "invalid_sort": "The sorting option is not valid for this report.",
+      "not_groupable": "A field cannot be used for grouping.",
+      "bucket_not_date": "A period can only be set on date fields.",
+      "not_aggregatable": "Sum, average, minimum and maximum need a number or currency field.",
+      "field_required": "Choose a field for each measure other than count.",
+      "field_not_allowed": "Count does not use a field.",
+      "duplicate_group": "The same field is grouped twice.",
+      "tabular_shape": "A tabular report needs at least one column, and no groups or measures.",
+      "summary_shape": "A summary report needs at least one group and one measure.",
+      "matrix_shape": "A matrix report needs one row group, one column group and one measure.",
+      "chart_dimension": "Funnel and donut charts need exactly one grouping.",
+      "chart_metric": "The charted measure does not exist.",
+      "limits": "A report allows at most 20 columns, 6 measures and 2000 rows or groups."
+    },
+    "save": {
+      "open": "Save",
+      "title": "Save report",
+      "name": "Name",
+      "folder": "Folder",
+      "noFolder": "No folder (private)",
+      "description": "Description",
+      "save": "Save",
+      "saveAs": "Save as new",
+      "cancel": "Cancel",
+      "saving": "Saving",
+      "nameRequired": "Enter a name.",
+      "failed": "Could not save the report.",
+      "forbidden": "You cannot save to that folder."
+    },
+    "loadFailed": "Could not load this report.",
+    "needsView": "No object is available to your role."
+  }
+}

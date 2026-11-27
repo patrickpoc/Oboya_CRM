@@ -11,7 +11,13 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 type ChartRow = Record<string, string | number>;
 
@@ -21,9 +27,9 @@ type ChartRow = Record<string, string | number>;
  */
 export function ChartCard({
   title,
-  data,
-  xKey,
-  yKey,
+  data = [],
+  xKey = "",
+  yKey = "",
   type = "line",
   color,
   height = 220,
@@ -33,11 +39,13 @@ export function ChartCard({
   formatTick,
   seriesLabel,
   children,
+  chart,
 }: {
   title: string;
-  data: ChartRow[];
-  xKey: string;
-  yKey: string;
+  /** Built-in single-series chart; omit when passing `chart`. */
+  data?: ChartRow[];
+  xKey?: string;
+  yKey?: string;
   type?: "line" | "bar";
   /** CSS color, brand tokens only (defaults: green line, blue bar). */
   color?: string;
@@ -53,12 +61,21 @@ export function ChartCard({
   seriesLabel?: string;
   /** Rendered under the chart, e.g. an sr-only data table. */
   children?: React.ReactNode;
+  /** Custom chart body (e.g. ReportChart) rendered instead of the built-in line/bar. */
+  chart?: React.ReactNode;
 }) {
   const tooltip = (
     <Tooltip
-      formatter={(value) => [formatValue ? formatValue(Number(value)) : String(value), seriesLabel ?? yKey]}
+      formatter={(value) => [
+        formatValue ? formatValue(Number(value)) : String(value),
+        seriesLabel ?? yKey,
+      ]}
       cursor={{ fill: "var(--oboya-soft-white)" }}
-      contentStyle={{ borderRadius: 8, border: "1px solid var(--border)", fontSize: 12 }}
+      contentStyle={{
+        borderRadius: 8,
+        border: "1px solid var(--border)",
+        fontSize: 12,
+      }}
     />
   );
   return (
@@ -66,36 +83,62 @@ export function ChartCard({
       <CardHeader className="flex flex-row flex-wrap items-start justify-between gap-2">
         <div className="min-w-0 space-y-1">
           <CardTitle>{title}</CardTitle>
-          {description ? <CardDescription>{description}</CardDescription> : null}
+          {description ? (
+            <CardDescription>{description}</CardDescription>
+          ) : null}
         </div>
         {actions}
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={height}>
-          {type === "line" ? (
-            <LineChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-              <XAxis dataKey={xKey} tick={{ fontSize: 11 }} />
-              <YAxis tick={{ fontSize: 11 }} tickFormatter={formatTick ? (v) => formatTick(Number(v)) : undefined} />
-              {tooltip}
-              <Line
-                type="monotone"
-                dataKey={yKey}
-                stroke={color ?? "var(--oboya-green)"}
-                strokeWidth={2}
-                dot={false}
-              />
-            </LineChart>
-          ) : (
-            <BarChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-              <XAxis dataKey={xKey} tick={{ fontSize: 11 }} />
-              <YAxis tick={{ fontSize: 11 }} tickFormatter={formatTick ? (v) => formatTick(Number(v)) : undefined} />
-              {tooltip}
-              <Bar dataKey={yKey} fill={color ?? "var(--oboya-blue)"} radius={[4, 4, 0, 0]} />
-            </BarChart>
-          )}
-        </ResponsiveContainer>
+        {chart ?? (
+          <ResponsiveContainer width="100%" height={height}>
+            {type === "line" ? (
+              <LineChart data={data}>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="var(--border)"
+                  vertical={false}
+                />
+                <XAxis dataKey={xKey} tick={{ fontSize: 11 }} />
+                <YAxis
+                  tick={{ fontSize: 11 }}
+                  tickFormatter={
+                    formatTick ? (v) => formatTick(Number(v)) : undefined
+                  }
+                />
+                {tooltip}
+                <Line
+                  type="monotone"
+                  dataKey={yKey}
+                  stroke={color ?? "var(--oboya-green)"}
+                  strokeWidth={2}
+                  dot={false}
+                />
+              </LineChart>
+            ) : (
+              <BarChart data={data}>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="var(--border)"
+                  vertical={false}
+                />
+                <XAxis dataKey={xKey} tick={{ fontSize: 11 }} />
+                <YAxis
+                  tick={{ fontSize: 11 }}
+                  tickFormatter={
+                    formatTick ? (v) => formatTick(Number(v)) : undefined
+                  }
+                />
+                {tooltip}
+                <Bar
+                  dataKey={yKey}
+                  fill={color ?? "var(--oboya-blue)"}
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
+            )}
+          </ResponsiveContainer>
+        )}
         {children}
       </CardContent>
     </Card>

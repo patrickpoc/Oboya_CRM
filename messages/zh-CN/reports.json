@@ -1,0 +1,286 @@
+{
+  "chart": {
+    "title": "图表",
+    "none": "此报表未配置图表。",
+    "noData": "没有可绘制的数据。",
+    "other": "其他",
+    "omitted": "不显示较小的数据系列。",
+    "total": "总计：{value}",
+    "group": "分组",
+    "value": "数值"
+  },
+  "dashboards": {
+    "title": "仪表板",
+    "back": "仪表板",
+    "edit": "编辑",
+    "failed": "无法加载仪表板。",
+    "empty": "此仪表板还没有小组件。",
+    "emptyHint": "编辑仪表板以添加已保存的报表。",
+    "unavailable": "此小组件不可用。",
+    "openReport": "打开报表",
+    "reportFallback": "报表",
+    "addFromReports": "添加已保存的报表",
+    "selectReport": "选择报表",
+    "noReports": "没有更多可添加的报表",
+    "addWidget": "添加小组件",
+    "save": "保存",
+    "cancel": "取消",
+    "saved": "仪表板已保存",
+    "editHint": "使用箭头按钮，或聚焦小组件后按 Alt+方向键，调整其顺序。",
+    "emptyEditor": "添加一个已保存的报表即可开始。",
+    "moved": "{name} 已移至第 {position} 位（共 {count} 个）",
+    "added": "已添加 {name}",
+    "removed": "已移除 {name}",
+    "chartOverride": {
+      "label": "{name} 的图表",
+      "default": "报表图表",
+      "none": "无图表",
+      "bar": "柱状图",
+      "line": "折线图",
+      "funnel": "漏斗图",
+      "donut": "环形图"
+    }
+  },
+  "index": {
+    "title": "报表与仪表板",
+    "description": "基于 CRM 数据创建报表，用文件夹整理，并放到仪表板上。",
+    "tabs": {
+      "reports": "报表",
+      "dashboards": "仪表板"
+    },
+    "folders": "文件夹",
+    "myReports": "我的报表",
+    "noFolder": "无文件夹",
+    "visibilityGroup": {
+      "private": "私有",
+      "team": "团队",
+      "public": "公开"
+    },
+    "visibility": {
+      "private": "私有",
+      "team": "团队",
+      "public": "所有人"
+    },
+    "visibilityHint": {
+      "private": "仅你可见。",
+      "team": "所选团队的所有人可见。",
+      "public": "所有有权访问报表的人可见。记录仍遵循每个人各自的可见范围。"
+    },
+    "objects": {
+      "lead": "线索",
+      "account": "客户",
+      "contact": "联系人",
+      "opportunity": "商机",
+      "activity": "活动"
+    },
+    "columns": {
+      "name": "名称",
+      "object": "对象",
+      "folder": "文件夹",
+      "owner": "负责人",
+      "updated": "更新时间",
+      "visibility": "可见范围"
+    },
+    "newReport": "新建报表",
+    "newDashboard": "新建仪表板",
+    "newFolder": "新建文件夹",
+    "renameFolder": "编辑文件夹",
+    "deleteFolder": "删除文件夹",
+    "searchReports": "搜索报表",
+    "searchDashboards": "搜索仪表板",
+    "emptyReports": "这里还没有报表",
+    "emptyReportsHint": "创建报表后即可在此列表中看到。",
+    "emptyDashboards": "还没有仪表板",
+    "emptyDashboardsHint": "创建仪表板并向其中添加已保存的报表。",
+    "form": {
+      "name": "名称",
+      "description": "描述",
+      "visibility": "谁可以查看",
+      "team": "团队",
+      "managersOnly": "只有销售经理和管理员可以与团队或所有人共享。"
+    },
+    "deleteItem": "删除 {name}",
+    "deleteTitle": "删除 {name}？",
+    "deleteBody": {
+      "folder": "该文件夹将被移除。",
+      "report": "该报表将被移除。",
+      "dashboard": "该仪表板将被移除。"
+    },
+    "deleteHint": "此操作无法在应用内撤销。",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "saved": "已保存",
+    "deleted": "已删除"
+  },
+  "engine": {
+    "restricted": "（受限）",
+    "empty": "（无）",
+    "total": "总计",
+    "agg": {
+      "count": "计数",
+      "sum": "{field} 的总和",
+      "avg": "{field} 的平均值",
+      "min": "{field} 的最小值",
+      "max": "{field} 的最大值"
+    }
+  },
+  "table": {
+    "empty": "没有符合此报表的记录。",
+    "noGroups": "没有可显示的分组。",
+    "total": "总计",
+    "group": "分组",
+    "expand": "展开 {name}",
+    "collapse": "折叠 {name}",
+    "multiValue": "具有多个值的记录（标签、多选、实体）按每个值各计一次。总计中每条记录只计一次。",
+    "matrix": "矩阵报表",
+    "summary": "汇总报表",
+    "tabular": "报表记录"
+  },
+  "view": {
+    "title": "报表",
+    "back": "报表",
+    "edit": "编辑",
+    "exportRows": "导出记录（CSV）",
+    "exportGrouped": "导出汇总（CSV）",
+    "running": "正在运行报表",
+    "failed": "无法运行此报表。",
+    "notFound": "未找到此报表，或你无权查看。",
+    "forbidden": "你无权访问此报表中的数据。",
+    "invalid": "此报表使用了已不存在的字段。请编辑以修正定义。",
+    "generated": "更新于 {time}",
+    "notices": {
+      "truncated": "显示 {total} 条记录中前 {scanned} 条的结果。请添加筛选条件以缩小报表范围。",
+      "limited": "显示 {total} 条记录中的 {shown} 条。",
+      "missingFx": "没有 {currencies} 的汇率。这些金额未计入总计（以 {base} 计）。"
+    }
+  },
+  "builder": {
+    "newTitle": "新建报表",
+    "editTitle": "编辑报表",
+    "back": "报表",
+    "config": "报表设置",
+    "object": "对象",
+    "type": "报表类型",
+    "types": {
+      "tabular": "表格",
+      "summary": "汇总",
+      "matrix": "矩阵"
+    },
+    "scope": "记录",
+    "scopes": {
+      "all": "我能看到的全部",
+      "mine": "仅我的"
+    },
+    "search": "搜索文本",
+    "searchPlaceholder": "包含...",
+    "columns": {
+      "title": "列",
+      "add": "添加列",
+      "empty": "未选择任何列。",
+      "remove": "移除 {name}",
+      "up": "上移 {name}",
+      "down": "下移 {name}"
+    },
+    "filters": {
+      "title": "筛选条件",
+      "all": "任意"
+    },
+    "group": {
+      "title": "分组",
+      "rows": "行分组依据",
+      "second": "再按",
+      "column": "列分组依据",
+      "bucket": "周期",
+      "pick": "选择字段",
+      "addRow": "添加第二级",
+      "remove": "移除"
+    },
+    "buckets": {
+      "day": "日",
+      "week": "周（ISO）",
+      "month": "月",
+      "quarter": "季度",
+      "year": "年"
+    },
+    "aggregates": {
+      "title": "度量",
+      "add": "添加度量",
+      "fn": "函数",
+      "field": "字段",
+      "remove": "移除度量 {index}",
+      "fns": {
+        "count": "计数",
+        "sum": "求和",
+        "avg": "平均值",
+        "min": "最小值",
+        "max": "最大值"
+      }
+    },
+    "sort": {
+      "title": "排序",
+      "default": "默认",
+      "label": "分组名称",
+      "agg": "度量 {index}",
+      "asc": "升序",
+      "desc": "降序",
+      "field": "排序依据",
+      "dir": "方向"
+    },
+    "limit": "最大行数或分组数",
+    "chart": {
+      "title": "图表",
+      "type": "图表类型",
+      "metric": "要绘制的度量",
+      "stacked": "堆叠数据系列",
+      "types": {
+        "none": "无图表",
+        "bar": "柱状图",
+        "line": "折线图",
+        "funnel": "漏斗图",
+        "donut": "环形图"
+      }
+    },
+    "preview": {
+      "title": "预览",
+      "invalid": "请修正以下问题以查看预览：",
+      "failed": "无法加载预览。",
+      "running": "正在更新预览"
+    },
+    "issues": {
+      "unknown_field": "所选字段在此对象上不存在。",
+      "wrong_object": "报表对象不匹配。",
+      "invalid_filter": "某个筛选条件的值无效。",
+      "invalid_sort": "该排序选项不适用于此报表。",
+      "not_groupable": "某个字段不能用于分组。",
+      "bucket_not_date": "只能为日期字段设置周期。",
+      "not_aggregatable": "求和、平均值、最小值和最大值需要数字或货币字段。",
+      "field_required": "请为每个非计数的度量选择字段。",
+      "field_not_allowed": "计数不使用字段。",
+      "duplicate_group": "同一字段被分组了两次。",
+      "tabular_shape": "表格报表至少需要一列，且不能有分组或度量。",
+      "summary_shape": "汇总报表至少需要一个分组和一个度量。",
+      "matrix_shape": "矩阵报表需要一个行分组、一个列分组和一个度量。",
+      "chart_dimension": "漏斗图和环形图必须恰好有一个分组。",
+      "chart_metric": "图表所用的度量不存在。",
+      "limits": "一个报表最多允许 20 列、6 个度量和 2000 行或分组。"
+    },
+    "save": {
+      "open": "保存",
+      "title": "保存报表",
+      "name": "名称",
+      "folder": "文件夹",
+      "noFolder": "无文件夹（私有）",
+      "description": "描述",
+      "save": "保存",
+      "saveAs": "另存为新报表",
+      "cancel": "取消",
+      "saving": "正在保存",
+      "nameRequired": "请输入名称。",
+      "failed": "无法保存报表。",
+      "forbidden": "你无法保存到该文件夹。"
+    },
+    "loadFailed": "无法加载此报表。",
+    "needsView": "你的角色没有可用的对象。"
+  }
+}

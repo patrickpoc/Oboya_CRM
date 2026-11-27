@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { DashboardHome } from "@/components/crm/dashboard/DashboardHome";
+import { HomeGrid } from "@/components/crm/home/HomeGrid";
 import { CrmPageHeader } from "@/components/crm/layout/CrmPageHeader";
 import { AccessDenied } from "@/components/crm/permissions/AccessDenied";
 import { loadLookups } from "@/lib/crm/repositories/lookups";
@@ -29,7 +29,7 @@ export default async function DashboardPage() {
         title={t("title")}
         description={t("greeting", { name: user.fullName || user.email })}
       />
-      <DashboardHome lookups={lookups} />
+      <HomeGrid lookups={lookups} />
     </>
   );
 }

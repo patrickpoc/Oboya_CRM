@@ -1,0 +1,51 @@
+{
+  "unavailable": "This widget is not available.",
+  "openReport": "Open report",
+  "openDashboard": "Open dashboard",
+  "widgets": {
+    "kpi_open_leads": "Open leads",
+    "kpi_pipeline": "Pipeline value",
+    "kpi_won_month": "Won this month",
+    "kpi_tasks_today": "Tasks due today",
+    "pipeline_chart": "Pipeline by stage",
+    "my_tasks": "My tasks",
+    "recent_records": "Recent records",
+    "quick_access": "Quick access"
+  },
+  "edit": {
+    "start": "Edit home",
+    "hint": "Use the arrow buttons, or focus a widget and press Alt+Arrow, to reorder it.",
+    "addWidget": "Add widget",
+    "select": "Choose a widget",
+    "add": "Add",
+    "groupBuiltin": "Built-in",
+    "groupReports": "Reports",
+    "groupDashboards": "Dashboards",
+    "reportFallback": "Report",
+    "dashboardFallback": "Dashboard",
+    "saveAs": "Save as",
+    "scopes": {
+      "user": "My home",
+      "team": "Team home",
+      "default": "Default"
+    },
+    "save": "Save",
+    "cancel": "Cancel",
+    "saved": "Home saved",
+    "reset": "Reset to team default",
+    "resetDone": "Home reset to the team default",
+    "moveUp": "Move {name} up",
+    "moveDown": "Move {name} down",
+    "remove": "Remove {name}",
+    "size": "Size of {name}",
+    "sizes": {
+      "sm": "Small",
+      "md": "Medium",
+      "lg": "Full width"
+    },
+    "moved": "{name} moved to position {position} of {count}",
+    "added": "{name} added",
+    "removed": "{name} removed",
+    "overriddenHint": "You have a personal home that overrides this one."
+  }
+}

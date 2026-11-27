@@ -1,0 +1,286 @@
+{
+  "chart": {
+    "title": "Gráfico",
+    "none": "Nenhum gráfico está configurado para este relatório.",
+    "noData": "Sem dados para o gráfico.",
+    "other": "Outros",
+    "omitted": "As séries menores não são exibidas.",
+    "total": "Total: {value}",
+    "group": "Grupo",
+    "value": "Valor"
+  },
+  "dashboards": {
+    "title": "Painel",
+    "back": "Painéis",
+    "edit": "Editar",
+    "failed": "Não foi possível carregar o painel.",
+    "empty": "Este painel ainda não tem widgets.",
+    "emptyHint": "Edite o painel para adicionar relatórios salvos.",
+    "unavailable": "Este widget não está disponível.",
+    "openReport": "Abrir relatório",
+    "reportFallback": "Relatório",
+    "addFromReports": "Adicionar um relatório salvo",
+    "selectReport": "Escolha um relatório",
+    "noReports": "Não há mais relatórios para adicionar",
+    "addWidget": "Adicionar widget",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "saved": "Painel salvo",
+    "editHint": "Use os botões de seta, ou foque um widget e pressione Alt+Seta, para reordená-lo.",
+    "emptyEditor": "Adicione um relatório salvo para começar.",
+    "moved": "{name} movido para a posição {position} de {count}",
+    "added": "{name} adicionado",
+    "removed": "{name} removido",
+    "chartOverride": {
+      "label": "Gráfico de {name}",
+      "default": "Gráfico do relatório",
+      "none": "Sem gráfico",
+      "bar": "Barras",
+      "line": "Linhas",
+      "funnel": "Funil",
+      "donut": "Rosca"
+    }
+  },
+  "index": {
+    "title": "Relatórios e painéis",
+    "description": "Crie relatórios com os dados do seu CRM, organize-os em pastas e coloque-os em painéis.",
+    "tabs": {
+      "reports": "Relatórios",
+      "dashboards": "Painéis"
+    },
+    "folders": "Pastas",
+    "myReports": "Meus relatórios",
+    "noFolder": "Sem pasta",
+    "visibilityGroup": {
+      "private": "Privados",
+      "team": "Equipe",
+      "public": "Públicos"
+    },
+    "visibility": {
+      "private": "Privado",
+      "team": "Equipe",
+      "public": "Todos"
+    },
+    "visibilityHint": {
+      "private": "Somente você pode ver.",
+      "team": "Todos da equipe escolhida podem ver.",
+      "public": "Todos com acesso a Relatórios podem ver. Os registros continuam seguindo a visibilidade de cada pessoa."
+    },
+    "objects": {
+      "lead": "Leads",
+      "account": "Contas",
+      "contact": "Contatos",
+      "opportunity": "Oportunidades",
+      "activity": "Atividades"
+    },
+    "columns": {
+      "name": "Nome",
+      "object": "Objeto",
+      "folder": "Pasta",
+      "owner": "Proprietário",
+      "updated": "Atualizado",
+      "visibility": "Visibilidade"
+    },
+    "newReport": "Novo relatório",
+    "newDashboard": "Novo painel",
+    "newFolder": "Nova pasta",
+    "renameFolder": "Editar pasta",
+    "deleteFolder": "Excluir pasta",
+    "searchReports": "Buscar relatórios",
+    "searchDashboards": "Buscar painéis",
+    "emptyReports": "Ainda não há relatórios aqui",
+    "emptyReportsHint": "Crie um relatório para vê-lo nesta lista.",
+    "emptyDashboards": "Ainda não há painéis",
+    "emptyDashboardsHint": "Crie um painel e adicione relatórios salvos a ele.",
+    "form": {
+      "name": "Nome",
+      "description": "Descrição",
+      "visibility": "Quem pode ver",
+      "team": "Equipe",
+      "managersOnly": "Somente gerentes de vendas e administradores podem compartilhar com uma equipe ou com todos."
+    },
+    "deleteItem": "Excluir {name}",
+    "deleteTitle": "Excluir {name}?",
+    "deleteBody": {
+      "folder": "A pasta será removida.",
+      "report": "O relatório será removido.",
+      "dashboard": "O painel será removido."
+    },
+    "deleteHint": "Esta ação não pode ser desfeita pelo app.",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "saved": "Salvo",
+    "deleted": "Excluído"
+  },
+  "engine": {
+    "restricted": "(restrito)",
+    "empty": "(nenhum)",
+    "total": "Total",
+    "agg": {
+      "count": "Contagem",
+      "sum": "Soma de {field}",
+      "avg": "Média de {field}",
+      "min": "Mínimo de {field}",
+      "max": "Máximo de {field}"
+    }
+  },
+  "table": {
+    "empty": "Nenhum registro corresponde a este relatório.",
+    "noGroups": "Não há grupos para exibir.",
+    "total": "Total",
+    "group": "Grupo",
+    "expand": "Expandir {name}",
+    "collapse": "Recolher {name}",
+    "multiValue": "Registros com vários valores (tags, seleções múltiplas, entidades) contam uma vez por valor. Os totais contam cada registro uma única vez.",
+    "matrix": "Relatório matricial",
+    "summary": "Relatório resumido",
+    "tabular": "Registros do relatório"
+  },
+  "view": {
+    "title": "Relatório",
+    "back": "Relatórios",
+    "edit": "Editar",
+    "exportRows": "Exportar registros (CSV)",
+    "exportGrouped": "Exportar resumo (CSV)",
+    "running": "Executando o relatório",
+    "failed": "Não foi possível executar este relatório.",
+    "notFound": "Este relatório não foi encontrado ou você não tem permissão para vê-lo.",
+    "forbidden": "Você não tem acesso aos dados deste relatório.",
+    "invalid": "Este relatório usa um campo que não existe mais. Edite-o para corrigir a definição.",
+    "generated": "Atualizado {time}",
+    "notices": {
+      "truncated": "Exibindo resultados dos primeiros {scanned} de {total} registros. Adicione filtros para restringir o relatório.",
+      "limited": "Exibindo {shown} de {total} registros.",
+      "missingFx": "Sem taxa de câmbio para {currencies}. Esses valores ficam fora dos totais (em {base})."
+    }
+  },
+  "builder": {
+    "newTitle": "Novo relatório",
+    "editTitle": "Editar relatório",
+    "back": "Relatórios",
+    "config": "Configurações do relatório",
+    "object": "Objeto",
+    "type": "Tipo de relatório",
+    "types": {
+      "tabular": "Tabular",
+      "summary": "Resumido",
+      "matrix": "Matricial"
+    },
+    "scope": "Registros",
+    "scopes": {
+      "all": "Tudo o que posso ver",
+      "mine": "Somente os meus"
+    },
+    "search": "Texto da busca",
+    "searchPlaceholder": "Contém...",
+    "columns": {
+      "title": "Colunas",
+      "add": "Adicionar uma coluna",
+      "empty": "Nenhuma coluna selecionada.",
+      "remove": "Remover {name}",
+      "up": "Mover {name} para cima",
+      "down": "Mover {name} para baixo"
+    },
+    "filters": {
+      "title": "Filtros",
+      "all": "Qualquer"
+    },
+    "group": {
+      "title": "Agrupamento",
+      "rows": "Agrupar linhas por",
+      "second": "Depois por",
+      "column": "Agrupar colunas por",
+      "bucket": "Período",
+      "pick": "Escolha um campo",
+      "addRow": "Adicionar um segundo nível",
+      "remove": "Remover"
+    },
+    "buckets": {
+      "day": "Dia",
+      "week": "Semana (ISO)",
+      "month": "Mês",
+      "quarter": "Trimestre",
+      "year": "Ano"
+    },
+    "aggregates": {
+      "title": "Medidas",
+      "add": "Adicionar uma medida",
+      "fn": "Função",
+      "field": "Campo",
+      "remove": "Remover medida {index}",
+      "fns": {
+        "count": "Contagem",
+        "sum": "Soma",
+        "avg": "Média",
+        "min": "Mínimo",
+        "max": "Máximo"
+      }
+    },
+    "sort": {
+      "title": "Ordenação",
+      "default": "Padrão",
+      "label": "Nome do grupo",
+      "agg": "Medida {index}",
+      "asc": "Crescente",
+      "desc": "Decrescente",
+      "field": "Ordenar por",
+      "dir": "Direção"
+    },
+    "limit": "Máximo de linhas ou grupos",
+    "chart": {
+      "title": "Gráfico",
+      "type": "Tipo de gráfico",
+      "metric": "Medida a exibir",
+      "stacked": "Empilhar as séries",
+      "types": {
+        "none": "Sem gráfico",
+        "bar": "Barras",
+        "line": "Linhas",
+        "funnel": "Funil",
+        "donut": "Rosca"
+      }
+    },
+    "preview": {
+      "title": "Pré-visualização",
+      "invalid": "Corrija estes pontos para ver a pré-visualização:",
+      "failed": "Não foi possível carregar a pré-visualização.",
+      "running": "Atualizando a pré-visualização"
+    },
+    "issues": {
+      "unknown_field": "Um campo selecionado não existe neste objeto.",
+      "wrong_object": "O objeto do relatório não corresponde.",
+      "invalid_filter": "Um filtro tem um valor inválido.",
+      "invalid_sort": "A opção de ordenação não é válida para este relatório.",
+      "not_groupable": "Um campo não pode ser usado para agrupamento.",
+      "bucket_not_date": "O período só pode ser definido em campos de data.",
+      "not_aggregatable": "Soma, média, mínimo e máximo exigem um campo numérico ou de moeda.",
+      "field_required": "Escolha um campo para cada medida, exceto contagem.",
+      "field_not_allowed": "A contagem não usa campo.",
+      "duplicate_group": "O mesmo campo foi agrupado duas vezes.",
+      "tabular_shape": "Um relatório tabular precisa de pelo menos uma coluna, sem grupos nem medidas.",
+      "summary_shape": "Um relatório resumido precisa de pelo menos um grupo e uma medida.",
+      "matrix_shape": "Um relatório matricial precisa de um grupo de linhas, um grupo de colunas e uma medida.",
+      "chart_dimension": "Gráficos de funil e rosca exigem exatamente um agrupamento.",
+      "chart_metric": "A medida do gráfico não existe.",
+      "limits": "Um relatório permite no máximo 20 colunas, 6 medidas e 2000 linhas ou grupos."
+    },
+    "save": {
+      "open": "Salvar",
+      "title": "Salvar relatório",
+      "name": "Nome",
+      "folder": "Pasta",
+      "noFolder": "Sem pasta (privado)",
+      "description": "Descrição",
+      "save": "Salvar",
+      "saveAs": "Salvar como novo",
+      "cancel": "Cancelar",
+      "saving": "Salvando",
+      "nameRequired": "Informe um nome.",
+      "failed": "Não foi possível salvar o relatório.",
+      "forbidden": "Você não pode salvar nessa pasta."
+    },
+    "loadFailed": "Não foi possível carregar este relatório.",
+    "needsView": "Nenhum objeto está disponível para o seu perfil."
+  }
+}

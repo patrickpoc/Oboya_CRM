@@ -1,0 +1,51 @@
+{
+  "unavailable": "Este widget não está disponível.",
+  "openReport": "Abrir relatório",
+  "openDashboard": "Abrir painel",
+  "widgets": {
+    "kpi_open_leads": "Leads abertos",
+    "kpi_pipeline": "Valor do pipeline",
+    "kpi_won_month": "Ganhas no mês",
+    "kpi_tasks_today": "Tarefas para hoje",
+    "pipeline_chart": "Pipeline por etapa",
+    "my_tasks": "Minhas tarefas",
+    "recent_records": "Registros recentes",
+    "quick_access": "Acesso rápido"
+  },
+  "edit": {
+    "start": "Editar início",
+    "hint": "Use os botões de seta, ou foque um widget e pressione Alt+Seta, para reordená-lo.",
+    "addWidget": "Adicionar widget",
+    "select": "Escolha um widget",
+    "add": "Adicionar",
+    "groupBuiltin": "Nativos",
+    "groupReports": "Relatórios",
+    "groupDashboards": "Painéis",
+    "reportFallback": "Relatório",
+    "dashboardFallback": "Painel",
+    "saveAs": "Salvar como",
+    "scopes": {
+      "user": "Meu início",
+      "team": "Início da equipe",
+      "default": "Padrão"
+    },
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "saved": "Início salvo",
+    "reset": "Restaurar padrão da equipe",
+    "resetDone": "Início restaurado para o padrão da equipe",
+    "moveUp": "Mover {name} para cima",
+    "moveDown": "Mover {name} para baixo",
+    "remove": "Remover {name}",
+    "size": "Tamanho de {name}",
+    "sizes": {
+      "sm": "Pequeno",
+      "md": "Médio",
+      "lg": "Largura total"
+    },
+    "moved": "{name} movido para a posição {position} de {count}",
+    "added": "{name} adicionado",
+    "removed": "{name} removido",
+    "overriddenHint": "Você tem um início pessoal que substitui este."
+  }
+}
