@@ -56,3 +56,4 @@ next-env.d.ts
 
 # Candidate PII (local fallback only)
 /data/cms/careers-applications.json
+/.workbuddy
